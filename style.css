@@ -10,7 +10,7 @@ body, html {
 
 /* 整个锁屏容器的样式 */
 .lock-screen {
-    height: 100vh; 
+    height: 100dvh; 
     width: 100vw;
     display: flex;
     flex-direction: column; 
