@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIAOChat</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="lock-screen">
+      
+        
+        <div class="top-status-bar">
+            <div class="status-time">9:10</div>
+            <div class="status-icons">
+                <i class="fas fa-signal"></i> 
+                <i class="fas fa-wifi"></i> 
+                <span class="battery-level">82</span>
+                <i class="fas fa-battery-three-quarters"></i>
+            </div>
+        </div>
+
+        <div class="main-content">
+          <div class="date-text" id="current-date">Saturday, July 12</div>
+            <div class="time-text" id="current-time">08:37</div>
+
+            <div class="widgets-container">
+                <div class="widget left-widget">
+                    <i class="fas fa-bolt"></i> 
+                </div>
+                <div class="widget right-widget">
+                    25 / 32 <i class="fas fa-cloud-sun"></i>
+                </div>
+            </div>
+
+            <div id="emoji-shower"></div> 
+                        <div class="bottom-slogan" id="cat-slogan">
+                     <span class="cat-paw"><i class="fas fa-paw"></i></span>猫猫大王
+        </div>
+        </div> <div class="bottom-shortcuts">
+             <div class="shortcut-icon flashlight" id="flashlight-toggle">
+                 ♡
+             </div>
+            <div class="shortcut-icon camera">
+                <i class="fas fa-camera"></i>
+            </div>
+        </div>
+
+        <div class="bottom-navigation-bar">
+            <div class="home-indicator"></div>
+        </div>
+
+    </div> <div class="home-screen hidden" id="home-screen"> 
+            
+            <div class="top-status-bar home-status-bar">
+                <div class="status-time">9:10</div> 
+                <div class="status-icons">
+                    <i class="fas fa-signal"></i> 
+                    <i class="fas fa-wifi"></i> 
+                    <span class="battery-level">82</span>
+                    <i class="fas fa-battery-three-quarters"></i>
+                </div>
+            </div>
+
+            <button id="lock-button" style="position:fixed; top:10px; right:10px; opacity: 0.1; cursor: pointer; z-index: 1001;">锁定屏幕</button>
+
+        </div>
+        
+    <script src="index.js"></script>
+</body>
+</html>
