@@ -148,7 +148,7 @@ body, html {
     max-width: 400px; 
     display: flex;
     justify-content: space-between;
-    margin-bottom: 6vh; 
+    margin-bottom: 1vh; 
 }
 
 .shortcut-icon {
@@ -196,7 +196,7 @@ body, html {
     background-color: white; 
     border-radius: 100px;
     opacity: 0.8; 
-    margin-bottom: 50px;
+    margin-bottom: 8px;
 }
 /* --- 7. Emoji 飘动动画的关键帧 --- */
 @keyframes floatUpAndFade {
