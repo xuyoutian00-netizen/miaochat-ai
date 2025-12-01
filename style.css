@@ -93,7 +93,13 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
 
 
 /* Home Indicator */
-.bottom-navigation-bar { width:100%; height:34px; display:flex; justify-content:center; align-items:flex-end; }
+.bottom-navigation-bar { 
+    width:100%; 
+    height:20px; /* 【新值】: 缩小底部高度 */
+    display:flex; 
+    justify-content:center; 
+    align-items:flex-end; 
+}
 .home-indicator { width:134px; height:5px; background:white; border-radius:3px; opacity:0.8; margin-bottom:8px; }
 .home-screen .home-indicator { background:black; }
 
@@ -110,8 +116,17 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
     text-shadow: none; /* 移除白色字体时的阴影 */
 }
 
-.dock-area { width:90%; max-width:400px; height:90px; margin-bottom:10px;
-    background:rgba(255,255,255,0.2); backdrop-filter:blur(12px); border-radius:18px; border:1px solid rgba(255,255,255,0.1); }
+.dock-area { 
+    width:90%; 
+    max-width:400px; 
+    height:90px; 
+    margin-top: 30px; /* 【新值】: 增加它和上方 Home Indicator 的间距 */
+    margin-bottom:35px; /* 【新值】: 减少它和底部导航栏的间距 */
+    background:rgba(255,255,255,0.2); 
+    backdrop-filter:blur(12px); 
+    border-radius:18px; 
+    border:1px solid rgba(255,255,255,0.1); 
+}
 
 /* Emoji 雨 */
 #emoji-shower { position:absolute; bottom:6vh; width:100%; pointer-events:none; display:flex; justify-content:center; }
@@ -138,4 +153,87 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
     0% { opacity: 1; filter: brightness(1); }
     50% { opacity: 0.85; filter: brightness(1.1); } 
     100% { opacity: 1; filter: brightness(1); }
+}
+/* style.css 添加 */
+
+/* style.css 添加 */
+
+/* 主屏幕小组件容器 */
+.home-widgets-container {
+    flex: 1; /* 让它占据主屏幕的剩余空间，将 Dock 推到底部 */
+    width: 90%;
+    max-width: 400px; /* 限制最大宽度 */
+    display: flex;
+    justify-content: space-around; /* 小组件组之间均匀分布 */
+    align-items: flex-start; /* **【主要修改点】**: 垂直向上对齐 */
+    gap: 15px; /* 小组件组之间的间距 */
+    padding-top:75px; /* **【主要修改点】**: 增加顶部间距，向下推离状态栏 */
+}
+
+/* 小组件组（左侧和右侧的药丸形小组件） */
+.home-widget-group {
+    display: flex;
+    flex-direction: column; /* 垂直排列 */
+    gap: 10px; /* 组内小组件之间的间距 */
+    align-items: flex-start; /* 左侧组靠左对齐 */
+}
+
+.home-widget-group.right-group {
+    align-items: flex-end; /* 右侧组靠右对齐 */
+}
+
+/* 通用小组件样式 */
+.home-widget {
+    background: rgba(255, 255, 255, 0.4); /* 半透明白色背景 */
+    backdrop-filter: blur(10px); /* 毛玻璃效果 */
+    border-radius: 18px; /* 圆角 */
+    color: white; /* 默认白色文字 */
+    font-weight: 500;
+    padding: 8px 15px;
+    font-size: 0.9em;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 淡淡的文字阴影 */
+}
+
+/* 药丸形小组件特有样式 */
+.pill-widget {
+    width: 70px; /* 固定宽度 */
+    text-align: center;
+}
+
+/* 居中圆形小组件容器 */
+.home-widget.center-widget {
+    background: none; /* 居中大组件本身没有背景 */
+    backdrop-filter: none;
+    padding: 0; /* 移除内边距 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative; /* 用于子元素的定位 */
+    min-width: 100px; /* 确保有足够空间 */
+}
+
+/* 中间黑色圆圈 */
+.center-circle {
+    width: 80px; /* 圆的直径 */
+    height: 80px;
+    /* 【修改点】：将背景颜色替换为你的图片 */
+    background-image: url('https://i.ibb.co/zVJN7WHd/IMG-20251201-152118.jpg'); 
+    background-size: cover; /* 确保图片覆盖整个圆形 */
+    background-position: center; /* 图片居中 */
+    background-repeat: no-repeat; /* 防止图片重复 */
+    
+    border-radius: 50%; /* 变成圆形 */
+    border: 3px solid white; /* 白色边框 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* 阴影增加立体感 */
+}
+
+/* 中间黑色圆圈下方的文字 */
+.center-text {
+    position: absolute; /* 相对于 center-widget 定位 */
+    bottom: -20px; /* 在圆圈下方 */
+    color: White; /* 黑色文字 */
+    font-weight: 600;
+    font-size: 1.0em;
+    white-space: nowrap; /* 不换行 */
 }
