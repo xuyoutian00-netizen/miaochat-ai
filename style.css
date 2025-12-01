@@ -45,10 +45,10 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
 }
 
 .time-text {
-    font-size:6.2em;
+    font-size:6.0em;
     font-weight: 800;
     line-height: 1;
-    margin-top: -15px;
+    margin-top: -5px;
     margin-bottom: 20px;
     color: transparent;
     background: rgba(255,255,255,0.8);
