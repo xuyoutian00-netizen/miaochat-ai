@@ -167,7 +167,7 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
     justify-content: space-around; /* 小组件组之间均匀分布 */
     align-items: flex-start; /* **【主要修改点】**: 垂直向上对齐 */
     gap: 15px; /* 小组件组之间的间距 */
-    padding-top:75px; /* **【主要修改点】**: 增加顶部间距，向下推离状态栏 */
+    padding-top:60px; /* **【主要修改点】**: 增加顶部间距，向下推离状态栏 */
 }
 
 /* 小组件组（左侧和右侧的药丸形小组件） */
