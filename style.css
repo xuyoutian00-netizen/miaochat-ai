@@ -1,298 +1,95 @@
-/* 通用重置，确保全屏显示 */
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden; /* 确保没有滚动条 */
-    /* 模拟 iOS 风格字体堆栈 */
-    font-family: 'SF Pro Display', 'SF Pro Icons', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-}
+/* 基础 */
+body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'SF Pro Display', -apple-system, sans-serif; }
+.hidden { display:none !important; }
 
-/* 整个锁屏容器的样式 */
+/* 锁屏 */
 .lock-screen {
-    height: 100dvh; 
-    width: 100vw;
-    display: flex;
-    flex-direction: column; 
-    align-items: center;
-    color: white; 
-.ll-screen {
-    /* ... 现有样式 ... */
-    color: white; 
-    
-    /* 【新增】动画基础：为 opacity 和 transform 添加过渡 */
-    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; 
-    
-    /* ... 现有样式 ... */
+    position:fixed; inset:0; z-index:10;
+    display:flex; flex-direction:column; align-items:center;
+    color:white;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.25)),
+                url(https://i.ibb.co/MD4x4wRc/IMG-20251130-135415.jpg) center/cover no-repeat;
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
-    
-    /* 【核心修改】恢复黑色渐变叠加层，使背景变暗 */
-    background: 
-        linear-gradient(to bottom, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0.25) 100%), 
-        url(https://i.ibb.co/MD4x4wRc/IMG-20251130-135415.jpg) no-repeat center center/cover; 
-}
+.lock-screen.fade-out { opacity:0; transform:translateY(-30px); pointer-events:none; }
+.lock-screen.fade-in  { opacity:0; transform:translateY(30px); }
+.lock-screen.fade-in.active { opacity:1; transform:translateY(0); }
 
-/* --- 1. 顶部状态栏样式 --- */
-.top-status-bar {
-    width: 90%;
-    margin-top: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.85em;
-    font-weight: 600;
-}
+/* 状态栏 */
+.top-status-bar { width:90%; margin-top:8px; display:flex; justify-content:space-between; font-size:0.85em; font-weight:600; }
+.status-icons { gap:4px; display:flex; align-items:center; }
+.battery-level { margin-right:-2px; }
 
-.status-time {
-    font-weight: bold;
-}
-
-.status-icons {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.battery-level {
-    margin-right: -2px;
-}
-
-/* --- 2. 核心时间/日期/小组件区域 --- */
+/* 时间日期（纯文字玻璃效果） */
+.main-content { flex:1; width:100%; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  /* —— 时间和日期位置上移，让猫猫头顶有天空！—— */
 .main-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex-grow: 1; /* 【关键】占据顶部状态栏和底部快捷方式之间的所有剩余空间 */
-    width: 100%;
-    position: relative; 
+    flex:1; 
+    width:100%; 
+    position:relative; 
+    display:flex; 
+    flex-direction:column; 
+    align-items:center; 
+    justify-content: flex-start;   /* ← 改成从顶部开始排列 */
+    padding-top: 6vh;              /* ← 从屏幕顶部往下留出空间 */
 }
 
 .date-text {
-    font-size: 2em;
+    font-size: 1.8em;
     font-weight: 500;
-    margin-top: 6vh;
-    
-    /* 【核心修正：纯字体玻璃效果】 */
-    color: transparent; 
-    background-color: rgba(255, 255, 255, 0.7); /* 字体内部的白色玻璃填充 */
-    /* backdrop-filter: blur(8px); <-- 移除此行，防止底板 */
-    -webkit-background-clip: text; 
-    background-clip: text; 
-    
-    /* 移除所有可能导致底板出现的间距 */
+    margin-top: 0vh;                /* ← 大幅减少间距 */
     margin-bottom: 0;
-    padding: 0;
+    color: transparent;
+    background: rgba(255,255,255,0.75);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 .time-text {
-    font-size: 7em;
+    font-size: 7.6em;               /* 稍微放大一点更好看 */
     font-weight: 800;
     line-height: 1;
-    
-    /* 【核心修正：纯字体玻璃效果】 */
-    color: transparent; 
-    background-color: rgba(255, 255, 255, 0.7); /* 字体内部的白色玻璃填充 */
-    /* backdrop-filter: blur(8px); <-- 移除此行，防止底板 */
-    -webkit-background-clip: text; 
-    background-clip: text; 
-    
-    /* 移除所有可能导致底板出现的间距 */
-    margin-bottom: 0;
-    padding: 0;
+    margin-top: -15px;              /* ← 把时间再往上提一点 */
+    margin-bottom: 20px;
+    color: transparent;
+    background: rgba(255,255,255,0.8);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
-/* --- 3. 小组件样式 --- */
-.widgets-container {
-    width: 90vw;
-    max-width: 400px;
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    font-size: 1.2em;
-    font-weight: 600;
-}
+/* 小组件 + 底部标语 */
+.widgets-container { width:90vw; max-width:400px; display:flex; justify-content:space-between; margin-top:20px; font-size:1.2em; font-weight:600; }
+.widget { background:rgba(255,255,255,0.2); padding:8px 16px; border-radius:12px; backdrop-filter:blur(5px); display:flex; gap:8px; align-items:center; }
+.bottom-slogan { position:absolute; bottom:3vh; background:rgba(255,255,255,0.2); padding:6px 14px; border-radius:16px; backdrop-filter:blur(6px); font-weight:600; }
 
-.widget {
-    background-color: rgba(255, 255, 255, 0.2); /* 半透明白色背景 */
-    padding: 8px 12px;
-    border-radius: 12px;
-    backdrop-filter: blur(5px);
-    display: flex;
-    align-items: center;
-    gap: 8px;
+/* 底部快捷键 */
+.bottom-shortcuts { width:80vw; max-width:400px; display:flex; justify-content:space-between; margin-bottom:2vh; }
+.shortcut-icon { width:60px; height:60px; border-radius:50%; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2);
+    backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; font-size:1.6em; transition:all .2s; }
+.shortcut-icon:active { transform:scale(0.9); background:rgba(255,255,255,0.3); }
+.flashlight.on .heart-icon {
+    animation: heartbeat 1.4s ease-in-out infinite;
+    color: #ff6dc8;
+    text-shadow: 0 0 15px #ff6dc8;
 }
+/* Home Indicator */
+.bottom-navigation-bar { width:100%; height:34px; display:flex; justify-content:center; align-items:flex-end; }
+.home-indicator { width:134px; height:5px; background:white; border-radius:3px; opacity:0.8; margin-bottom:8px; }
+.home-screen .home-indicator { background:black; }
 
-/* --- 4. 底部口号样式 --- */
-.bottom-slogan {
-    position: absolute; 
-    bottom: 2vh; 
-    font-size: 1.2em;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: rgba(255, 255, 255, 0.2); 
-    padding: 5px 10px;
-    border-radius: 15px;
-    backdrop-filter: blur(5px);
-}
-
-.cat-paw {
-    color: pink;
-    font-size: 1.1em;
-}
-
-/* --- 5. 底部快捷图标 --- */
-.bottom-shortcuts {
-    width: 80vw;
-    max-width: 400px; 
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1vh; 
-}
-
-.shortcut-icon {
-    font-size: 1.5em;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.1);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.2s ease; /* 【核心修改】过渡所有属性，包括缩放 */
-}
-
-/* 针对手电筒 'I' 字符的样式（如果使用Font Awesome） */
-.shortcut-icon .icon-symbol {
-    font-size: 1.5em; 
-    font-weight: 900; 
-    line-height: 1; 
-    color: white; 
-}
-
-/* --- 5.5. 底部快捷图标的按下效果 (Press State) --- */
-.shortcut-icon:active {
-    background-color: rgba(255, 255, 255, 0.3); 
-    transition: background-color 0.05s ease-out;
-    transform: scale(0.9); /* 【核心修改】按下时缩小到 90% */
-}
-
-
-/* --- 6. 底部导航条 (Home Indicator) 样式 --- */
-.bottom-navigation-bar {
-    width: 100%;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end; 
-}
-
-.home-indicator {
-    width: 130px; 
-    height: 5px; 
-    background-color: white; 
-    border-radius: 100px;
-    opacity: 0.8; 
-    margin-bottom: 8px;
-}
-/* --- 7. Emoji 飘动动画的关键帧 --- */
-@keyframes floatUpAndFade {
-    0% {
-        transform: translateY(0) scale(1); /* 初始位置和大小 */
-        opacity: 1; /* 完全可见 */
-    }
-    100% {
-        transform: translateY(-150px) scale(1.5); /* 向上飘动150px，放大 */
-        opacity: 0; /* 完全透明，消失 */
-    }
-}
-/* --- 8. Emoji 飘动效果样式 --- */
-
-/* 承载所有飘动表情的容器 */
-#emoji-shower {
-    position: absolute;
-    bottom: 5vh; /* 放在口号上方一点 */
-    width: 100%;
-    display: flex;
-    justify-content: center; /* 确保表情从屏幕中心（口号上方）飘出 */
-    pointer-events: none; /* 关键：确保这个容器不阻挡任何点击事件 */
-}
-
-/* 动态生成的单个表情样式 */
-.floating-emoji {
-    font-size: 2.5em; /* 表情大小 */
-    position: absolute; /* 绝对定位，以便独立飘动 */
-    user-select: none;
-    cursor: default;
-    
-    /* 应用动画：持续时间1.5秒，慢速开始/结束，只播放一次，在动画结束后保持最终状态 */
-    animation: floatUpAndFade 1.5s ease-out forwards;
-}
-/* --- 9. 主屏幕样式 (解锁后的桌面壁纸 + 状态栏) --- */
+/* 主屏幕 */
 .home-screen {
-    position: fixed; 
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 9999;
-    
-    /* 【核心修改】设置桌面背景图片，取代纯白色 */
-    background: url(https://i.ibb.co/MD4x4wRc/IMG-20251130-135415.jpg) no-repeat center center/cover; 
-    
-    /* 启用 Flex 布局，只为放置状态栏 */
-    display: flex;
-    flex-direction: column; 
-    align-items: center;
-    
-    /* 移除之前的 padding，让状态栏紧贴顶部 */
-    padding: 0; 
-    color: white; /* 状态栏文字默认为白色 */
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); /* 轻微阴影，确保在壁纸上可见 */
+    position:fixed; inset:0; z-index:9;
+    display:flex; flex-direction:column; align-items:center;
+    background:url(https://i.ibb.co/MD4x4wRc/IMG-20251130-135415.jpg) center/cover no-repeat;
 }
+.home-status-bar { color:white; text-shadow:0 1px 3px rgba(0,0,0,0.5); }
+.dock-area { width:90%; max-width:400px; height:90px; margin-bottom:10px;
+    background:rgba(255,255,255,0.2); backdrop-filter:blur(12px); border-radius:18px; border:1px solid rgba(255,255,255,0.1); }
 
-/* 核心控制类：用于隐藏或显示界面 */
-.hidden {
-    display: none !important; /* 确保它能强制隐藏任何元素 */
-}
-
-/* 状态栏在桌面上使用深色文字 (可选：如果背景图亮，建议用黑色) */
-.home-status-bar {
-    width: 90%;
-    margin-top: 10px;
-    
-    /* 【核心修改】将文字颜色设为黑色，并移除阴影 */
-    color: black; 
-    text-shadow: none; 
-}
-
-/* --- 10. 手电筒开关效果 (Emoji 版) --- */
-
-/* 开启状态：改变按钮背景和光晕 */
-.shortcut-icon.flashlight.on {
-    /* 颜色可以根据您喜欢的实心爱心颜色来调整，这里使用亮粉色 */
-    background-color: #ffcceb; 
-    border-color: #ffcceb; 
-    box-shadow: 0 0 15px rgba(255, 100, 200, 0.9); /* 粉色的发光效果 */
-}
-
-/* --- 11. 屏幕过渡动画效果 --- */
-
-/* 锁屏隐藏时的最终状态（用于过渡）*/
-.lock-screen.fade-out {
-    opacity: 0; /* 完全透明 */
-    transform: translateY(-20px); /* 向上轻微移动 */
-}
-/* --- 11. 屏幕过渡动画效果 --- */
-
-/* 锁屏隐藏时的最终状态（用于过渡）*/
-.lock-screen.fade-out {
-    opacity: 0; /* 完全透明 */
-    transform: translateY(-20px); /* 向上轻微移动 */
-    
-    /* 动画进行时，防止其阻挡桌面内容 */
-    pointer-events: none; 
+/* Emoji 雨 */
+#emoji-shower { position:absolute; bottom:6vh; width:100%; pointer-events:none; display:flex; justify-content:center; }
+.floating-emoji { position:absolute; font-size:2.8em; animation:floatUpAndFade 1.6s ease-out forwards; }
+@keyframes floatUpAndFade {
+    to { transform:translateY(-180px) scale(1.6); opacity:0; }
 }
