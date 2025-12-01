@@ -20,24 +20,23 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
 .status-icons { gap:4px; display:flex; align-items:center; }
 .battery-level { margin-right:-2px; }
 
+/* 修复电量图标对齐 */
+.top-status-bar .battery-icon {
+    vertical-align: middle; 
+    position: relative; 
+    top: 1px; /* 向下微移 1 像素 */
+    margin-left: 3px;
+}
+
 /* 时间日期（纯文字玻璃效果） */
-.main-content { flex:1; width:100%; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-  /* —— 时间和日期位置上移，让猫猫头顶有天空！—— */
-.main-content {
-    flex:1; 
-    width:100%; 
-    position:relative; 
-    display:flex; 
-    flex-direction:column; 
-    align-items:center; 
-    justify-content: flex-start;   /* ← 改成从顶部开始排列 */
-    padding-top: 6vh;              /* ← 从屏幕顶部往下留出空间 */
+.main-content { flex:1; width:100%; position:relative; display:flex; flex-direction:column; align-items:center; justify-content: flex-start;
+    padding-top: 6vh;
 }
 
 .date-text {
     font-size: 1.2em;
     font-weight: 500;
-    margin-top: 0vh;                /* ← 大幅减少间距 */
+    margin-top: 0vh;
     margin-bottom: 0;
     color: transparent;
     background: rgba(255,255,255,0.75);
@@ -46,10 +45,10 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
 }
 
 .time-text {
-    font-size: 6.5em;               /* 稍微放大一点更好看 */
+    font-size:6.5em;
     font-weight: 800;
     line-height: 1;
-    margin-top: -15px;              /* ← 把时间再往上提一点 */
+    margin-top: -15px;
     margin-bottom: 20px;
     color: transparent;
     background: rgba(255,255,255,0.8);
@@ -60,6 +59,23 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
 /* 小组件 + 底部标语 */
 .widgets-container { width:90vw; max-width:400px; display:flex; justify-content:space-between; margin-top:20px; font-size:1.2em; font-weight:600; }
 .widget { background:rgba(255,255,255,0.2); padding:8px 16px; border-radius:12px; backdrop-filter:blur(5px); display:flex; gap:8px; align-items:center; }
+
+/* 充电时左上角闪电小组件的样式 */
+.widget.left-widget.widget-charging-flash {
+    /* 小组件容器背景变色和光晕 */
+    background: rgba(144, 238, 144, 0.2) !important; 
+    box-shadow: 0 0 8px rgba(144, 238, 144, 0.4); 
+    transition: all 0.3s ease-in-out; 
+}
+
+/* 充电时小组件内部闪电图标的颜色和动画 */
+.widget.left-widget.widget-charging-flash .fa-bolt {
+    color: #90ee90; 
+    text-shadow: 0 0 10px rgba(144, 238, 144, 0.6); 
+    animation: charging-breathe 2s ease-in-out infinite; 
+}
+
+
 .bottom-slogan { position:absolute; bottom:3vh; background:rgba(255,255,255,0.2); padding:6px 14px; border-radius:16px; backdrop-filter:blur(6px); font-weight:600; }
 
 /* 底部快捷键 */
@@ -67,11 +83,15 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
 .shortcut-icon { width:60px; height:60px; border-radius:50%; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2);
     backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; font-size:1.6em; transition:all .2s; }
 .shortcut-icon:active { transform:scale(0.9); background:rgba(255,255,255,0.3); }
+
+/* 激活状态 (手电筒的原始样式) */
 .flashlight.on .heart-icon {
     animation: heartbeat 1.4s ease-in-out infinite;
     color: #ff6dc8;
     text-shadow: 0 0 15px #ff6dc8;
 }
+
+
 /* Home Indicator */
 .bottom-navigation-bar { width:100%; height:34px; display:flex; justify-content:center; align-items:flex-end; }
 .home-indicator { width:134px; height:5px; background:white; border-radius:3px; opacity:0.8; margin-bottom:8px; }
@@ -83,7 +103,13 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
     display:flex; flex-direction:column; align-items:center;
     background:url(https://i.ibb.co/MD4x4wRc/IMG-20251130-135415.jpg) center/cover no-repeat;
 }
-.home-status-bar { color:white; text-shadow:0 1px 3px rgba(0,0,0,0.5); }
+
+/* 【修改点】：主屏幕状态栏改为黑色字体 */
+.home-status-bar { 
+    color: black; /* 字体颜色改为黑色 */
+    text-shadow: none; /* 移除白色字体时的阴影 */
+}
+
 .dock-area { width:90%; max-width:400px; height:90px; margin-bottom:10px;
     background:rgba(255,255,255,0.2); backdrop-filter:blur(12px); border-radius:18px; border:1px solid rgba(255,255,255,0.1); }
 
@@ -92,4 +118,24 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
 .floating-emoji { position:absolute; font-size:2.8em; animation:floatUpAndFade 1.6s ease-out forwards; }
 @keyframes floatUpAndFade {
     to { transform:translateY(-180px) scale(1.6); opacity:0; }
+}
+
+/* 充电时的绿色呼吸特效 (应用于状态栏电池图标 & 闪电小组件) */
+.battery-icon.charging {
+    color: #90ee90 !important; 
+    text-shadow: 0 0 6px rgba(144, 238, 144, 0.4); 
+    animation: charging-breathe 2s ease-in-out infinite; 
+    transform: scale(1.05); 
+}
+
+/* 覆盖主屏幕状态栏下的充电颜色，确保它在黑色背景下仍然是淡绿色 */
+.home-status-bar .battery-icon.charging {
+    color: #90ee90 !important; 
+}
+
+
+@keyframes charging-breathe {
+    0% { opacity: 1; filter: brightness(1); }
+    50% { opacity: 0.85; filter: brightness(1.1); } 
+    100% { opacity: 1; filter: brightness(1); }
 }
