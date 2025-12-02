@@ -372,17 +372,18 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-bottom: 68px; /* 底部间距 */
+    padding-bottom: 80px; /* 底部间距 */
+    margin-top: 20px; 
 }
 
 /* 模式切换 (SLO-MO, VIDEO, PHOTO...) */
 .mode-selector {
     display: flex;
-    gap: 20px;
+    gap: 30px;
     font-size: 0.8em;
     font-weight: 600;
     text-transform: uppercase;
-    margin-bottom: 25px;
+    margin-bottom: 40px;
 }
 
 .mode-selector span {
@@ -464,9 +465,6 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
     z-index: 101;
     color: white;
 }
-/* style.css */
-
-/* ... (在文件末尾添加以下代码) ... */
 
 /* 新增：专业模式手动控制面板样式 */
 .pro-controls {
@@ -545,72 +543,4 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
     cursor: pointer;
     border: 2px solid white;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-}
-/* style.css (在文件末尾添加以下代码) */
-
-/* === 相册预览界面样式 === */
-#photo-preview-app {
-    z-index: 99; /* 确保它在相机 App 之上 */
-    background-color: #000;
-    color: white;
-    display: flex;
-    flex-direction: column;
-}
-
-.preview-header {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* 居中标题 */
-    padding: 15px;
-    height: 50px;
-    position: relative;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.preview-header .camera-close-button {
-    left: 10px;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.header-title {
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.preview-content {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 0;
-}
-
-.latest-photo {
-    max-width: 90%;
-    max-height: 80%;
-    object-fit: contain;
-    border-radius: 8px;
-}
-
-.preview-actions {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-    padding: 15px 0;
-    font-size: 24px;
-}
-
-.preview-actions i {
-    cursor: pointer;
-    opacity: 0.8;
-    transition: opacity 0.2s;
-}
-
-.preview-actions i:hover {
-    opacity: 1;
 }
