@@ -14,6 +14,18 @@ const homeStatusBarBatteryLevel = document.querySelector('#home-screen .top-stat
 const emojis = ['💗', '😻', '⭐', '💕', '🐾'] ;
 const ANIMATION_DURATION = 480;
 
+// 【新增】：记录相机是否是从锁屏打开的
+let cameraOpenedFromLock = false; 
+
+// index.js (在现有代码的获取元素部分添加)
+const cameraAppIcon = document.querySelector('.camera-app-icon');
+const cameraApp = document.getElementById('camera-app');
+const cameraCloseButton = document.getElementById('camera-close-button');
+const shutterButton = document.querySelector('.shutter-button'); 
+
+// 【新增】获取锁屏相机的快捷方式
+const lockScreenCameraShortcut = document.querySelector('.lock-screen .shortcut-icon.camera');
+
 // ==================== 1. 电池核心功能 (已包含充电特效) ====================
 
 // 更新图标样式的函数
@@ -233,4 +245,198 @@ function tryReturnToLock(endY) {
         }, 50);
     }
     homeTouchStartY = 0;
+}
+// ==================== 6. 相机应用打开/关闭逻辑 ====================
+
+// 监听 Dock 栏相机图标点击事件 (从主屏幕打开)
+if (cameraAppIcon && cameraApp) {
+    cameraAppIcon.addEventListener('click', () => {
+        // 【修改】：设置状态为 false
+        cameraOpenedFromLock = false;
+
+        // 确保先关闭主屏幕
+        homeScreen.classList.add('hidden');
+        
+        // 延迟打开相机 App，模仿过渡
+        setTimeout(() => {
+            cameraApp.classList.remove('hidden');
+        }, 50); 
+    });
+}
+
+// 监听锁屏相机快捷方式点击事件 (从锁屏打开)
+if (lockScreenCameraShortcut && cameraApp) {
+    lockScreenCameraShortcut.addEventListener('click', e => {
+        // 阻止事件冒泡，防止点击相机图标时触发向上滑动解锁
+        e.stopPropagation(); 
+        
+        // 【修改】：设置状态为 true
+        cameraOpenedFromLock = true;
+        
+        // 1. 隐藏锁屏
+        lockScreen.classList.add('hidden');
+        
+        // 2. 延迟打开相机 App，模仿过渡
+        setTimeout(() => {
+            cameraApp.classList.remove('hidden');
+        }, 50); 
+    });
+}
+
+
+// 监听相机 App 关闭按钮点击事件
+if (cameraCloseButton && cameraApp) {
+    cameraCloseButton.addEventListener('click', () => {
+        // 隐藏相机 App
+        cameraApp.classList.add('hidden');
+        
+        // 【核心修改】：根据 cameraOpenedFromLock 决定返回哪个界面
+        if (cameraOpenedFromLock) {
+            // 如果是从锁屏打开的，返回锁屏
+            lockScreen.classList.remove('hidden');
+            
+            // 可选：添加一个短暂的动画效果，让返回更自然
+            lockScreen.classList.add('fade-in', 'active');
+            setTimeout(() => {
+                lockScreen.classList.remove('fade-in', 'active');
+            }, 50); 
+        } else {
+            // 否则（从主屏幕打开的），返回主屏幕
+            homeScreen.classList.remove('hidden');
+        }
+    });
+}
+
+// ==================== 7. 快门按钮点击动画 ====================
+
+if (shutterButton) {
+    shutterButton.addEventListener('click', () => {
+        // 1. 触发点击动画
+        shutterButton.classList.add('shutter-active');
+
+        // 2. 模拟拍摄/动画时间后，移除激活状态
+        setTimeout(() => {
+            shutterButton.classList.remove('shutter-active');
+        }, 150); // 150毫秒的短暂动画
+    });
+}
+// index.js (在现有代码的获取元素部分添加新的元素)
+const modeSelector = document.querySelector('.mode-selector'); 
+
+// 【新增】专业模式控制元素
+const proControls = document.querySelector('.pro-controls'); 
+const isoSlider = document.getElementById('iso-slider');
+const isoValueSpan = document.getElementById('iso-value');
+const shutterSlider = document.getElementById('shutter-slider');
+const shutterValueSpan = document.getElementById('shutter-value');
+
+// ISO/快门速度的映射表（模拟真实相机参数）
+// [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+const shutterSpeedMap = [
+    '1s', '1/2s', '1/4s', '1/8s', '1/15s', '1/30s', '1/60s', '1/125s', '1/250s', '1/500s', '1/1000s'
+];
+
+
+// ==================== 8. 模式切换功能 (新增) ====================
+
+function updateCameraMode(newMode) {
+    // 1. 更新模式激活状态
+    document.querySelectorAll('.mode-selector span').forEach(span => {
+        if (span.getAttribute('data-mode') === newMode) {
+            span.classList.add('mode-active');
+        } else {
+            span.classList.remove('mode-active');
+        }
+    });
+
+    // 2. 显示/隐藏专业模式控制面板
+    if (proControls) {
+        if (newMode === 'pro') {
+            // PRO 模式：显示控制面板
+            proControls.classList.remove('hidden');
+        } else {
+            // 其他模式：隐藏控制面板
+            proControls.classList.add('hidden');
+        }
+    }
+}
+
+// 监听模式选择器点击事件
+if (modeSelector) {
+    modeSelector.addEventListener('click', (e) => {
+        const target = e.target;
+        // 确保点击的是带有 data-mode 属性的 span 元素
+        if (target.tagName === 'SPAN' && target.hasAttribute('data-mode')) {
+            const newMode = target.getAttribute('data-mode');
+            updateCameraMode(newMode);
+        }
+    });
+}
+
+// index.js (替换现有的 updateCameraMode 函数)
+function updateCameraMode(newMode) {
+    // 1. 更新模式激活状态
+    document.querySelectorAll('.mode-selector span').forEach(span => {
+        if (span.getAttribute('data-mode') === newMode) {
+            span.classList.add('mode-active');
+        } else {
+            span.classList.remove('mode-active');
+        }
+    });
+
+    // 2. 显示/隐藏专业模式控制面板
+    if (proControls) {
+        if (newMode === 'pro') {
+            // PRO 模式：默认显示控制面板
+            proControls.classList.remove('hidden');
+        } else {
+            // 其他模式：隐藏控制面板
+            proControls.classList.add('hidden');
+        }
+    }
+}
+
+// ==================== 9. 专业模式滑块控制 (新增) ====================
+
+// ISO 滑块监听器：更新 ISO 数值显示
+if (isoSlider && isoValueSpan) {
+    isoSlider.addEventListener('input', () => {
+        isoValueSpan.textContent = isoSlider.value;
+    });
+}
+
+// 快门速度滑块监听器：更新快门速度显示
+if (shutterSlider && shutterValueSpan) {
+    shutterSlider.addEventListener('input', () => {
+        // 使用映射表将滑块的 0-10 索引映射到真实的快门速度值
+        const valueIndex = parseInt(shutterSlider.value);
+        shutterValueSpan.textContent = shutterSpeedMap[valueIndex] || 'Auto';
+    });
+    
+    // 初始化快门速度显示（确保和 HTML 中的默认值一致）
+    shutterValueSpan.textContent = shutterSpeedMap[shutterSlider.value];
+}
+// index.js (在文件开头，获取元素的部分新增)
+const cameraViewfinder = document.querySelector('.camera-viewfinder'); 
+
+// ... (在文件末尾，新增以下代码块)
+
+// ==================== 10. 专业模式控制面板隐藏/显示 (新增) ====================
+
+// 监听取景框点击事件
+if (cameraViewfinder && proControls) {
+    cameraViewfinder.addEventListener('click', () => {
+        // 只有在 PRO 模式下才执行隐藏操作
+        const currentMode = document.querySelector('.mode-selector .mode-active').getAttribute('data-mode');
+        
+        if (currentMode === 'pro') {
+            // 如果面板是可见的，则隐藏它；如果已隐藏，则再次显示（模拟开关）
+            if (!proControls.classList.contains('hidden')) {
+                proControls.classList.add('hidden');
+            } else {
+                // 如果用户再次点击，也可以重新显示它
+                proControls.classList.remove('hidden');
+            }
+        }
+    });
 }
