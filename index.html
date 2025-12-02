@@ -78,13 +78,63 @@
             </div>
         <div style="flex: 1;"></div>
 
-        <div class="dock-area"></div>
-
-        <div class="bottom-navigation-bar">
+        <div class="dock-area">
+            <div class="app-icon camera-app-icon">
+                <div class="app-name">相机</div>
+            </div>
+        </div> <div class="bottom-navigation-bar">
             <div class="home-indicator"></div>
         </div>
     </div>
+    </div>
+       <div id="camera-app" class="camera-app hidden">
+    <div class="camera-top-bar">
+        <div class="camera-icon-btn"><i class="fas fa-bolt"></i></div>
+        <div class="camera-icon-btn">HDR</div>
+        <div class="camera-icon-btn"><i class="fas fa-stopwatch"></i></div>
+        <div class="camera-icon-btn"><i class="far fa-circle"></i></div>
+    </div>
 
+    <div class="camera-viewfinder">
+        <div class="grid-line"></div>
+        <div class="grid-line"></div>
+        <div class="grid-line vertical"></div>
+        <div class="grid-line vertical"></div>
+    </div>
+
+    <div class="pro-controls hidden">
+        <div class="control-slider">
+            <label>ISO</label>
+            <input type="range" min="50" max="3200" value="100" step="50" class="slider" id="iso-slider">
+            <span id="iso-value">100</span>
+        </div>
+        <div class="control-slider">
+            <label>S</label> <input type="range" min="0" max="10" value="6" step="1" class="slider" id="shutter-slider">
+            <span id="shutter-value">1/60s</span>
+        </div>
+    </div>
+    <div class="camera-bottom-bar">
+        <div class="mode-selector">
+            <span data-mode="slo-mo">SLO-MO</span>
+            <span data-mode="video">VIDEO</span>
+            <span class="mode-active" data-mode="photo">PHOTO</span>
+            <span data-mode="pro">PRO</span> <span data-mode="square">SQUARE</span>
+            <span data-mode="pano">PANO</span>
+        </div>
+        
+        <div class="shutter-controls">
+            <div class="preview-thumbnail"></div>
+            <div class="shutter-button">
+                <div class="shutter-inner"></div>
+            </div>
+            <div class="camera-toggle-btn"><i class="fas fa-redo"></i></div>
+        </div>
+    </div>
+
+    <div id="camera-close-button" class="camera-close-button">
+        <i class="fas fa-chevron-left"></i>
+    </div>
+</div>
     <script src="index.js"></script>
 </body>
 </html>
