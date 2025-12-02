@@ -1,7 +1,11 @@
 /* 基础 */
 body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'SF Pro Display', -apple-system, sans-serif; }
 .hidden { display:none !important; }
-
+/* style.css 新增：移除移动端点击时的蓝色高亮/选中效果 */
+* {
+    -webkit-tap-highlight-color: transparent; /* 针对WebKit/Chrome内核 */
+    -webkit-touch-callout: none; /* 禁用长按弹出菜单 */
+}
 /* 锁屏 */
 .lock-screen {
     position:fixed; inset:0; z-index:10;
@@ -117,15 +121,23 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
 }
 
 .dock-area { 
-    width:90%; 
-    max-width:400px; 
-    height:90px; 
-    margin-top: 30px; /* 【新值】: 增加它和上方 Home Indicator 的间距 */
-    margin-bottom:35px; /* 【新值】: 减少它和底部导航栏的间距 */
-    background:rgba(255,255,255,0.2); 
-    backdrop-filter:blur(12px); 
-    border-radius:18px; 
-    border:1px solid rgba(255,255,255,0.1); 
+    width: 80vw; 
+    max-width: 450px; 
+    /* 🌟 保持这个高度，确保有足够的空间 */
+    height: 90px; 
+    margin-top: 30px;
+    margin-bottom: 35px; 
+    background: rgba(255,255,255,0.2); 
+    backdrop-filter: blur(12px); 
+    border-radius: 24px; 
+    border: 1px solid rgba(255,255,255,0.1); 
+    
+    /* 保持图标的 flex 布局样式 */
+    display: flex; 
+    justify-content: flex-start;
+    align-items: center; 
+    gap: 12px; 
+    padding: 0 16px; 
 }
 
 /* Emoji 雨 */
@@ -236,4 +248,369 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
     font-weight: 600;
     font-size: 1.0em;
     white-space: nowrap; /* 不换行 */
+}
+/* ==================== Dock 区域图标样式 (新增) ==================== */
+
+/* 1. Dock 区域整体布局：让图标在底部玻璃板中横向排列 */
+.dock-area {
+    display: flex; /* 启用 Flexbox 布局 */
+    justify-content: flex-start; /* 保持靠左对齐 */
+    align-items: flex-start; /* 让内容（图标）靠顶部对齐 */
+    gap: 12px; /* 图标之间的间距 */
+    /* 🌟 关键修改：增大顶部内边距，让图标向下移动 */
+    padding: 15px 16px 0 30px; /* 顶部内边距从 10px 增大到 15px */
+}
+
+/* 2. 通用应用图标样式：定义图标的大小和形状 */
+.app-icon {
+    width: 60px; /* 图标大小 */
+    height: 60px;
+    border-radius: 12px; /* 方形圆角 */
+    position: relative;
+    /* 图标背景的通用样式 */
+    background-color: white; /* 默认背景颜色 */
+    background-size: cover; /* 确保图片覆盖整个图标 */
+    background-position: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* 阴影 */
+}
+
+/* 3. 应用图标名称样式：定义图标下方文字的样式和位置 */
+.app-name {
+    position: absolute;
+    bottom: -18px; /* 文字更靠近图标 */
+    left: 50%;
+    transform: translateX(-50%); 
+    color: Black; 
+    font-size: 0.75em;
+    font-weight: 500;
+    white-space: nowrap; 
+}
+
+/* 4. 特定图标：相机图标的背景图片 (使用你上传的 1000051538.jpg) */
+.camera-app-icon {
+    /* 🌟 关键修改：使用你本地上传的文件名 */
+    background-image: url('https://i.ibb.co/HLBFb8Pz/Camera-XHS-17645804740351040g2sg3120cpg1o3c305nt8j00g8qa26vrp9dg-2.jpg'); 
+}
+/* ==================== 相机 App 样式 (新增) ==================== */
+
+.camera-app {
+    position: fixed;
+    inset: 0;
+    z-index: 100; /* 确保它在锁屏和主屏幕之上 */
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* 顶部设置栏 (闪光灯/HDR/计时器) */
+.camera-top-bar {
+    /* 🌟 修改点 1: 增加宽度到 90%，让内容有更多空间 */
+    width: 72%; 
+    max-width: none;
+    height: 60px;
+    display: flex;
+    /* 🌟 修改点 2: 使用 space-around 或 space-evenly 替代 space-between */
+    /* space-around: 图标之间和两边都有空间 */
+    /* justify-content: space-around; */ 
+    /* 保持 space-between，但增大左右内边距，使其整体向右偏移 */
+    justify-content: space-between; 
+    align-items: center;
+    /* 🌟 修改点 3: 调整左右内边距，让右边更大，从而将内容向右推 */
+    padding: 0 10px 0 75px; /* 左 35px, 右 50px。右边距比左边大，整体右移 */
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+/* 调整图标容器的样式，让它们在垂直方向上对齐 */
+.camera-top-bar .camera-icon-btn,
+.camera-top-bar #camera-close-button {
+    display: flex; /* 让图标内部也能flex布局，如果有多行文本或复杂内容 */
+    align-items: center; /* 确保内部元素垂直居中 */
+    justify-content: center; /* 确保内部元素水平居中 */
+    height: 100%; /* 让按钮高度充满父容器，更容易对齐 */
+    padding: 0 8px; /* 增加点击区域左右内边距，手感更好 */
+}
+
+
+.camera-icon-btn {
+    cursor: pointer;
+}
+
+/* 取景器区域 */
+.camera-viewfinder {
+    width: 100%;
+    /* 高度由顶部和底部栏决定，保持黑色全屏，这里不设置固定高度 */
+    flex: 1; 
+    position: relative; /* 用于网格线定位 */
+    
+    /* 🌟 关键修改：将背景色设置为白色 */
+    background-color: white; 
+}
+
+/* 九宫格辅助线 */
+.grid-line {
+    position: absolute;
+    /* 🌟 关键修改：将线条颜色从 rgba(255, 255, 255, 0.4) 改为 rgba(0, 0, 0, 0.4) (半透明黑色) */
+    background: rgba(0, 0, 0, 0.4); 
+}
+
+/* 水平线 */
+.grid-line:nth-child(1) { top: 33.33%; left: 0; right: 0; height: 1px; }
+.grid-line:nth-child(2) { top: 66.66%; left: 0; right: 0; height: 1px; }
+
+/* 垂直线 */
+.grid-line.vertical:nth-child(3) { left: 33.33%; top: 0; bottom: 0; width: 1px; }
+.grid-line.vertical:nth-child(4) { left: 66.66%; top: 0; bottom: 0; width: 1px; }
+
+
+/* 底部操作区 */
+.camera-bottom-bar {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 20px; /* 底部间距 */
+}
+
+/* 模式切换 (SLO-MO, VIDEO, PHOTO...) */
+.mode-selector {
+    display: flex;
+    gap: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+}
+
+.mode-selector span {
+    opacity: 0.5; /* 非激活模式半透明 */
+    transition: opacity 0.2s;
+    cursor: pointer;
+}
+
+.mode-selector .mode-active {
+    color: #ffc300; /* 激活模式为黄色 */
+    opacity: 1;
+}
+
+/* 快门和预览控制区域 */
+.shutter-controls {
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 10px;
+}
+
+/* 预览图 (左下角小方块) */
+.preview-thumbnail {
+    width: 40px;
+    height: 40px;
+    background-color: #555; /* 灰色占位符 */
+    border-radius: 4px;
+    border: 1px solid white;
+    cursor: pointer;
+}
+
+/* 快门按钮 */
+.shutter-button {
+    width: 70px;
+    height: 70px;
+    border: 3px solid white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.shutter-button:active {
+    transform: scale(0.95);
+}
+
+.shutter-inner {
+    width: 60px;
+    height: 60px;
+    background-color: white;
+    border-radius: 50%;
+}
+/* style.css 新增：快门激活时的动画效果 */
+.shutter-button.shutter-active {
+    /* 按下时的视觉反馈：略微缩小并移除边框，使白色内圆更突出 */
+    transform: scale(0.9);
+    border: 3px solid transparent; 
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+/* 切换摄像头 (右下角图标) */
+.camera-toggle-btn {
+    font-size: 1.8em;
+    cursor: pointer;
+}
+
+/* 额外的关闭按钮 (用于在模拟器中返回主屏幕) */
+.camera-close-button {
+    position: absolute;
+    top: 5px; /* 稍微向下一点，避开刘海屏区域 */
+    left: 6px; /* 离左边框更近 */
+    font-size: 1.5em;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 101;
+    color: white;
+}
+/* style.css */
+
+/* ... (在文件末尾添加以下代码) ... */
+
+/* 新增：专业模式手动控制面板样式 */
+.pro-controls {
+    position: absolute;
+    bottom: 120px; /* 放在 mode-selector 上方 */
+    left: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.4); /* 半透明背景 */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    padding: 10px 15px;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s ease; /* 添加过渡动画 */
+}
+
+/* 隐藏时向下移动并透明 */
+.pro-controls.hidden {
+    transform: translateY(100%); 
+    opacity: 0;
+    pointer-events: none;
+}
+
+.control-slider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.control-slider label {
+    width: 30px; /* 标签宽度 */
+    text-align: right;
+    color: #ffc300; /* 使用主题色 */
+}
+
+.control-slider span {
+    width: 40px; /* 数值显示宽度 */
+    text-align: left;
+    font-variant-numeric: tabular-nums; /* 数字对齐，视觉上更整齐 */
+}
+
+/* 滑块样式 (使用 mode-active 的黄色) */
+.slider {
+    flex-grow: 1;
+    -webkit-appearance: none; 
+    appearance: none;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #ffc300; /* 主题色 */
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.slider::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #ffc300;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+/* style.css (在文件末尾添加以下代码) */
+
+/* === 相册预览界面样式 === */
+#photo-preview-app {
+    z-index: 99; /* 确保它在相机 App 之上 */
+    background-color: #000;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 居中标题 */
+    padding: 15px;
+    height: 50px;
+    position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.preview-header .camera-close-button {
+    left: 10px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.header-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.preview-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.latest-photo {
+    max-width: 90%;
+    max-height: 80%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.preview-actions {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    padding: 15px 0;
+    font-size: 24px;
+}
+
+.preview-actions i {
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.preview-actions i:hover {
+    opacity: 1;
 }
