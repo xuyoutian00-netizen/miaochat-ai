@@ -5,14 +5,36 @@ const emojiShower = document.getElementById('emoji-shower');
 const flashlightToggle = document.getElementById('flashlight-toggle');
 const homeStatusBar = document.getElementById('home-status-bar');
 
+// ... (现有代码)
+
+// 【新增】：密码锁屏相关元素
+const passcodeScreen = document.getElementById('passcode-screen');
+const passcodeDotsContainer = document.getElementById('passcode-dots-container');
+const passcodeDots = document.querySelectorAll('.passcode-dot');
+const numpad = document.getElementById('numpad');
+
+// 【新增】：密码常量和状态
+const CORRECT_PASSCODE = '2217'; 
+let currentPasscode = ''; // 当前输入的密码
+
 // 获取状态栏时间/电量元素
 const lockStatusBarTime = document.querySelector('#lock-screen .top-status-bar .status-time');
 const lockStatusBarBatteryLevel = document.querySelector('#lock-screen .top-status-bar .battery-level');
 const homeStatusBarTime = document.querySelector('#home-screen .top-status-bar .status-time');
 const homeStatusBarBatteryLevel = document.querySelector('#home-screen .top-status-bar .battery-level');
 
+// 【新增】：获取密码界面状态栏元素
+const passcodeStatusBarTime = document.querySelector('#passcode-screen .top-status-bar .status-time');
+const passcodeStatusBarBatteryLevel = document.querySelector('#passcode-screen .top-status-bar .battery-level');
+
+
 const emojis = ['💗', '😻', '⭐', '💕', '🐾'] ;
 const ANIMATION_DURATION = 480;
+
+// 【新增】：用于模拟电量和充电状态
+let simulatedBatteryLevel = 85; // 默认模拟电量
+let isSimulatedCharging = false;  // 默认非充电状态
+let batterySimulatorInterval = null; // 用于存储模拟器的定时器
 
 // 【新增】：记录相机是否是从锁屏打开的
 let cameraOpenedFromLock = false; 
@@ -20,11 +42,30 @@ let cameraOpenedFromLock = false;
 // index.js (在现有代码的获取元素部分添加)
 const cameraAppIcon = document.querySelector('.camera-app-icon');
 const cameraApp = document.getElementById('camera-app');
+// 【修复】：新增 modeSelector 的获取
+const modeSelector = document.querySelector('.mode-selector'); 
 const cameraCloseButton = document.getElementById('camera-close-button');
 const shutterButton = document.querySelector('.shutter-button'); 
 
 // 【新增】获取锁屏相机的快捷方式
 const lockScreenCameraShortcut = document.querySelector('.lock-screen .shortcut-icon.camera');
+
+// index.js (在文件开头，获取元素的部分新增)
+const cameraViewfinder = document.querySelector('.camera-viewfinder'); 
+
+// 【新增】专业模式控制元素
+const proControls = document.querySelector('.pro-controls'); 
+const isoSlider = document.getElementById('iso-slider');
+const isoValueSpan = document.getElementById('iso-value');
+const shutterSlider = document.getElementById('shutter-slider');
+const shutterValueSpan = document.getElementById('shutter-value');
+
+// ISO/快门速度的映射表（模拟真实相机参数）
+// [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+const shutterSpeedMap = [
+    '1s', '1/2s', '1/4s', '1/8s', '1/15s', '1/30s', '1/60s', '1/125s', '1/250s', '1/500s', '1/1000s'
+];
+
 
 // ==================== 1. 电池核心功能 (已包含充电特效) ====================
 
@@ -65,16 +106,70 @@ function updateBatteryIcon(level, isCharging) {
             leftWidget.classList.remove('widget-charging-flash');
         }
     }
-
-    // 4. 控制手电筒快捷图标的充电特效 (已移除)
-    // 保持手电筒图标不受充电状态影响
 }
 
-// 初始化真实电池系统
+// 更新模拟电量UI的函数（新增）
+function updateSimulatedBatteryUI() {
+    const levelText = simulatedBatteryLevel + '%';
+
+    // 1. 更新文字数字
+    if (lockStatusBarBatteryLevel) lockStatusBarBatteryLevel.textContent = levelText;
+    if (homeStatusBarBatteryLevel) homeStatusBarBatteryLevel.textContent = levelText;
+    // 【修复】：新增对密码界面电量数字的更新
+    if (passcodeStatusBarBatteryLevel) passcodeStatusBarBatteryLevel.textContent = levelText;
+
+
+    // 2. 更新图标和动画 (调用原有的函数)
+    updateBatteryIcon(simulatedBatteryLevel, isSimulatedCharging);
+
+    // 3. 模拟电量变化
+    if (isSimulatedCharging) {
+        // 充电时电量上升
+        if (simulatedBatteryLevel < 100) {
+            simulatedBatteryLevel = Math.min(100, simulatedBatteryLevel + 1);
+        }
+    } else {
+        // 非充电时电量下降
+        if (simulatedBatteryLevel > 1) {
+            simulatedBatteryLevel = Math.max(1, simulatedBatteryLevel - 1);
+        }
+    }
+}
+
+// 切换模拟充电状态的函数（新增）
+function toggleSimulatedCharging() {
+    // 只有在模拟模式下才允许切换
+    if (batterySimulatorInterval) { 
+        isSimulatedCharging = !isSimulatedCharging;
+        console.log(`模拟充电状态切换为: ${isSimulatedCharging ? '充电中' : '非充电'}`);
+        
+        // 立即触发一次 UI 更新
+        updateSimulatedBatteryUI(); 
+    }
+}
+
+// 启动电量模拟器（新增）
+function startBatterySimulator() {
+    // 每 5 秒更新一次模拟电量和 UI (模拟缓慢变化)
+    batterySimulatorInterval = setInterval(updateSimulatedBatteryUI, 5000); 
+
+    // 立即更新一次
+    updateSimulatedBatteryUI();
+    
+    // 【新增】：监听锁屏状态栏点击，切换充电状态
+    document.querySelector('#lock-screen .top-status-bar').addEventListener('click', toggleSimulatedCharging);
+    document.querySelector('#home-screen .top-status-bar').addEventListener('click', toggleSimulatedCharging);
+    
+    // 【新增】：监听密码界面状态栏点击，切换充电状态
+    document.querySelector('#passcode-screen .top-status-bar').addEventListener('click', toggleSimulatedCharging);
+}
+
+// 初始化真实电池系统（核心修改在这里）
 function initRealBatterySystem() {
     // 检查浏览器是否支持电池 API
     if ('getBattery' in navigator) {
         navigator.getBattery().then(function(battery) {
+            console.log("当前浏览器支持电池API，使用真实数据。");
             
             // 定义更新逻辑
             function updateAllBatteryUI() {
@@ -86,6 +181,8 @@ function initRealBatterySystem() {
                 const levelText = level + '%';
                 if (lockStatusBarBatteryLevel) lockStatusBarBatteryLevel.textContent = levelText;
                 if (homeStatusBarBatteryLevel) homeStatusBarBatteryLevel.textContent = levelText;
+                if (passcodeStatusBarBatteryLevel) passcodeStatusBarBatteryLevel.textContent = levelText; // 更新密码界面电量
+
 
                 // 更新图标和动画
                 updateBatteryIcon(level, isCharging);
@@ -100,12 +197,9 @@ function initRealBatterySystem() {
             battery.addEventListener('chargingchange', updateAllBatteryUI);
         });
     } else {
-        // 如果设备不支持，显示默认值
-        console.log("当前浏览器不支持电池API");
-        // 默认显示 85%
-        if (lockStatusBarBatteryLevel) lockStatusBarBatteryLevel.textContent = '85%';
-        if (homeStatusBarBatteryLevel) homeStatusBarBatteryLevel.textContent = '85%';
-        updateBatteryIcon(85, false); 
+        // 如果设备不支持，启动模拟器
+        console.log("当前浏览器不支持电池API，启动模拟电量。");
+        startBatterySimulator(); 
     }
 }
 
@@ -139,6 +233,9 @@ function updateTimeAndDate() {
     const statusBarTimeStr = now.toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit' });
     if (lockStatusBarTime) lockStatusBarTime.textContent = statusBarTimeStr;
     if (homeStatusBarTime) homeStatusBarTime.textContent = statusBarTimeStr;
+    
+    // 【修复】：新增对密码界面状态栏时间的更新
+    if (passcodeStatusBarTime) passcodeStatusBarTime.textContent = statusBarTimeStr;
 }
 
 updateTimeAndDate();
@@ -199,16 +296,17 @@ if (lockScreen) {
 function tryUnlock(endY) {
     if (touchStartY === 0) return; 
     if (touchStartY - endY > 60) { 
+        // 【修改点】：从锁屏切换到密码输入界面
         lockScreen.classList.add('fade-out');
         setTimeout(() => {
             lockScreen.classList.add('hidden');
-            homeScreen.classList.remove('hidden');
+            // 显示密码输入界面
+            passcodeScreen.classList.remove('hidden'); 
             lockScreen.classList.remove('fade-out');
         }, ANIMATION_DURATION);
     }
     touchStartY = 0; 
 }
-
 
 // ==================== 5. 主屏幕下拉返回锁屏 ====================
 let homeTouchStartY = 0;
@@ -231,21 +329,7 @@ if (homeStatusBar) {
     });
 }
 
-function tryReturnToLock(endY) {
-    if (homeTouchStartY === 0) return;
-    
-    const deltaY = endY - homeTouchStartY;
-    if (deltaY > 70) { 
-        homeScreen.classList.add('hidden');
-        lockScreen.classList.remove('hidden');
-        
-        lockScreen.classList.add('fade-in', 'active');
-        setTimeout(() => {
-            lockScreen.classList.remove('fade-in', 'active');
-        }, 50);
-    }
-    homeTouchStartY = 0;
-}
+// 【注意】：此处删除旧的 tryReturnToLock 函数定义，保留文件末尾的修复版本。
 // ==================== 6. 相机应用打开/关闭逻辑 ====================
 
 // 监听 Dock 栏相机图标点击事件 (从主屏幕打开)
@@ -320,59 +404,6 @@ if (shutterButton) {
         }, 150); // 150毫秒的短暂动画
     });
 }
-// index.js (在现有代码的获取元素部分添加新的元素)
-const modeSelector = document.querySelector('.mode-selector'); 
-
-// 【新增】专业模式控制元素
-const proControls = document.querySelector('.pro-controls'); 
-const isoSlider = document.getElementById('iso-slider');
-const isoValueSpan = document.getElementById('iso-value');
-const shutterSlider = document.getElementById('shutter-slider');
-const shutterValueSpan = document.getElementById('shutter-value');
-
-// ISO/快门速度的映射表（模拟真实相机参数）
-// [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-const shutterSpeedMap = [
-    '1s', '1/2s', '1/4s', '1/8s', '1/15s', '1/30s', '1/60s', '1/125s', '1/250s', '1/500s', '1/1000s'
-];
-
-
-// ==================== 8. 模式切换功能 (新增) ====================
-
-function updateCameraMode(newMode) {
-    // 1. 更新模式激活状态
-    document.querySelectorAll('.mode-selector span').forEach(span => {
-        if (span.getAttribute('data-mode') === newMode) {
-            span.classList.add('mode-active');
-        } else {
-            span.classList.remove('mode-active');
-        }
-    });
-
-    // 2. 显示/隐藏专业模式控制面板
-    if (proControls) {
-        if (newMode === 'pro') {
-            // PRO 模式：显示控制面板
-            proControls.classList.remove('hidden');
-        } else {
-            // 其他模式：隐藏控制面板
-            proControls.classList.add('hidden');
-        }
-    }
-}
-
-// 监听模式选择器点击事件
-if (modeSelector) {
-    modeSelector.addEventListener('click', (e) => {
-        const target = e.target;
-        // 确保点击的是带有 data-mode 属性的 span 元素
-        if (target.tagName === 'SPAN' && target.hasAttribute('data-mode')) {
-            const newMode = target.getAttribute('data-mode');
-            updateCameraMode(newMode);
-        }
-    });
-}
-
 // index.js (替换现有的 updateCameraMode 函数)
 function updateCameraMode(newMode) {
     // 1. 更新模式激活状态
@@ -396,6 +427,18 @@ function updateCameraMode(newMode) {
     }
 }
 
+// 监听模式选择器点击事件
+if (modeSelector) {
+    modeSelector.addEventListener('click', (e) => {
+        const target = e.target;
+        // 确保点击的是带有 data-mode 属性的 span 元素
+        if (target.tagName === 'SPAN' && target.hasAttribute('data-mode')) {
+            const newMode = target.getAttribute('data-mode');
+            updateCameraMode(newMode);
+        }
+    });
+}
+
 // ==================== 9. 专业模式滑块控制 (新增) ====================
 
 // ISO 滑块监听器：更新 ISO 数值显示
@@ -417,7 +460,7 @@ if (shutterSlider && shutterValueSpan) {
     shutterValueSpan.textContent = shutterSpeedMap[shutterSlider.value];
 }
 // index.js (在文件开头，获取元素的部分新增)
-const cameraViewfinder = document.querySelector('.camera-viewfinder'); 
+// const cameraViewfinder = document.querySelector('.camera-viewfinder'); 
 
 // ... (在文件末尾，新增以下代码块)
 
@@ -438,5 +481,125 @@ if (cameraViewfinder && proControls) {
                 proControls.classList.remove('hidden');
             }
         }
+    });
+}
+// ==================== 11. 密码输入和校验 (新增) ====================
+
+// 1. 更新密码输入点的 UI：点亮已输入的点
+function updatePasscodeDots() {
+    passcodeDots.forEach((dot, index) => {
+        // 如果当前输入的长度大于索引，则点亮输入点
+        if (index < currentPasscode.length) {
+            dot.classList.add('filled');
+        } else {
+            dot.classList.remove('filled');
+        }
+    });
+}
+
+// 2. 清空密码输入，并执行视觉抖动
+function shakeAndClear() {
+    // 触发抖动动画
+    passcodeDotsContainer.classList.add('shake');
+    // 清空当前密码输入
+    currentPasscode = '';
+    
+    // 动画结束后移除抖动类并更新 UI
+    setTimeout(() => {
+        passcodeDotsContainer.classList.remove('shake');
+        updatePasscodeDots();
+    }, 500); // 0.5s 动画持续时间
+}
+
+// 3. 密码校验逻辑
+function checkPasscode() {
+    if (currentPasscode.length === 4) {
+        if (currentPasscode === CORRECT_PASSCODE) {
+            // 密码正确：进入主屏幕
+            passcodeScreen.classList.add('hidden');
+            homeScreen.classList.remove('hidden');
+            currentPasscode = ''; // 解锁后清空
+        } else {
+            // 密码错误：抖动并清空
+            shakeAndClear();
+        }
+    }
+}
+
+// 4. 数字键盘点击事件监听
+if (numpad) {
+    numpad.addEventListener('click', (e) => {
+        const target = e.target.closest('.numpad-btn');
+        if (!target) return; 
+
+        const key = target.getAttribute('data-key');
+
+        if (key && currentPasscode.length < 4 && !isNaN(parseInt(key))) {
+            // 输入数字
+            currentPasscode += key;
+        } else if (key === 'backspace') {
+            // 退格 (删除最后一个字符)
+            currentPasscode = currentPasscode.slice(0, -1);
+        } else {
+            return; 
+        }
+        
+        // 更新 UI
+        updatePasscodeDots();
+        
+        // 校验密码
+        checkPasscode();
+    });
+}
+
+
+// ==================== 12. 修复和新增返回逻辑 (新增) ====================
+
+// 修复：从主屏幕返回锁屏时的状态（确保密码界面也隐藏）
+function tryReturnToLock(endY) {
+    if (homeTouchStartY === 0) return;
+    
+    const deltaY = endY - homeTouchStartY;
+    if (deltaY > 70) { 
+        homeScreen.classList.add('hidden');
+        lockScreen.classList.remove('hidden');
+        
+        // 【关键修改】：如果从主屏幕返回锁屏，需要先隐藏密码界面
+        passcodeScreen.classList.add('hidden'); 
+        currentPasscode = ''; // 清空密码输入
+        updatePasscodeDots(); // 更新点状态
+
+        lockScreen.classList.add('fade-in', 'active');
+        setTimeout(() => {
+            lockScreen.classList.remove('fade-in', 'active');
+        }, 50);
+    }
+    homeTouchStartY = 0;
+}
+
+// 新增：从密码界面滑到底部 Home Indicator 返回锁屏
+const passcodeNavigationBar = document.querySelector('.passcode-screen .bottom-navigation-bar');
+let passcodeTouchStartY = 0;
+
+if (passcodeNavigationBar) {
+    passcodeNavigationBar.addEventListener('touchstart', e => {
+        passcodeTouchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    passcodeNavigationBar.addEventListener('touchend', e => {
+        const endY = e.changedTouches[0].clientY;
+        if (passcodeTouchStartY - endY < -30) { // 向下滑动超过 30 像素
+            // 返回锁屏
+            passcodeScreen.classList.add('hidden');
+            lockScreen.classList.remove('hidden');
+            currentPasscode = ''; // 清空密码输入
+            updatePasscodeDots(); // 更新点状态
+            
+            lockScreen.classList.add('fade-in', 'active');
+            setTimeout(() => {
+                lockScreen.classList.remove('fade-in', 'active');
+            }, 50);
+        }
+        passcodeTouchStartY = 0;
     });
 }
