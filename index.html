@@ -6,135 +6,197 @@
     <title>PurrPhone</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="apple-touch-icon" href="https://i.ibb.co/MD4x4wRc/IMG-20251130-135415.jpg">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#000000">
-</head>
+    </head>
 <body>
 
-    <!-- 锁屏 -->
-    <div class="lock-screen" id="lock-screen">
-        <div class="top-status-bar">
-            <div class="status-time">9:41</div>
-            <div class="status-icons">
-                <i class="fas fa-signal"></i>
-                <i class="fas fa-wifi"></i>
-                <span class="battery-level">82</span>
-<i class="fas fa-battery-three-quarters battery-icon"></i>
-            </div>
-        </div>
-
-        <div class="main-content">
-            <div class="date-text" id="current-date">Saturday, July 12</div>
-            <div class="time-text" id="current-time">08:37</div>
-
-            <div class="widgets-container">
-                <div class="widget left-widget"><i class="fas fa-bolt"></i></div>
-                <div class="widget right-widget">25 / 32 <i class="fas fa-cloud-sun"></i></div>
+    <div class="phone-frame">
+        
+        <div class="lock-screen" id="lock-screen">
+            <div class="top-status-bar">
+                <div class="status-time">9:41</div>
+                <div class="status-icons">
+                    <i class="fas fa-signal"></i>
+                    <i class="fas fa-wifi"></i>
+                    <span class="battery-level">82</span>
+                    <i class="fas fa-battery-three-quarters battery-icon"></i>
+                </div>
             </div>
 
-            <div id="emoji-shower"></div>
+            <div class="main-content">
+                <div class="date-text" id="current-date">Saturday, July 12</div>
+                <div class="time-text" id="current-time">08:37</div>
 
-            <div class="bottom-slogan" id="cat-slogan">
-                <span class="cat-paw"><i class="fas fa-paw"></i></span> 猫大王的 watch
+                <div class="widgets-container">
+                    <div class="widget left-widget"><i class="fas fa-bolt"></i></div>
+                    <div class="widget right-widget">25 / 32 <i class="fas fa-cloud-sun"></i></div>
+                </div>
+
+                <div id="emoji-shower"></div>
+
+                <div class="bottom-slogan" id="cat-slogan">
+                    <span class="cat-paw"><i class="fas fa-paw"></i></span> 猫大王的 watch
+                </div>
+            </div>
+
+            <div class="bottom-shortcuts">
+                <div class="shortcut-icon flashlight" id="flashlight-toggle">
+                    <span class="heart-icon">♡</span>
+                </div>
+                <div class="shortcut-icon camera"><i class="fas fa-camera"></i></div>
+            </div>
+
+            <div class="bottom-navigation-bar">
+                <div class="home-indicator"></div>
             </div>
         </div>
-
-        <div class="bottom-shortcuts">
-            <div class="shortcut-icon flashlight" id="flashlight-toggle">
-                <span class="heart-icon">♡</span>
+        
+        <div class="passcode-screen hidden" id="passcode-screen">
+            <div class="passcode-top">
+                <div class="passcode-status-bar top-status-bar home-status-bar">
+                    <div class="status-time">9:41</div>
+                    <div class="status-icons">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <span class="battery-level">82</span>
+                        <i class="fas fa-battery-three-quarters battery-icon"></i>
+                    </div>
+                </div>
+                <div class="passcode-prompt">输入密码</div>
+                <div class="passcode-dots-container" id="passcode-dots-container">
+                    <div class="passcode-dot"></div>
+                    <div class="passcode-dot"></div>
+                    <div class="passcode-dot"></div>
+                    <div class="passcode-dot"></div>
+                </div>
             </div>
-            <div class="shortcut-icon camera"><i class="fas fa-camera"></i></div>
-        </div>
+            
+            <div class="numpad" id="numpad">
+                <div class="numpad-row">
+                    <button class="numpad-btn" data-key="1">1</button>
+                    <button class="numpad-btn" data-key="2">2</button>
+                    <button class="numpad-btn" data-key="3">3</button>
+                </div>
+                <div class="numpad-row">
+                    <button class="numpad-btn" data-key="4">4</button>
+                    <button class="numpad-btn" data-key="5">5</button>
+                    <button class="numpad-btn" data-key="6">6</button>
+                </div>
+                <div class="numpad-row">
+                    <button class="numpad-btn" data-key="7">7</button>
+                    <button class="numpad-btn" data-key="8">8</button>
+                    <button class="numpad-btn" data-key="9">9</button>
+                </div>
+                <div class="numpad-row">
+                    <button class="numpad-btn empty-btn"></button>
+                    <button class="numpad-btn" data-key="0">0</button>
+                    <button class="numpad-btn backspace-btn" data-key="backspace">
+                        <i class="fas fa-backspace"></i>
+                    </button>
+                </div>
+            </div>
 
-        <div class="bottom-navigation-bar">
-            <div class="home-indicator"></div>
-        </div>
-    </div>
+            <div class="passcode-bottom-actions">
+                <div class="emergency-call">
+                    <i class="fas fa-phone-alt"></i> 紧急呼叫
+                </div>
+            </div>
 
-    <!-- 主屏幕 -->
-    <div class="home-screen hidden" id="home-screen">
-        <div class="top-status-bar home-status-bar" id="home-status-bar">
-            <div class="status-time">9:41</div>
-            <div class="status-icons">
-                <i class="fas fa-signal"></i>
-                <i class="fas fa-wifi"></i>
-                <span class="battery-level">82</span>
-                <i class="fas fa-battery-three-quarters battery-icon"></i>
+            <div class="bottom-navigation-bar">
+                <div class="home-indicator"></div>
             </div>
         </div>
+        
+        <div class="home-screen hidden" id="home-screen">
+            <div class="top-status-bar home-status-bar" id="home-status-bar">
+                <div class="status-time">9:41</div>
+                <div class="status-icons">
+                    <i class="fas fa-signal"></i>
+                    <i class="fas fa-wifi"></i>
+                    <span class="battery-level">82</span>
+                    <i class="fas fa-battery-three-quarters battery-icon"></i>
+                </div>
+            </div>
             <div class="home-widgets-container">
                 <div class="home-widget-group left-group">
                     <div class="home-widget pill-widget">HAPPY</div>
                     <div class="home-widget pill-widget">放松</div>
+                    <div class="home-widget app-widget wechat-app-widget">
+                        <div class="app-name widget-app-name">Chat</div>
+                    </div>
                 </div>
                 <div class="home-widget center-widget">
-                    <div class="center-circle"></div> <div class="center-text">小猫.</div> </div>
+                    <div class="center-circle"></div> <div class="center-text">小猫.</div> 
+                </div>
                 <div class="home-widget-group right-group">
                     <div class="home-widget pill-widget">冥想</div>
                     <div class="home-widget pill-widget">SMILE</div>
                 </div>
             </div>
-        <div style="flex: 1;"></div>
+            <div style="flex: 1;"></div>
 
-        <div class="dock-area">
-            <div class="app-icon camera-app-icon">
-                <div class="app-name">相机</div>
+            <div class="dock-area">
+                <div class="app-icon camera-app-icon">
+                    <div class="app-name">相机</div>
+                </div>
             </div>
-        </div> <div class="bottom-navigation-bar">
-            <div class="home-indicator"></div>
-        </div>
-    </div>
-    </div>
-       <div id="camera-app" class="camera-app hidden">
-    <div class="camera-top-bar">
-        <div class="camera-icon-btn"><i class="fas fa-bolt"></i></div>
-        <div class="camera-icon-btn">HDR</div>
-        <div class="camera-icon-btn"><i class="fas fa-stopwatch"></i></div>
-        <div class="camera-icon-btn"><i class="far fa-circle"></i></div>
-    </div>
-
-    <div class="camera-viewfinder">
-        <div class="grid-line"></div>
-        <div class="grid-line"></div>
-        <div class="grid-line vertical"></div>
-        <div class="grid-line vertical"></div>
-    </div>
-
-    <div class="pro-controls hidden">
-        <div class="control-slider">
-            <label>ISO</label>
-            <input type="range" min="50" max="3200" value="100" step="50" class="slider" id="iso-slider">
-            <span id="iso-value">100</span>
-        </div>
-        <div class="control-slider">
-            <label>S</label> <input type="range" min="0" max="10" value="6" step="1" class="slider" id="shutter-slider">
-            <span id="shutter-value">1/60s</span>
-        </div>
-    </div>
-    <div class="camera-bottom-bar">
-        <div class="mode-selector">
-            <span data-mode="slo-mo">SLO-MO</span>
-            <span data-mode="video">VIDEO</span>
-            <span class="mode-active" data-mode="photo">PHOTO</span>
-            <span data-mode="pro">PRO</span> <span data-mode="square">SQUARE</span>
-            <span data-mode="pano">PANO</span>
+            <div class="bottom-navigation-bar">
+                <div class="home-indicator"></div>
+            </div>
         </div>
         
-        <div class="shutter-controls">
-            <div class="preview-thumbnail"></div>
-            <div class="shutter-button">
-                <div class="shutter-inner"></div>
+        <div id="camera-app" class="camera-app hidden">
+            <div class="camera-top-bar">
+                <div class="camera-icon-btn"><i class="fas fa-bolt"></i></div>
+                <div class="camera-icon-btn">HDR</div>
+                <div class="camera-icon-btn"><i class="fas fa-stopwatch"></i></div>
+                <div class="camera-icon-btn"><i class="far fa-circle"></i></div>
             </div>
-            <div class="camera-toggle-btn"><i class="fas fa-redo"></i></div>
-        </div>
-    </div>
 
-    <div id="camera-close-button" class="camera-close-button">
-        <i class="fas fa-chevron-left"></i>
+            <div class="camera-viewfinder">
+                <div class="grid-line"></div>
+                <div class="grid-line"></div>
+                <div class="grid-line vertical"></div>
+                <div class="grid-line vertical"></div>
+            </div>
+
+            <div class="pro-controls hidden">
+                <div class="control-slider">
+                    <label>ISO</label>
+                    <input type="range" min="50" max="3200" value="100" step="50" class="slider" id="iso-slider">
+                    <span id="iso-value">100</span>
+                </div>
+                <div class="control-slider">
+                    <label>S</label> 
+                    <input type="range" min="0" max="10" value="6" step="1" class="slider" id="shutter-slider">
+                    <span id="shutter-value">1/60s</span>
+                </div>
+            </div>
+            <div class="camera-bottom-bar">
+                <div class="mode-selector">
+                    <span data-mode="slo-mo">SLO-MO</span>
+                    <span data-mode="video">VIDEO</span>
+                    <span class="mode-active" data-mode="photo">PHOTO</span>
+                    <span data-mode="pro">PRO</span> 
+                    <span data-mode="square">SQUARE</span>
+                    <span data-mode="pano">PANO</span>
+                </div>
+                
+                <div class="shutter-controls">
+                    <div class="preview-thumbnail"></div>
+                    <div class="shutter-button">
+                        <div class="shutter-inner"></div>
+                    </div>
+                    <div class="camera-toggle-btn"><i class="fas fa-redo"></i></div>
+                </div>
+            </div>
+
+            <div id="camera-close-button" class="camera-close-button">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+        </div>
+        
     </div>
-</div>
+    
     <script src="index.js"></script>
 </body>
 </html>
