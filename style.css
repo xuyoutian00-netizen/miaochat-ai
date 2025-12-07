@@ -34,7 +34,7 @@ body, html {
                 0 0 0 1px rgba(255, 255, 255, 0.1) inset; 
     
     /* 缩放：整体缩小 15% */
-    transform: scale(0.75); 
+    transform: scale(1); 
     transform-origin: center center; 
     position: relative; 
     overflow: hidden; /* 隐藏超出圆角边框的内容 */
