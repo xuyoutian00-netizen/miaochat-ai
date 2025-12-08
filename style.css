@@ -12,6 +12,21 @@ body, html {
     align-items: center;
     background-color: #f0f0f0; 
 }
+/* ==================== 容器样式 (用户请求复制) ==================== */
+#phone-container { 
+    width: 100%; 
+    height: 100vh; 
+    background-color: white; 
+    /* 假设您有背景图变量 */
+    background-image: var(--user-bg-image); 
+    background-size: cover; 
+    background-position: center; 
+    display: flex; 
+    flex-direction: column; 
+    overflow: hidden; 
+    position: relative;
+}
+/* ========================================================== */
 /* ==================== 全局主题变量（新增） ==================== */
 :root {
     --primary-hue: 217; 
@@ -52,7 +67,7 @@ body, html {
     transform: perspective(1000px); 
     
     /* 【实现下移】：向下移动 30 像素 */
-    margin-top: 30px; 
+    margin-top: 32px; 
 }
 
 /* 调整所有屏幕的尺寸和位置以适应无刘海的显示 */
