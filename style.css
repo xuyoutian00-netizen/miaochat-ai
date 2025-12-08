@@ -20,24 +20,37 @@ body, html {
     -webkit-touch-callout: none; /* 禁用长按弹出菜单 */
 }
 
-/* ==================== 新增：手机边框和缩放 ==================== */
+/* ================= 手机边框和缩放 ================== */
 .phone-frame {
-    /* 固定宽高，模拟手机屏幕比例 */
+    /* 【尺寸】：维持 iPhone X/XS/11 Pro 的逻辑分辨率 (375x812) */
     width: 375px; 
     height: 812px; 
     
-    /* 边框样式 */
-    border: 10px solid #333; /* 边框 */
+    /* 【边框样式】：匹配 Noir 的高保真金属边框和阴影 */
+    border: 10px solid #333; /* 边框，使用深灰色模拟不锈钢/铝合金 */
     border-radius: 45px; /* 屏幕外框圆角 */
     background-color: black;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 
-                0 0 0 1px rgba(255, 255, 255, 0.1) inset; 
+    box-shadow: 
+        0 8px 15px rgba(0, 0, 0, 0.3), /* 主要阴影 */
+        0 0 0 1px rgba(255, 255, 255, 0.05), /* 边框高光 */
+        inset 0 0 15px rgba(0, 0, 0, 0.7); /* 内部暗角，增强立体感 */
     
-    /* 缩放：整体缩小 15% */
-    transform: scale(1); 
-    transform-origin: center center; 
-    position: relative; 
-    overflow: hidden; /* 隐藏超出圆角边框的内容 */
+    /* 确保屏幕内容位于边框内 */
+    overflow: hidden; 
+    transform: perspective(1000px); /* 保持 3D 转换能力 */
+}
+
+/* 调整所有屏幕的尺寸和位置以适应无刘海的显示 */
+.lock-screen, .home-screen, .passcode-screen {
+    /* 【尺寸】：内屏尺寸 (375x812) */
+    width: calc(100% - 20px); /* 375px - 10px*2 = 355px */
+    height: calc(100% - 20px); /* 812px - 10px*2 = 792px */
+    position: absolute;
+    top: 10px; /* 10px 边框 */
+    left: 10px; /* 10px 边框 */
+    border-radius: 35px; /* 【关键】内屏圆角，略小于外框圆角 */
+    overflow: hidden; 
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 /* 关键修改：将所有屏幕的定位从 fixed 更改为 absolute，并确保它们占据 phone-frame 的 100% 宽高 */
@@ -68,7 +81,18 @@ body, html {
 .lock-screen.fade-in.active { opacity:1; transform:translateY(0); }
 
 /* 状态栏 */
-.top-status-bar { width:90%; margin-top:8px; display:flex; justify-content:space-between; font-size:0.85em; font-weight:600; }
+.top-status-bar {
+    width: 100%;
+    /* 调整顶部内边距，使其内容靠近顶部，适合无刘海的 Noir 外观 */
+    padding: 12px 20px 0; 
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-size: 0.85em;
+    font-weight: 600;
+}
 .status-icons { gap:4px; display:flex; align-items:center; }
 .battery-level { margin-right:-2px; }
 
