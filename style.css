@@ -12,6 +12,19 @@ body, html {
     align-items: center;
     background-color: #f0f0f0; 
 }
+/* ==================== 全局主题变量（新增） ==================== */
+:root {
+    --primary-hue: 217; 
+    --primary-saturation: 70%;
+    --primary-lightness: 60%;
+    
+    /* 【您的新变量】：边框颜色 */
+    --border-color: hsla(var(--primary-hue), calc(var(--primary-saturation) / 2), calc(var(--primary-lightness)), 0.3); 
+
+    /* 【您的新变量】：阴影颜色 */
+    --soft-shadow: 0 4px 12px hsla(var(--primary-hue), 40%, calc(var(--primary-lightness) - 10%), 0.15);
+}
+/* ========================================================= */
 .hidden { display:none !important; }
 
 /* style.css 新增：移除移动端点击时的蓝色高亮/选中效果 */
@@ -26,7 +39,7 @@ body, html {
     width: 375px; 
     height: 812px; 
     
-    /* 边框样式：保持 Noir 的高保真金属边框和阴影 */
+    /* 边框样式 */
     border: 10px solid #333; /* 10px 边框 */
     border-radius: 45px; /* 外框圆角 */
     background-color: black;
@@ -38,19 +51,20 @@ body, html {
     overflow: hidden; 
     transform: perspective(1000px); 
     
-    /* 【新增/修改】：向下移动整个手机框 30 像素 */
-    margin-top: 30px; /* 您可以根据需要调整这个值，数字越大，下移越多 */
+    /* 【实现下移】：向下移动 30 像素 */
+    margin-top: 30px; 
 }
 
 /* 调整所有屏幕的尺寸和位置以适应无刘海的显示 */
+/* 调整所有屏幕的尺寸和位置，使其完全贴合边框内部 */
 .lock-screen, .home-screen, .passcode-screen {
-    /* 【尺寸】：内屏尺寸 (375x812) */
-    width: calc(100% - 20px); /* 375px - 10px*2 = 355px */
-    height: calc(100% - 20px); /* 812px - 10px*2 = 792px */
+    /* 【关键修改】：内屏尺寸 = 外框尺寸 - 20px 边框 */
+    width: calc(100% - 20px); 
+    height: calc(100% - 20px); 
     position: absolute;
-    top: 10px; /* 10px 边框 */
-    left: 10px; /* 10px 边框 */
-    border-radius: 35px; /* 【关键】内屏圆角，略小于外框圆角 */
+    top: 10px; /* 顶部偏移 10px (边框宽度) */
+    left: 10px; /* 左侧偏移 10px (边框宽度) */
+    border-radius: 35px; /* 内屏圆角 */
     overflow: hidden; 
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
