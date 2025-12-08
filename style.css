@@ -24,7 +24,7 @@ body, html {
 .phone-frame {
     /* 固定宽高，模拟手机屏幕比例 */
     width: 375px; 
-    height: 777px; 
+    height: 812px; 
     
     /* 边框样式 */
     border: 10px solid #333; /* 边框 */
@@ -34,7 +34,7 @@ body, html {
                 0 0 0 1px rgba(255, 255, 255, 0.1) inset; 
     
     /* 缩放：整体缩小 15% */
-    transform: scale(1) translateY(-10px); 
+    transform: scale(1); 
     transform-origin: center center; 
     position: relative; 
     overflow: hidden; /* 隐藏超出圆角边框的内容 */
