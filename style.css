@@ -22,22 +22,24 @@ body, html {
 
 /* ================= 手机边框和缩放 ================== */
 .phone-frame {
-    /* 【尺寸】：维持 iPhone X/XS/11 Pro 的逻辑分辨率 (375x812) */
+    /* 外框总尺寸 */
     width: 375px; 
     height: 812px; 
     
-    /* 【边框样式】：匹配 Noir 的高保真金属边框和阴影 */
-    border: 10px solid #333; /* 边框，使用深灰色模拟不锈钢/铝合金 */
-    border-radius: 45px; /* 屏幕外框圆角 */
+    /* 边框样式：保持 Noir 的高保真金属边框和阴影 */
+    border: 10px solid #333; /* 10px 边框 */
+    border-radius: 45px; /* 外框圆角 */
     background-color: black;
     box-shadow: 
-        0 8px 15px rgba(0, 0, 0, 0.3), /* 主要阴影 */
-        0 0 0 1px rgba(255, 255, 255, 0.05), /* 边框高光 */
-        inset 0 0 15px rgba(0, 0, 0, 0.7); /* 内部暗角，增强立体感 */
+        0 8px 15px rgba(0, 0, 0, 0.3), 
+        0 0 0 1px rgba(255, 255, 255, 0.05), 
+        inset 0 0 15px rgba(0, 0, 0, 0.7); 
     
-    /* 确保屏幕内容位于边框内 */
     overflow: hidden; 
-    transform: perspective(1000px); /* 保持 3D 转换能力 */
+    transform: perspective(1000px); 
+    
+    /* 【新增/修改】：向下移动整个手机框 30 像素 */
+    margin-top: 30px; /* 您可以根据需要调整这个值，数字越大，下移越多 */
 }
 
 /* 调整所有屏幕的尺寸和位置以适应无刘海的显示 */
