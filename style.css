@@ -147,9 +147,7 @@ body, html {
     align-items: center; 
     justify-content: flex-start; 
     
-    /* 🌟 修正 2：时间/日期组的位置，尝试从 10vh 调整回 12vh，或使用 15vh 进一步往下推 */
-    /* 目标图中的时间位置在屏幕上方，但不是最顶部。我们使用 12vh */
-    padding-top: 12vh; 
+     padding-top: 8vh; 
 }
 
 /* 时间文本 */
