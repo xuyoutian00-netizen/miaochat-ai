@@ -1,4 +1,4 @@
-const lockScreen = document.getElementById('lock-screen');
+·const lockScreen = document.getElementById('lock-screen');
 const homeScreen = document.getElementById('home-screen');
 const catSlogan = document.getElementById('cat-slogan');
 const emojiShower = document.getElementById('emoji-shower');
@@ -208,39 +208,45 @@ initRealBatterySystem();
 
 
 // ==================== 2. 时间和日期 (每秒更新) ====================
-
 function updateTimeAndDate() {
     const now = new Date();
-    const locale = 'zh-CN';
     
-    // --- 锁屏大标题日期 ---
-    const dateOptions = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-    const dateStr = now.toLocaleDateString(locale, dateOptions)
-                       .replace('年', '年 ')
-                       .replace('月', '月 ')
-                       .replace('日', '');
-    
-    // --- 锁屏大标题时间 ---
-    const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: false };
-    const mainTimeStr = now.toLocaleTimeString(locale, timeOptions).replace(':', ':');
+    // --- 1. 锁屏日期 (手动拼接，100% 杜绝年份) ---
+    const month = now.getMonth() + 1; // 获取月份
+    const day = now.getDate();        // 获取日期
+    const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+    const weekDay = weekDays[now.getDay()];
 
+    // 🌟 格式结果： "12月9日 星期二"
+    // (注意：这里没有加年份)
+    const dateStr = `${month}月${day}日 ${weekDay}`;
+
+
+    // --- 2. 锁屏时间 (24小时制) ---
+    // 手动补零，确保 08:05 这种格式
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    
+    // 🌟 格式结果： "22:13"
+    const mainTimeStr = `${hours}:${minutes}`;
+
+
+    // --- 3. 更新界面元素 ---
     const dateEl = document.getElementById('current-date');
     const timeEl = document.getElementById('current-time');
+    
     if (dateEl) dateEl.textContent = dateStr;
     if (timeEl) timeEl.textContent = mainTimeStr;
 
-    // --- 状态栏小时间 ---
-    const statusBarTimeStr = now.toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit' });
-    if (lockStatusBarTime) lockStatusBarTime.textContent = statusBarTimeStr;
-    if (homeStatusBarTime) homeStatusBarTime.textContent = statusBarTimeStr;
-    
-    // 【修复】：新增对密码界面状态栏时间的更新
-    if (passcodeStatusBarTime) passcodeStatusBarTime.textContent = statusBarTimeStr;
+    // --- 4. 状态栏小时间 ---
+    if (lockStatusBarTime) lockStatusBarTime.textContent = mainTimeStr;
+    if (homeStatusBarTime) homeStatusBarTime.textContent = mainTimeStr;
+    if (passcodeStatusBarTime) passcodeStatusBarTime.textContent = mainTimeStr;
 }
 
+// 立即运行
 updateTimeAndDate();
 setInterval(updateTimeAndDate, 1000);
-
 
 // ==================== 3. 交互功能 (标语、手电筒) ====================
 
