@@ -105,7 +105,7 @@ body, html {
     display:flex; flex-direction:column; align-items:center;
     color:white;
     background: linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.25)),
-                url(https://i.ibb.co/MD4x4wRc/IMG-20251130-135415.jpg) center/cover no-repeat;
+                url(https://i.ibb.co/Lz7zk3TN/img-17640775608564ddc52a7adc687ed3e5689f75d6318f880deb627dbf678e2d8c817beded1548a.jpg) center/cover no-repeat;
     transition: opacity 0.5s ease, transform 0.5s ease;
 }
 .lock-screen.fade-out { opacity:0; transform:translateY(-30px); pointer-events:none; }
@@ -215,7 +215,7 @@ body, html {
     /* 移除 position:fixed; inset:0; z-index:9; 因为已在上面通用定义 */
     z-index:9;
     display:flex; flex-direction:column; align-items:center;
-    background:url(https://i.ibb.co/MD4x4wRc/IMG-20251130-135415.jpg) center/cover no-repeat;
+    background:url(https://i.ibb.co/Lz7zk3TN/img-17640775608564ddc52a7adc687ed3e5689f75d6318f880deb627dbf678e2d8c817beded1548a.jpg) center/cover no-repeat;
 }
 
 /* 【修改点】：主屏幕状态栏改为黑色字体 */
