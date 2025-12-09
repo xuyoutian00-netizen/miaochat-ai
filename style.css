@@ -1,18 +1,113 @@
-/* 基础 */
-body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'SF Pro Display', -apple-system, sans-serif; }
+body, html { 
+    margin:0; 
+    padding:0; 
+    /* 保持 100vh 和 100vw */
+    height:100vh; 
+    width: 100vw;
+    overflow:hidden; 
+    
+    /* 🌟 这是您的新字体设置：启用 CSS 变量，并使用 iOS 系统字体作为备选 */
+    font-family: var(--custom-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); 
+    
+    /* 确保整个内容居中 */
+    display: flex; 
+    justify-content: center;
+    align-items: center; 
+    background-color: #f0f0f0; 
+}
+/* ==================== 容器样式 (用户请求复制) ==================== */
+#phone-container {
+  width: 100%; /* 占满屏幕宽度 */
+  height: 100vh; /* 占满屏幕高度 */
+  background-color: white;
+  background-image: var(--user-bg-image);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative; /* 确保内部元素可以基于它进行定位 */
+}
+
+/* ========================================================== */
+/* ==================== 全局主题变量（新增） ==================== */
+:root {
+    --primary-hue: 217; 
+    --primary-saturation: 70%;
+    --primary-lightness: 60%;
+    
+    /* 【您的新变量】：边框颜色 */
+    --border-color: hsla(var(--primary-hue), calc(var(--primary-saturation) / 2), calc(var(--primary-lightness)), 0.3); 
+
+    /* 【您的新变量】：阴影颜色 */
+    --soft-shadow: 0 4px 12px hsla(var(--primary-hue), 40%, calc(var(--primary-lightness) - 10%), 0.15);
+}
+/* ========================================================= */
 .hidden { display:none !important; }
+
 /* style.css 新增：移除移动端点击时的蓝色高亮/选中效果 */
 * {
     -webkit-tap-highlight-color: transparent; /* 针对WebKit/Chrome内核 */
     -webkit-touch-callout: none; /* 禁用长按弹出菜单 */
 }
+
+/* ================= 手机边框和缩放 ================== */
+.phone-frame {
+    /* 外框总尺寸 */
+    width: 375px; 
+    height: 812px; 
+    
+    /* 边框样式 */
+    border: 10px solid #333; /* 10px 边框 */
+    border-radius: 45px; /* 外框圆角 */
+    background-color: black;
+    box-shadow: 
+        0 8px 15px rgba(0, 0, 0, 0.3), 
+        0 0 0 1px rgba(255, 255, 255, 0.05), 
+        inset 0 0 15px rgba(0, 0, 0, 0.7); 
+    
+    overflow: hidden; 
+    transform: perspective(1000px); 
+    
+    /* 【实现下移】：向下移动 30 像素 */
+    margin-top: 32px; 
+}
+
+/* 调整所有屏幕的尺寸和位置以适应无刘海的显示 */
+/* 调整所有屏幕的尺寸和位置，使其完全贴合边框内部 */
+.lock-screen, .home-screen, .passcode-screen {
+    /* 【关键修改】：内屏尺寸 = 外框尺寸 - 20px 边框 */
+    width: calc(100% - 20px); 
+    height: calc(100% - 20px); 
+    position: absolute;
+    top: 10px; /* 顶部偏移 10px (边框宽度) */
+    left: 10px; /* 左侧偏移 10px (边框宽度) */
+    border-radius: 35px; /* 内屏圆角 */
+    overflow: hidden; 
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* 关键修改：将所有屏幕的定位从 fixed 更改为 absolute，并确保它们占据 phone-frame 的 100% 宽高 */
+.lock-screen, .passcode-screen, .home-screen, .camera-app {
+    width: 100%;
+    height: 100%;
+    position: absolute; 
+    top: 0;
+    left: 0;
+    /* 屏幕内圆角（略小于边框圆角） */
+    border-radius: 28px; 
+}
+/* ============================================================= */
+
+
 /* 锁屏 */
 .lock-screen {
-    position:fixed; inset:0; z-index:10;
+    /* 移除 position:fixed; inset:0; z-index:10; 因为已在上面通用定义 */
+    z-index:10;
     display:flex; flex-direction:column; align-items:center;
     color:white;
     background: linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.25)),
-                url(https://i.ibb.co/MD4x4wRc/IMG-20251130-135415.jpg) center/cover no-repeat;
+                url(https://i.ibb.co/Lz7zk3TN/img-17640775608564ddc52a7adc687ed3e5689f75d6318f880deb627dbf678e2d8c817beded1548a.jpg) center/cover no-repeat;
     transition: opacity 0.5s ease, transform 0.5s ease;
 }
 .lock-screen.fade-out { opacity:0; transform:translateY(-30px); pointer-events:none; }
@@ -20,7 +115,18 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
 .lock-screen.fade-in.active { opacity:1; transform:translateY(0); }
 
 /* 状态栏 */
-.top-status-bar { width:90%; margin-top:8px; display:flex; justify-content:space-between; font-size:0.85em; font-weight:600; }
+.top-status-bar {
+    width: 100%;
+    /* 调整顶部内边距，使其内容靠近顶部，适合无刘海的 Noir 外观 */
+    padding: 12px 20px 0; 
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-size: 0.85em;
+    font-weight: 600;
+}
 .status-icons { gap:4px; display:flex; align-items:center; }
 .battery-level { margin-right:-2px; }
 
@@ -32,55 +138,66 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
     margin-left: 3px;
 }
 
-/* 时间日期（纯文字玻璃效果） */
-.main-content { flex:1; width:100%; position:relative; display:flex; flex-direction:column; align-items:center; justify-content: flex-start;
-    padding-top: 6vh;
+/* style.css (锁屏时间/日期部分) */
+
+/* 主内容容器：保持顶部对齐 */
+.main-content { 
+    flex: 1;
+    width: 100%; 
+    position: relative; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: flex-start; 
+    
+    /* 🌟 修改：向下推，使其更居中靠上 */
+    padding-top: 12vh; 
 }
 
-.date-text {
-    font-size: 1.2em;
-    font-weight: 500;
-    margin-top: 0vh;
-    margin-bottom: 0;
-    color: transparent;
-    background: rgba(255,255,255,0.75);
-    -webkit-background-clip: text;
-    background-clip: text;
-}
-
+/* 时间文本 */
 .time-text {
-    font-size:6.0em;
-    font-weight: 800;
-    line-height: 1;
-    margin-top: -5px;
-    margin-bottom: 20px;
-    color: transparent;
-    background: rgba(255,255,255,0.8);
-    -webkit-background-clip: text;
-    background-clip: text;
+    order: 1; 
+    color: white; 
+    /* 🌟 修改：时间数字尺寸增大 */
+    font-size: 5.0em; 
+    font-weight: 300; 
+    line-height: 1; 
+    letter-spacing: -3px; 
+    margin-top: 0; 
+    
+    /* 🌟 修改：移除时间与日期之间的距离 */
+    margin-bottom: 40; 
 }
 
-/* 小组件 + 底部标语 */
-.widgets-container { width:90vw; max-width:400px; display:flex; justify-content:space-between; margin-top:20px; font-size:1.2em; font-weight:600; }
-.widget { background:rgba(255,255,255,0.2); padding:8px 16px; border-radius:12px; backdrop-filter:blur(5px); display:flex; gap:8px; align-items:center; }
-
-/* 充电时左上角闪电小组件的样式 */
-.widget.left-widget.widget-charging-flash {
-    /* 小组件容器背景变色和光晕 */
-    background: rgba(144, 238, 144, 0.2) !important; 
-    box-shadow: 0 0 8px rgba(144, 238, 144, 0.4); 
-    transition: all 0.3s ease-in-out; 
+/* 日期文本 */
+.date-text {
+    order: 2; 
+    color: white; 
+    
+    /* 🌟 修改：略微减小日期字体 */
+    font-size: 1.0em; 
+    
+    font-weight: 500; 
+    margin-top: 0; 
+    margin-bottom: 0;
+    opacity: 0.98;
+    letter-spacing: 0.5px;
 }
 
-/* 充电时小组件内部闪电图标的颜色和动画 */
-.widget.left-widget.widget-charging-flash .fa-bolt {
-    color: #90ee90; 
-    text-shadow: 0 0 10px rgba(144, 238, 144, 0.6); 
-    animation: charging-breathe 2s ease-in-out infinite; 
+/* 小组件容器 */
+.widgets-container { 
+    order: 3;
+    width: 90vw; 
+    max-width: 400px; 
+    display: flex; 
+    justify-content: space-between; 
+    
+    /* 🌟 修改 7：增加与上方日期的距离，把小组件推下去 */
+    margin-top: 25px; 
+    
+    font-size: 1.2em; 
+    font-weight: 600; 
 }
-
-
-.bottom-slogan { position:absolute; bottom:3vh; background:rgba(255,255,255,0.2); padding:6px 14px; border-radius:16px; backdrop-filter:blur(6px); font-weight:600; }
 
 /* 底部快捷键 */
 .bottom-shortcuts { width:80vw; max-width:400px; display:flex; justify-content:space-between; margin-bottom:2vh; }
@@ -95,23 +212,12 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
     text-shadow: 0 0 15px #ff6dc8;
 }
 
-
-/* Home Indicator */
-.bottom-navigation-bar { 
-    width:100%; 
-    height:20px; /* 【新值】: 缩小底部高度 */
-    display:flex; 
-    justify-content:center; 
-    align-items:flex-end; 
-}
-.home-indicator { width:134px; height:5px; background:white; border-radius:3px; opacity:0.8; margin-bottom:8px; }
-.home-screen .home-indicator { background:black; }
-
 /* 主屏幕 */
 .home-screen {
-    position:fixed; inset:0; z-index:9;
+    /* 移除 position:fixed; inset:0; z-index:9; 因为已在上面通用定义 */
+    z-index:9;
     display:flex; flex-direction:column; align-items:center;
-    background:url(https://i.ibb.co/MD4x4wRc/IMG-20251130-135415.jpg) center/cover no-repeat;
+    background:url(https://i.ibb.co/Lz7zk3TN/img-17640775608564ddc52a7adc687ed3e5689f75d6318f880deb627dbf678e2d8c817beded1548a.jpg) center/cover no-repeat;
 }
 
 /* 【修改点】：主屏幕状态栏改为黑色字体 */
@@ -294,9 +400,8 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
 /* ==================== 相机 App 样式 (新增) ==================== */
 
 .camera-app {
-    position: fixed;
-    inset: 0;
-    z-index: 100; /* 确保它在锁屏和主屏幕之上 */
+    /* 移除 position: fixed; inset: 0; z-index: 100; 因为已在上面通用定义 */
+    z-index: 100; 
     background-color: black;
     color: white;
     display: flex;
@@ -543,4 +648,228 @@ body, html { margin:0; padding:0; height:100dvh; overflow:hidden; font-family:'S
     cursor: pointer;
     border: 2px solid white;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+/* style.css (片段) */
+/* 4. 特定图标：相机图标的背景图片 (使用你上传的 1000051538.jpg) */
+.camera-app-icon {
+    /* 🌟 关键修改：使用你本地上传的文件名 */
+    background-image: url('https://i.ibb.co/HLBFb8Pz/Camera-XHS-17645804740351040g2sg3120cpg1o3c305nt8j00g8qa26vrp9dg-2.jpg'); 
+}
+
+/* style.css (修改片段) */
+
+/* ==================== 针对应用图标小组件的样式 (新增) ==================== */
+
+/* 1. 应用图标小组件容器 (通用样式) */
+.app-widget {
+    /* 覆盖 home-widget 的默认样式，使其更像应用图标 */
+    background: rgba(255, 255, 255, 0.9); /* 更亮的背景 */
+    padding: 0; /* 移除内边距 */
+    
+    /* 🌟 关键修改：图标大小调整为 60px x 60px，与 Dock 图标一致 */
+    width: 60px; 
+    height: 60px;
+    
+    border-radius: 12px; /* 方形圆角 */
+    position: relative;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3); /* 增加阴影 */
+    
+    /* 移除通用小组件的文字阴影 */
+    text-shadow: none; 
+    
+    /* 确保内部文字可以定位 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 2. 微信小组件特定样式：背景图片 (保持不变) */
+.wechat-app-widget {
+    /* 使用你提供的微信图标图片 URL */
+    background-image: url('https://i.ibb.co/qMKqdMgZ/Camera-1040g3k831k9d6igr2o805oe8f9l410do6tcbpso-2.jpg');
+    background-size: cover;
+    background-position: center;
+    
+    /* 🌟 关键修改：为微信小组件本身添加顶部外边距 */
+    margin-top: 70px; 
+}
+
+/* 3. 应用图标小组件的名称样式 */
+.widget-app-name {
+    /* 覆盖通用 home-widget 的文字样式 */
+    position: absolute;
+    
+    /* 🌟 关键修改：文字位置调整到 -20px，与 Dock 图标文字一致 */
+    bottom: -17px; 
+    left: 50%;
+    transform: translateX(-50%); 
+    color: Black; /* 使用黑色字体 */
+    
+    /* 🌟 关键修改：文字大小保持 0.75em，与 Dock 图标文字一致 */
+    font-size: 12.7px;
+    font-weight: 500;
+    white-space: nowrap; 
+    
+    /* 确保它在图标上方 */
+    z-index: 2; 
+}
+/* style.css (在文件末尾新增或修改) */
+
+/* ==================== 针对左侧小组件组的位置调整 (新增) ==================== */
+
+.home-widget-group.left-group {
+    /* 垂直位置：如果你之前为了向下移动添加了 padding-top，请保留你的数值 */
+    padding-top: 0px; /* **请替换为你实际需要的数值，如果你不需要向下移动则删除此行** */
+    
+    /* 🌟 关键修改：通过增加左侧外边距，将所有内容向右推。 */
+    /* 我们从 20px 开始测试，你可以根据需要调整这个数值。 */
+    margin-left: 19px; 
+    
+    /* 清理之前的边距 (如果存在) */
+    margin-top: 0 !important;
+    
+    /* 确保靠左对齐，如果需要 */
+    align-items: flex-start; 
+    pointer-events: auto; /* 确保小组件可点击 */
+}
+/* ==================== 密码锁屏样式 (新增) ==================== */
+
+.passcode-screen {
+    /* 移除 position: fixed; inset: 0; z-index: 10; 因为已在上面通用定义 */
+    z-index: 10; /* 在锁屏和主屏之间 */
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    transition: opacity 0.3s ease;
+}
+
+/* 顶部区域 (状态栏 + 提示文字 + 输入点) */
+.passcode-top {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 8px; 
+    flex: 0 0 auto; 
+}
+
+/* 状态栏 */
+.passcode-status-bar {
+    width: 90%;
+    color: white; 
+    text-shadow: 0 0 4px rgba(0,0,0,0.4);
+}
+
+/* 提示文字 */
+.passcode-prompt {
+    font-size: 1.1em;
+    font-weight: 500;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+/* 密码输入点容器 */
+.passcode-dots-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+/* 密码输入点 */
+.passcode-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.5); 
+    background-color: transparent;
+    transition: background-color 0.1s ease, transform 0.2s ease;
+}
+
+/* 密码输入点（激活/已输入） */
+.passcode-dot.filled {
+    background-color: white;
+    transform: scale(1.1);
+}
+
+/* 底部操作 */
+.passcode-bottom-actions {
+    width: 100%;
+    text-align: center;
+    color: #4a90e2; 
+    font-size: 0.9em;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+.emergency-call {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+/* 数字键盘容器 */
+.numpad {
+    width: 80vw;
+    max-width: 320px;
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    gap: 15px;
+}
+
+.numpad-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* 数字按钮 */
+.numpad-btn {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 2.2em;
+    font-weight: 400;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.1s ease, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.numpad-btn:active {
+    background-color: rgba(255, 255, 255, 0.4);
+    transform: scale(0.95);
+}
+
+/* 空白按钮 */
+.empty-btn {
+    background: transparent;
+    pointer-events: none;
+    border: none;
+}
+
+/* 退格按钮 */
+.backspace-btn {
+    background: transparent;
+    font-size: 1.5em; 
+}
+
+/* 抖动动画 (新增) */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-10px); }
+    40%, 80% { transform: translateX(10px); }
+}
+
+/* 应用抖动动画的类 */
+.passcode-dots-container.shake {
+    animation: shake 0.5s ease-in-out;
 }
