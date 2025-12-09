@@ -2,10 +2,11 @@
 body, html { 
     margin:0; 
     padding:0; 
-    height:100vh; /* 使用 vh 来确保在桌面端正确居中 */
+    height:100vh; 
     width: 100vw;
     overflow:hidden; 
-    font-family:'SF Pro Display', -apple-system, sans-serif; 
+    /* 🌟 修改点 1：使用新的 Inter 字体作为首选字体 */
+    font-family: 'Roboto', sans-serif;
     /* 新增：居中设置 */
     display: flex; 
     justify-content: center;
@@ -135,55 +136,75 @@ body, html {
     margin-left: 3px;
 }
 
-/* 时间日期（纯文字玻璃效果） */
-.main-content { flex:1; width:100%; position:relative; display:flex; flex-direction:column; align-items:center; justify-content: flex-start;
-    padding-top: 6vh;
+/* 时间日期（纯文字，无玻璃效果） */
+/* 主内容容器：保持顶部对齐 */
+.main-content { 
+    flex: 1; 
+    width: 100%; 
+    position: relative; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: flex-start; 
+    
+    /* 这里的 12vh 表示距离屏幕顶部 12% 的位置，这是实现时间居上的关键 */
+    padding-top: 12vh; 
 }
 
-.date-text {
-    font-size: 1.2em;
-    font-weight: 500;
-    margin-top: 0vh;
-    margin-bottom: 0;
-    color: transparent;
-    background: rgba(255,255,255,0.75);
-    -webkit-background-clip: text;
-    background-clip: text;
-}
-
+/* 时间文本 */
 .time-text {
-    font-size:6.0em;
-    font-weight: 800;
-    line-height: 1;
-    margin-top: -5px;
-    margin-bottom: 20px;
-    color: transparent;
-    background: rgba(255,255,255,0.8);
-    -webkit-background-clip: text;
-    background-clip: text;
+    order: 1; 
+    color: white; 
+    
+    /* 🌟 修改 4：字体大小稍微调大一点点 */
+    font-size: 7.8em; 
+    
+    /* 🌟 修改 5：字重改为 400 (Regular)，匹配目标图的清爽感 */
+    font-weight: 400; 
+    
+    line-height: 1; 
+    letter-spacing: -3px; 
+    
+    margin-top: 0; 
+    /* 增加底部间距 */
+    margin-bottom: 8px; 
 }
 
-/* 小组件 + 底部标语 */
-.widgets-container { width:90vw; max-width:400px; display:flex; justify-content:space-between; margin-top:20px; font-size:1.2em; font-weight:600; }
-.widget { background:rgba(255,255,255,0.2); padding:8px 16px; border-radius:12px; backdrop-filter:blur(5px); display:flex; gap:8px; align-items:center; }
-
-/* 充电时左上角闪电小组件的样式 */
-.widget.left-widget.widget-charging-flash {
-    /* 小组件容器背景变色和光晕 */
-    background: rgba(144, 238, 144, 0.2) !important; 
-    box-shadow: 0 0 8px rgba(144, 238, 144, 0.4); 
-    transition: all 0.3s ease-in-out; 
+/* 日期文本 */
+.date-text {
+    order: 2; 
+    color: white; 
+    
+    /* 🌟 修改 6：字体调小，更加精致 */
+    font-size: 1.05em; 
+    
+    /* 字重保持中等 */
+    font-weight: 500; 
+    
+    margin-top: 0; 
+    margin-bottom: 0;
+    
+    /* 增加透明度，让它看起来没那么“死白” */
+    opacity: 0.95;
+    
+    /* 稍微增加字间距 */
+    letter-spacing: 0.5px;
 }
 
-/* 充电时小组件内部闪电图标的颜色和动画 */
-.widget.left-widget.widget-charging-flash .fa-bolt {
-    color: #90ee90; 
-    text-shadow: 0 0 10px rgba(144, 238, 144, 0.6); 
-    animation: charging-breathe 2s ease-in-out infinite; 
+/* 小组件容器 */
+.widgets-container { 
+    order: 3;
+    width: 90vw; 
+    max-width: 400px; 
+    display: flex; 
+    justify-content: space-between; 
+    
+    /* 🌟 修改 7：增加与上方日期的距离，把小组件推下去 */
+    margin-top: 25px; 
+    
+    font-size: 1.2em; 
+    font-weight: 600; 
 }
-
-
-.bottom-slogan { position:absolute; bottom:3vh; background:rgba(255,255,255,0.2); padding:6px 14px; border-radius:16px; backdrop-filter:blur(6px); font-weight:600; }
 
 /* 底部快捷键 */
 .bottom-shortcuts { width:80vw; max-width:400px; display:flex; justify-content:space-between; margin-bottom:2vh; }
@@ -197,18 +218,6 @@ body, html {
     color: #ff6dc8;
     text-shadow: 0 0 15px #ff6dc8;
 }
-
-
-/* Home Indicator */
-.bottom-navigation-bar { 
-    width:100%; 
-    height:20px; /* 【新值】: 缩小底部高度 */
-    display:flex; 
-    justify-content:center; 
-    align-items:flex-end; 
-}
-.home-indicator { width:134px; height:5px; background:white; border-radius:3px; opacity:0.8; margin-bottom:8px; }
-.home-screen .home-indicator { background:black; }
 
 /* 主屏幕 */
 .home-screen {
