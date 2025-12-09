@@ -1,4 +1,4 @@
-·const lockScreen = document.getElementById('lock-screen');
+const lockScreen = document.getElementById('lock-screen');
 const homeScreen = document.getElementById('home-screen');
 const catSlogan = document.getElementById('cat-slogan');
 const emojiShower = document.getElementById('emoji-shower');
