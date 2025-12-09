@@ -5,7 +5,9 @@ body, html {
     height:100vh; 
     width: 100vw;
     overflow:hidden; 
-    font-family: 'Roboto', sans-serif; 
+    
+    /* 🌟 这是您的新字体设置：启用 CSS 变量，并使用 iOS 系统字体作为备选 */
+    font-family: var(--custom-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); 
     
     /* 确保整个内容居中 */
     display: flex; 
@@ -14,19 +16,19 @@ body, html {
     background-color: #f0f0f0; 
 }
 /* ==================== 容器样式 (用户请求复制) ==================== */
-#phone-container { 
-    width: 100%; 
-    height: 100vh; 
-    background-color: white; 
-    /* 假设您有背景图变量 */
-    background-image: var(--user-bg-image); 
-    background-size: cover; 
-    background-position: center; 
-    display: flex; 
-    flex-direction: column; 
-    overflow: hidden; 
-    position: relative;
+#phone-container {
+  width: 100%; /* 占满屏幕宽度 */
+  height: 100vh; /* 占满屏幕高度 */
+  background-color: white;
+  background-image: var(--user-bg-image);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative; /* 确保内部元素可以基于它进行定位 */
 }
+
 /* ========================================================== */
 /* ==================== 全局主题变量（新增） ==================== */
 :root {
@@ -136,7 +138,8 @@ body, html {
     margin-left: 3px;
 }
 
-/* 时间日期（纯文字，无玻璃效果） */
+/* style.css (锁屏时间/日期部分) */
+
 /* 主内容容器：保持顶部对齐 */
 .main-content { 
     flex: 1; 
@@ -147,7 +150,8 @@ body, html {
     align-items: center; 
     justify-content: flex-start; 
     
-     padding-top: 8vh; 
+    /* 🌟 修改：向下推，使其更居中靠上 */
+    padding-top: 20vh; 
 }
 
 /* 时间文本 */
@@ -155,31 +159,33 @@ body, html {
     order: 1; 
     color: white; 
     
-    /* 🌟 修正 3：时间数字尺寸减小，从 8.0em 减到 6.5em */
-    font-size: 6.5em; 
+    /* 🌟 修改：时间数字尺寸增大 */
+    font-size: 7.5em; 
     
-    /* 保持纤细字重 */
     font-weight: 300; 
-    
     line-height: 1; 
-    /* 调整字母间距 */
     letter-spacing: -3px; 
-    
     margin-top: 0; 
-    margin-bottom: 5px; 
+    
+    /* 🌟 修改：移除时间与日期之间的距离 */
+    margin-bottom: 0; 
 }
 
-/* 日期文本 (保持不变) */
+/* 日期文本 */
 .date-text {
     order: 2; 
     color: white; 
-    font-size: 1.05em; 
+    
+    /* 🌟 修改：略微减小日期字体 */
+    font-size: 1.0em; 
+    
     font-weight: 500; 
     margin-top: 0; 
     margin-bottom: 0;
     opacity: 0.98;
     letter-spacing: 0.5px;
 }
+
 /* 小组件容器 */
 .widgets-container { 
     order: 3;
