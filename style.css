@@ -1,10 +1,14 @@
 body, html { 
     margin:0; 
     padding:0; 
-    /* 保持 100vh 和 100vw */
-    height:100vh; 
+    /* 保持 100vw */
     width: 100vw;
     overflow:hidden; 
+    
+    /* 🌟 核心修复：使用 100dvh 解决移动端地址栏/工具栏导致的高度不一致问题 */
+    height: 100dvh; 
+    /* 针对不支持 dVH 的旧浏览器的备选方案 */
+    min-height: 100vh; 
     
     /* 🌟 这是您的新字体设置：启用 CSS 变量，并使用 iOS 系统字体作为备选 */
     font-family: var(--custom-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); 
@@ -18,7 +22,10 @@ body, html {
 /* ==================== 容器样式 (用户请求复制) ==================== */
 #phone-container {
   width: 100%; /* 占满屏幕宽度 */
-  height: 100vh; /* 占满屏幕高度 */
+  /* 🌟 核心修复：这里也使用 100dvh 来确保容器高度正确 */
+  height: 100dvh; /* 占满屏幕高度 */
+  /* 针对不支持 dVH 的旧浏览器的备选方案 */
+  min-height: 100vh;
   background-color: white;
   background-image: var(--user-bg-image);
   background-size: cover;
