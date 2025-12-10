@@ -75,9 +75,7 @@ body, html {
     
     overflow: hidden; 
     transform: perspective(1000px); 
-    
-    /* 【实现下移】：向下移动 30 像素 (保留用户原设置) */
-    margin-top: 32px; 
+  
 }
 
 /* 调整所有屏幕的尺寸和位置以适应无刘海的显示 */
