@@ -57,20 +57,22 @@ body, html {
     width: 375px; 
     height: 812px; 
     
-    /* 边框样式 */
-    border: 10px solid #333; /* 10px 边框 */
+    /* 【核心修改 1】：外框边框设为纯黑 */
+    border: 10px solid #000; /* 10px 边框改为纯黑 */
     border-radius: 45px; /* 外框圆角 */
-    background-color: black;
+    
+    /* 【核心修改 2】：背景设为纯黑 */
+    background-color: #000;
+    
+    /* 【核心修改 3】：移除内嵌阴影 (inset)，仅保留外部阴影增加立体感 */
     box-shadow: 
-        0 8px 15px rgba(0, 0, 0, 0.3), 
-        0 0 0 1px rgba(255, 255, 255, 0.05), 
-        inset 0 0 15px rgba(0, 0, 0, 0.7); 
+        0 15px 30px rgba(0, 0, 0, 0.5), /* 外部大阴影 */
+        0 0 0 1px rgba(0, 0, 0, 0.9);  /* 外部薄边 */
     
     overflow: hidden; 
     transform: perspective(1000px); 
     
-    /* 【实现下移】：向下移动 30 像素 */
-    margin-top: 32px; 
+    /* 保持：完全依赖 body 的 Flex 居中 */
 }
 
 /* 调整所有屏幕的尺寸和位置以适应无刘海的显示 */
