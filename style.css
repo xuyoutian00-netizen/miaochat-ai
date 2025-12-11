@@ -114,23 +114,37 @@ body, html {
     background: linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.25)),
                 url(https://i.ibb.co/Lz7zk3TN/img-17640775608564ddc52a7adc687ed3e5689f75d6318f880deb627dbf678e2d8c817beded1548a.jpg) center/cover no-repeat;
     transition: opacity 0.5s ease, transform 0.5s ease;
+    
+    /* 🌟 核心修改：为所有内容留出状态栏的高度 (35px) */
+    padding-top: 35px;
 }
 .lock-screen.fade-out { opacity:0; transform:translateY(-30px); pointer-events:none; }
 .lock-screen.fade-in  { opacity:0; transform:translateY(30px); }
 .lock-screen.fade-in.active { opacity:1; transform:translateY(0); }
 
-/* 状态栏 */
+/* 状态栏：统一使用绝对定位和固定高度 */
 .top-status-bar {
-    width: 100%;
-    /* 调整顶部内边距，使其内容靠近顶部，适合无刘海的 Noir 外观 */
-    padding: 12px 20px 0; 
+    /* 🌟 核心修改：绝对定位到顶部，脱离文档流 */
+    position: absolute; 
+    top: 0; 
+    left: 0;
+    width: 89%;
+    
+    /* 统一固定高度，确保所有屏幕一致 */
+    height: 50px; 
+    
+    /* 调整内边距，使其内容在 35px 高度内垂直居中 */
+    padding: 0 20px; /* 移除顶部的 padding-top: 12px 0; */
     
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: center; /* 垂直居中对齐内容 */
     color: white;
     font-size: 0.85em;
     font-weight: 600;
+    
+    /* 确保它始终位于所有其他屏幕元素之上 */
+    z-index: 50; 
 }
 .status-icons { gap:4px; display:flex; align-items:center; }
 .battery-level { margin-right:-2px; }
@@ -155,7 +169,7 @@ body, html {
     align-items: center; 
     justify-content: flex-start; 
     
-    /* 🌟 修改：向下推，使其更居中靠上 */
+    /* 🌟 修改：向下推，使其更居中靠上。现在是相对状态栏下边缘计算 */
     padding-top: 12vh; 
 }
 
@@ -205,7 +219,7 @@ body, html {
 }
 
 /* 底部快捷键 */
-.bottom-shortcuts { width:80vw; max-width:400px; display:flex; justify-content:space-between; margin-bottom:2vh; }
+.bottom-shortcuts { width:80vw; max-width:400px; display:flex; justify-content:space-between; margin-bottom:10vh; }
 .shortcut-icon { width:60px; height:60px; border-radius:50%; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2);
     backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; font-size:1.6em; transition:all .2s; }
 .shortcut-icon:active { transform:scale(0.9); background:rgba(255,255,255,0.3); }
@@ -223,6 +237,9 @@ body, html {
     z-index:9;
     display:flex; flex-direction:column; align-items:center;
     background:url(https://i.ibb.co/Lz7zk3TN/img-17640775608564ddc52a7adc687ed3e5689f75d6318f880deb627dbf678e2d8c817beded1548a.jpg) center/cover no-repeat;
+    
+    /* 🌟 核心修改：为所有内容留出状态栏的高度 (35px) */
+    padding-top: 35px;
 }
 
 /* 【修改点】：主屏幕状态栏改为黑色字体 */
@@ -230,6 +247,13 @@ body, html {
     color: black; /* 字体颜色改为黑色 */
     text-shadow: none; /* 移除白色字体时的阴影 */
 }
+
+/* 🌟 新增：密码界面的状态栏颜色需要是白色，覆盖 home-status-bar 的 black */
+.passcode-status-bar-color {
+    color: white; 
+    text-shadow: 0 0 4px rgba(0,0,0,0.4);
+}
+
 
 .dock-area { 
     width: 80vw; 
@@ -290,7 +314,8 @@ body, html {
     justify-content: space-around; /* 小组件组之间均匀分布 */
     align-items: flex-start; /* **【主要修改点】**: 垂直向上对齐 */
     gap: 15px; /* 小组件组之间的间距 */
-    padding-top:60px; /* **【主要修改点】**: 增加顶部间距，向下推离状态栏 */
+    /* **【主要修改点】**: 减少顶部间距，但依然留出空间避开状态栏 */
+    padding-top:25px; 
 }
 
 /* 小组件组（左侧和右侧的药丸形小组件） */
@@ -413,6 +438,9 @@ body, html {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
+    
+    /* 🌟 核心修改：为所有内容留出状态栏的高度 (35px) */
+    padding-top: 35px;
 }
 
 /* 顶部设置栏 (闪光灯/HDR/计时器) */
@@ -750,24 +778,27 @@ body, html {
     align-items: center;
     justify-content: space-between;
     transition: opacity 0.3s ease;
+    
+    /* 🌟 核心修改：移除这里的 padding-top，因为状态栏已经移到外面了 */
 }
 
-/* 顶部区域 (状态栏 + 提示文字 + 输入点) */
+/* 顶部区域 (提示文字 + 输入点) */
 .passcode-top {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 8px; 
+    /* 🌟 核心修改：增加 padding-top，避开状态栏(35px) + 留出 8px 间隙 */
+    padding-top: 43px; 
     flex: 0 0 auto; 
 }
 
-/* 状态栏 */
-.passcode-status-bar {
+/* 状态栏 (这个类已废弃，其样式现在由 .passcode-status-bar-color 控制) */
+/* .passcode-status-bar {
     width: 90%;
     color: white; 
     text-shadow: 0 0 4px rgba(0,0,0,0.4);
-}
+} */
 
 /* 提示文字 */
 .passcode-prompt {
