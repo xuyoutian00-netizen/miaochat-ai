@@ -1,3 +1,4 @@
+
 body, html { 
     margin:0; 
     padding:0; 
@@ -591,7 +592,7 @@ body, html {
 /* 额外的关闭按钮 (用于在模拟器中返回主屏幕) */
 .camera-close-button {
     position: absolute;
-    top: 5px; /* 稍微向下一点，避开刘海屏区域 */
+    top: 47px; /* 稍微向下一点，避开刘海屏区域 */
     left: 6px; /* 离左边框更近 */
     font-size: 1.5em;
     padding: 10px;
