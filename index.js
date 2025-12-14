@@ -5,27 +5,14 @@ const emojiShower = document.getElementById('emoji-shower');
 const flashlightToggle = document.getElementById('flashlight-toggle');
 const homeStatusBar = document.getElementById('home-status-bar');
 
-// ... (现有代码)
-
-// 【新增】：密码锁屏相关元素
-const passcodeScreen = document.getElementById('passcode-screen');
-const passcodeDotsContainer = document.getElementById('passcode-dots-container');
-const passcodeDots = document.querySelectorAll('.passcode-dot');
-const numpad = document.getElementById('numpad');
-
-// 【新增】：密码常量和状态
-const CORRECT_PASSCODE = '2217'; 
-let currentPasscode = ''; // 当前输入的密码
 
 // 获取状态栏时间/电量元素
 const lockStatusBarTime = document.querySelector('#lock-screen .top-status-bar .status-time');
 const lockStatusBarBatteryLevel = document.querySelector('#lock-screen .top-status-bar .battery-level');
 const homeStatusBarTime = document.querySelector('#home-screen .top-status-bar .status-time');
 const homeStatusBarBatteryLevel = document.querySelector('#home-screen .top-status-bar .battery-level');
-
-// 【新增】：获取密码界面状态栏元素
-const passcodeStatusBarTime = document.querySelector('#passcode-screen .top-status-bar .status-time');
-const passcodeStatusBarBatteryLevel = document.querySelector('#passcode-screen .top-status-bar .battery-level');
+// 注意：passcodeStatusBarTime 在 index.html 中未定义，暂时不使用。
+const passcodeStatusBarTime = document.querySelector('#passcode-screen .top-status-bar .status-time'); 
 
 
 const emojis = ['💗', '😻', '⭐', '💕', '🐾'] ;
@@ -115,9 +102,6 @@ function updateSimulatedBatteryUI() {
     // 1. 更新文字数字
     if (lockStatusBarBatteryLevel) lockStatusBarBatteryLevel.textContent = levelText;
     if (homeStatusBarBatteryLevel) homeStatusBarBatteryLevel.textContent = levelText;
-    // 【修复】：新增对密码界面电量数字的更新
-    if (passcodeStatusBarBatteryLevel) passcodeStatusBarBatteryLevel.textContent = levelText;
-
 
     // 2. 更新图标和动画 (调用原有的函数)
     updateBatteryIcon(simulatedBatteryLevel, isSimulatedCharging);
@@ -159,9 +143,6 @@ function startBatterySimulator() {
     // 【新增】：监听锁屏状态栏点击，切换充电状态
     document.querySelector('#lock-screen .top-status-bar').addEventListener('click', toggleSimulatedCharging);
     document.querySelector('#home-screen .top-status-bar').addEventListener('click', toggleSimulatedCharging);
-    
-    // 【新增】：监听密码界面状态栏点击，切换充电状态
-    document.querySelector('#passcode-screen .top-status-bar').addEventListener('click', toggleSimulatedCharging);
 }
 
 // 初始化真实电池系统（核心修改在这里）
@@ -181,7 +162,6 @@ function initRealBatterySystem() {
                 const levelText = level + '%';
                 if (lockStatusBarBatteryLevel) lockStatusBarBatteryLevel.textContent = levelText;
                 if (homeStatusBarBatteryLevel) homeStatusBarBatteryLevel.textContent = levelText;
-                if (passcodeStatusBarBatteryLevel) passcodeStatusBarBatteryLevel.textContent = levelText; // 更新密码界面电量
 
 
                 // 更新图标和动画
@@ -274,7 +254,7 @@ if (flashlightToggle) {
 }
 
 
-// ==================== 4. 向上滑动解锁 ====================
+// ==================== 4. 向上滑动解锁事件监听 ====================
 let touchStartY = 0;
 
 if (lockScreen) {
@@ -299,22 +279,7 @@ if (lockScreen) {
     });
 }
 
-function tryUnlock(endY) {
-    if (touchStartY === 0) return; 
-    if (touchStartY - endY > 60) { 
-        // 【修改点】：从锁屏切换到密码输入界面
-        lockScreen.classList.add('fade-out');
-        setTimeout(() => {
-            lockScreen.classList.add('hidden');
-            // 显示密码输入界面
-            passcodeScreen.classList.remove('hidden'); 
-            lockScreen.classList.remove('fade-out');
-        }, ANIMATION_DURATION);
-    }
-    touchStartY = 0; 
-}
-
-// ==================== 5. 主屏幕下拉返回锁屏 ====================
+// ==================== 5. 主屏幕下拉返回锁屏事件监听 ====================
 let homeTouchStartY = 0;
 
 if (homeStatusBar) {
@@ -335,7 +300,65 @@ if (homeStatusBar) {
     });
 }
 
-// 【注意】：此处删除旧的 tryReturnToLock 函数定义，保留文件末尾的修复版本。
+// ==================== 解锁核心逻辑函数 (新增/修正部分) ====================
+
+const UNLOCK_THRESHOLD = 50; // 滑动超过 50px 才算有效解锁
+const RETURN_THRESHOLD = 50; // 下拉超过 50px 返回
+
+/**
+ * 尝试解锁屏幕。
+ * @param {number} endY 触摸/鼠标释放时的 Y 坐标
+ */
+function tryUnlock(endY) {
+    // 只有当 touchStartY 被设置（即从屏幕内部开始滑动）时才执行
+    if (touchStartY === 0) return; 
+
+    const swipeDistance = touchStartY - endY; // 向上滑动距离
+
+    if (swipeDistance > UNLOCK_THRESHOLD) {
+        // 向上滑动距离超过阈值，执行解锁动画和切换
+        lockScreen.classList.add('fade-out'); // 添加淡出和上滑动画类
+        
+        // 延时执行屏幕切换（等待动画完成）
+        setTimeout(() => {
+            lockScreen.classList.add('hidden'); // 实际隐藏锁屏
+            lockScreen.classList.remove('fade-out'); // 移除动画类
+            homeScreen.classList.remove('hidden'); // 显示主屏幕
+        }, ANIMATION_DURATION); // ANIMATION_DURATION 是 480ms
+    }
+    
+    // 重置起始位置，防止下次错误触发
+    touchStartY = 0; 
+}
+
+/**
+ * 尝试从主屏幕返回锁屏。
+ * @param {number} endY 触摸/鼠标释放时的 Y 坐标
+ */
+function tryReturnToLock(endY) {
+    // 只有当 homeTouchStartY 被设置（即从状态栏开始滑动）时才执行
+    if (homeTouchStartY === 0) return; 
+    
+    const swipeDistance = endY - homeTouchStartY; // 向下滑动距离
+
+    if (swipeDistance > RETURN_THRESHOLD) {
+        // 向下滑动距离超过阈值，返回锁屏
+        homeScreen.classList.add('hidden'); // 隐藏主屏幕
+        lockScreen.classList.remove('hidden'); // 显示锁屏
+        
+        // 可选：添加一个短暂的动画效果，让返回更自然
+        lockScreen.classList.add('fade-in', 'active');
+        setTimeout(() => {
+            lockScreen.classList.remove('fade-in', 'active');
+        }, 50); 
+    }
+    
+    // 重置起始位置
+    homeTouchStartY = 0;
+}
+// =========================================================================
+
+
 // ==================== 6. 相机应用打开/关闭逻辑 ====================
 
 // 监听 Dock 栏相机图标点击事件 (从主屏幕打开)
@@ -487,125 +510,5 @@ if (cameraViewfinder && proControls) {
                 proControls.classList.remove('hidden');
             }
         }
-    });
-}
-// ==================== 11. 密码输入和校验 (新增) ====================
-
-// 1. 更新密码输入点的 UI：点亮已输入的点
-function updatePasscodeDots() {
-    passcodeDots.forEach((dot, index) => {
-        // 如果当前输入的长度大于索引，则点亮输入点
-        if (index < currentPasscode.length) {
-            dot.classList.add('filled');
-        } else {
-            dot.classList.remove('filled');
-        }
-    });
-}
-
-// 2. 清空密码输入，并执行视觉抖动
-function shakeAndClear() {
-    // 触发抖动动画
-    passcodeDotsContainer.classList.add('shake');
-    // 清空当前密码输入
-    currentPasscode = '';
-    
-    // 动画结束后移除抖动类并更新 UI
-    setTimeout(() => {
-        passcodeDotsContainer.classList.remove('shake');
-        updatePasscodeDots();
-    }, 500); // 0.5s 动画持续时间
-}
-
-// 3. 密码校验逻辑
-function checkPasscode() {
-    if (currentPasscode.length === 4) {
-        if (currentPasscode === CORRECT_PASSCODE) {
-            // 密码正确：进入主屏幕
-            passcodeScreen.classList.add('hidden');
-            homeScreen.classList.remove('hidden');
-            currentPasscode = ''; // 解锁后清空
-        } else {
-            // 密码错误：抖动并清空
-            shakeAndClear();
-        }
-    }
-}
-
-// 4. 数字键盘点击事件监听
-if (numpad) {
-    numpad.addEventListener('click', (e) => {
-        const target = e.target.closest('.numpad-btn');
-        if (!target) return; 
-
-        const key = target.getAttribute('data-key');
-
-        if (key && currentPasscode.length < 4 && !isNaN(parseInt(key))) {
-            // 输入数字
-            currentPasscode += key;
-        } else if (key === 'backspace') {
-            // 退格 (删除最后一个字符)
-            currentPasscode = currentPasscode.slice(0, -1);
-        } else {
-            return; 
-        }
-        
-        // 更新 UI
-        updatePasscodeDots();
-        
-        // 校验密码
-        checkPasscode();
-    });
-}
-
-
-// ==================== 12. 修复和新增返回逻辑 (新增) ====================
-
-// 修复：从主屏幕返回锁屏时的状态（确保密码界面也隐藏）
-function tryReturnToLock(endY) {
-    if (homeTouchStartY === 0) return;
-    
-    const deltaY = endY - homeTouchStartY;
-    if (deltaY > 70) { 
-        homeScreen.classList.add('hidden');
-        lockScreen.classList.remove('hidden');
-        
-        // 【关键修改】：如果从主屏幕返回锁屏，需要先隐藏密码界面
-        passcodeScreen.classList.add('hidden'); 
-        currentPasscode = ''; // 清空密码输入
-        updatePasscodeDots(); // 更新点状态
-
-        lockScreen.classList.add('fade-in', 'active');
-        setTimeout(() => {
-            lockScreen.classList.remove('fade-in', 'active');
-        }, 50);
-    }
-    homeTouchStartY = 0;
-}
-
-// 新增：从密码界面滑到底部 Home Indicator 返回锁屏
-const passcodeNavigationBar = document.querySelector('.passcode-screen .bottom-navigation-bar');
-let passcodeTouchStartY = 0;
-
-if (passcodeNavigationBar) {
-    passcodeNavigationBar.addEventListener('touchstart', e => {
-        passcodeTouchStartY = e.touches[0].clientY;
-    }, { passive: true });
-
-    passcodeNavigationBar.addEventListener('touchend', e => {
-        const endY = e.changedTouches[0].clientY;
-        if (passcodeTouchStartY - endY < -30) { // 向下滑动超过 30 像素
-            // 返回锁屏
-            passcodeScreen.classList.add('hidden');
-            lockScreen.classList.remove('hidden');
-            currentPasscode = ''; // 清空密码输入
-            updatePasscodeDots(); // 更新点状态
-            
-            lockScreen.classList.add('fade-in', 'active');
-            setTimeout(() => {
-                lockScreen.classList.remove('fade-in', 'active');
-            }, 50);
-        }
-        passcodeTouchStartY = 0;
     });
 }
