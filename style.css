@@ -1,4 +1,3 @@
-
 body, html { 
     margin:0; 
     padding:0; 
@@ -113,7 +112,7 @@ body, html {
     display:flex; flex-direction:column; align-items:center;
     color:white;
     /* 🌟 核心修改：移除 Lock Screen 的渐变覆盖，使其与 Home Screen 壁纸完全一致 */
-    background:url(https://i.ibb.co/Lz7zk3TN/img-17640775608564ddc52a7adc687ed3e5689f75d6318f880deb627dbf678e2d8c817beded1548a.jpg) center/cover no-repeat;
+    background:url(https://i.ibb.co/hFPt6Nmn/retouch-2025121418510296.jpg) center/cover no-repeat;
     transition: opacity 0.5s ease, transform 0.5s ease;
     
     /* 🌟 核心修改：为所有内容留出状态栏的高度 (35px) */
@@ -132,7 +131,7 @@ body, html {
     width: 89%;
     
     /* 统一固定高度，确保所有屏幕一致 */
-    height: 50px; 
+    height: 55px; 
     
     /* 调整内边距，使其内容在 35px 高度内垂直居中 */
     padding: 0 20px; /* 移除顶部的 padding-top: 12px 0; */
@@ -171,7 +170,7 @@ body, html {
     justify-content: flex-start; 
     
     /* 🌟 核心修正：从 vh 改为 %，使其位置始终相对于手机屏幕的高度（778px） */
-    padding-top: 30%; 
+    padding-top: 24%; 
 }
 
 /* 时间文本 */
@@ -238,7 +237,7 @@ body, html {
     /* 移除 position:fixed; inset:0; z-index:9; 因为已在上面通用定义 */
     z-index:9;
     display:flex; flex-direction:column; align-items:center;
-    background:url(https://i.ibb.co/Lz7zk3TN/img-17640775608564ddc52a7adc687ed3e5689f75d6318f880deb627dbf678e2d8c817beded1548a.jpg) center/cover no-repeat;
+    background:url(https://i.ibb.co/hFPt6Nmn/retouch-2025121418510296.jpg) center/cover no-repeat;
     
     /* 🌟 核心修改：为所有内容留出状态栏的高度 (35px) */
     padding-top: 35px;
@@ -322,7 +321,7 @@ body, html {
     gap: 15px; /* 小组件组之间的间距 */
      margin-left: -41px; 
     /* **【主要修改点】**: 减少顶部间距，但依然留出空间避开状态栏 */
-    padding-top:40px; 
+    padding-top:50px; 
 }
 
 /* 小组件组（左侧和右侧的药丸形小组件） */
@@ -366,6 +365,7 @@ body, html {
     justify-content: center;
     position: relative; /* 用于子元素的定位 */
     min-width: 100px; /* 确保有足够空间 */
+    margin-left: -52px; 
 }
 
 /* 中间黑色圆圈 */
@@ -373,7 +373,7 @@ body, html {
     width: 80px; /* 圆的直径 */
     height: 80px;
     /* 【修改点】：将背景颜色替换为你的图片 */
-    background-image: url('https://i.ibb.co/zVJN7WHd/IMG-20251201-152118.jpg'); 
+    background-image: url(https://i.ibb.co/x9XKkn2/Camera-XHS-17657024151771040g00831o8jo56f6meg40ktn7kc3nn00q2l0i8-2.jpg); 
     background-size: cover; /* 确保图片覆盖整个圆形 */
     background-position: center; /* 图片居中 */
     background-repeat: no-repeat; /* 防止图片重复 */
@@ -413,7 +413,7 @@ body, html {
     bottom: -18px; /* 文字更靠近图标 */
     left: 50%;
     transform: translateX(-50%); 
-    color: Black; 
+    color: White; 
     font-size: 0.75em;
     font-weight: 500;
     white-space: nowrap; 
@@ -683,7 +683,7 @@ body, html {
 /* 4. 特定图标：相机图标的背景图片 (使用你上传的 1000051538.jpg) */
 .camera-app-icon {
     /* 🌟 关键修改：使用你本地上传的文件名 */
-    background-image: url('https://i.ibb.co/HLBFb8Pz/Camera-XHS-17645804740351040g2sg3120cpg1o3c305nt8j00g8qa26vrp9dg-2.jpg'); 
+    background-image: url('https://i.ibb.co/ymNsjZ28/Camera-XHS-17656961359831040g008317m2ipnt3u205o22u8p091jo88hqv3g-2.jpg'); 
 }
 
 /* style.css (修改片段) */
@@ -714,15 +714,15 @@ body, html {
     align-items: center;
 }
 
-/* 2. 微信小组件特定样式：背景图片 (保持不变) */
+/* 2. 微信小组件特定样式：背景图片 (关键修改) */
 .wechat-app-widget {
     /* 使用你提供的微信图标图片 URL */
     background-image: url('https://i.ibb.co/qMKqdMgZ/Camera-1040g3k831k9d6igr2o805oe8f9l410do6tcbpso-2.jpg');
     background-size: cover;
     background-position: center;
     
-    /* 🌟 关键修改：为微信小组件本身添加顶部外边距 */
-    margin-top: 70px; 
+    /* 🌟 **修正点 2：** 重置顶部边距，让垂直定位由父容器 icon-row-group 统一处理。 */
+    margin-top: 0; 
 }
 
 /* 3. 应用图标小组件的名称样式 */
@@ -734,7 +734,7 @@ body, html {
     bottom: -17px; 
     left: 50%;
     transform: translateX(-50%); 
-    color: Black; /* 使用黑色字体 */
+    color: White; /* 使用白色字体 */
     
     /* 🌟 关键修改：文字大小保持 0.75em，与 Dock 图标文字一致 */
     font-size: 12.7px;
@@ -746,169 +746,41 @@ body, html {
 }
 /* style.css (在文件末尾新增或修改) */
 
-/* ==================== 针对左侧小组件组的位置调整 (新增) ==================== */
+/* ==================== 针对图标横向排列的容器样式 (修正，恢复垂直间距) ==================== */
+.icon-row-group {
+    display: flex; /* 🌟 启用 Flexbox */
+    flex-direction: row; /* 🌟 关键：使 Chat 和 相机 水平排列（并排） */
+    gap: 15px; /* 两个图标之间的间距 */
+    
+    /* 🌟 **修正点 1：** 将 margin-top 调整为 60px，以补偿父容器 home-widget-group 的 10px gap，确保总间距为 70px。 */
+    margin-top: 60px; 
+}
+
+
+/* ==================== 针对左侧小组件组的位置调整 (修正，恢复药丸位置) ==================== */
 
 .home-widget-group.left-group {
-    /* 垂直位置：如果你之前为了向下移动添加了 padding-top，请保留你的数值 */
-    padding-top: 0px; /* **请替换为你实际需要的数值，如果你不需要向下移动则删除此行** */
+    /* 🌟 **修正点 3：** 移除所有影响药丸垂直位置的属性，只保留横向位移。 */
+    padding-top: 0 !important; 
     
-    /* 🌟 关键修改：通过增加左侧外边距，将所有内容向右推。 */
-    /* 我们从 20px 开始测试，你可以根据需要调整这个数值。 */
-    margin-left: 25px; 
-    
-    /* 清理之前的边距 (如果存在) */
-    margin-top: 0 !important;
+    /* 🌟 关键修改：通过增加左侧外边距，将所有内容向右推。（您设置的 25px） */
+    margin-left: 20px; 
     
     /* 确保靠左对齐，如果需要 */
     align-items: flex-start; 
     pointer-events: auto; /* 确保小组件可点击 */
 }
-/* ==================== 密码锁屏样式 (新增) ==================== */
+/* style.css (在文件末尾新增或修改) */
 
-.passcode-screen {
-    /* 移除 position: fixed; inset: 0; z-index: 10; 因为已在上面通用定义 */
-    z-index: 10; /* 在锁屏和主屏之间 */
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    transition: opacity 0.3s ease;
+/* ==================== 针对图标横向排列的容器样式 (修正，恢复垂直间距) ==================== */
+.icon-row-group {
+    display: flex; /* 🌟 启用 Flexbox */
+    flex-direction: row; /* 关键：使 Chat 和 相机 水平排列（并排） */
     
-    /* 🌟 核心修改：使用 backdrop-filter 实现磨砂玻璃效果，并移除背景图/颜色 */
-    background-color: rgba(0, 0, 0, 0.45); /* 半透明黑色背景 */
-    backdrop-filter: blur(20px); /* 关键：对下面的背景应用 20px 模糊效果 */
-    -webkit-backdrop-filter: blur(20px); /* 兼容性 */
+    /* 🌟 【修改 1】：增大两个图标之间的间距 */
+    gap: 25px; 
     
-    /* 移除这里的 padding-top，因为状态栏已经移到外面了 */
-}
-
-/* 移除上一次修改中添加的 .passcode-screen::before 块 */
-
-/* 顶部区域 (提示文字 + 输入点) */
-.passcode-top {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* 🌟 核心修改：增加 padding-top，避开状态栏(35px) + 留出 8px 间隙 */
-    padding-top: 43px; 
-    flex: 0 0 auto; 
-}
-
-/* 状态栏 (这个类已废弃，其样式现在由 .passcode-status-bar-color 控制) */
-/* .passcode-status-bar {
-    width: 90%;
-    color: white; 
-    text-shadow: 0 0 4px rgba(0,0,0,0.4);
-} */
-
-/* 提示文字 */
-.passcode-prompt {
-    font-size: 1.1em;
-    font-weight: 500;
-    margin-top: 40px;
-    margin-bottom: 20px;
-}
-
-/* 密码输入点容器 */
-.passcode-dots-container {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 30px;
-}
-
-/* 密码输入点 */
-.passcode-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.5); 
-    background-color: transparent;
-    transition: background-color 0.1s ease, transform 0.2s ease;
-}
-
-/* 密码输入点（激活/已输入） */
-.passcode-dot.filled {
-    background-color: white;
-    transform: scale(1.1);
-}
-
-/* 底部操作 */
-.passcode-bottom-actions {
-    width: 100%;
-    text-align: center;
-    color: #4a90e2; 
-    font-size: 0.9em;
-    font-weight: 500;
-    margin-bottom: 15px;
-}
-.emergency-call {
-    cursor: pointer;
-    opacity: 0.8;
-}
-
-/* 数字键盘容器 */
-.numpad {
-    width: 80vw;
-    max-width: 320px;
-    flex: 1; 
-    display: flex;
-    flex-direction: column;
-    justify-content: center; 
-    gap: 15px;
-}
-
-.numpad-row {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-
-/* 数字按钮 */
-.numpad-btn {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-    font-size: 2.2em;
-    font-weight: 400;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    transition: background-color 0.1s ease, transform 0.1s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.numpad-btn:active {
-    background-color: rgba(255, 255, 255, 0.4);
-    transform: scale(0.95);
-}
-
-/* 空白按钮 */
-.empty-btn {
-    background: transparent;
-    pointer-events: none;
-    border: none;
-}
-
-/* 退格按钮 */
-.backspace-btn {
-    background: transparent;
-    font-size: 1.5em; 
-}
-
-/* 抖动动画 (新增) */
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-10px); }
-    40%, 80% { transform: translateX(10px); }
-}
-
-/* 应用抖动动画的类 */
-.passcode-dots-container.shake {
-    animation: shake 0.5s ease-in-out;
+    /* 🌟 【修改 2】：增大顶部外边距，将图标整体向下推 */
+    margin-top: 60px; 
+    margin-left:8px; 
 }
