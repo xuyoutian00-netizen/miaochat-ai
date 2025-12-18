@@ -1198,12 +1198,13 @@ body, html {
 
 /* ==================== 输入栏样式优化 ==================== */
 .chat-input-bar {
+    height: 60px;      /* 固定高度 */
     background: white;
-    padding: 10px 15px;
+    border-top: 1px solid #eee;
+    padding: 0 10px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    border-top: 1px solid #e0e0e0;
+    flex-shrink: 0;    /* 防止被压缩 */
 }
 
 .chat-input-bar i {
@@ -1381,4 +1382,111 @@ body, html {
 
 /* ==================== 修复Chat App全屏显示问题 ==================== */
 
-/* Chat Ap
+/* Chat App整体容器 */
+#chat-app {
+    display: none; /* 初始隐藏 */
+    flex-direction: column;
+    height: 100%;  /* 必须占据父容器 100% 高度 */
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #f5f5f5;
+    z-index: 50;
+}
+
+/* 当显示时 */
+#chat-app.active {
+    display: flex !important;
+}
+
+/* Chat子屏幕 */
+.chat-sub-screen {
+    width: 100%;
+    height: 100%;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 0.3s ease;
+    /* 移除圆角，确保全屏 */
+    border-radius: 0;
+    overflow: hidden;
+}
+
+/* Chat头部-调整高度和位置 */
+.chat-header {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 15px 15px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 10;
+    /* 确保头部从顶部开始 */
+    margin-top: 0;
+}
+
+/* Chat标签内容区域-确保填满剩余空间 */
+.chat-tab-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Tab页面 */
+.tab-pane {
+    flex: 1;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.tab-pane.active {
+    display: flex;
+}
+
+/* 角色列表容器 */
+.role-list {
+    flex: 1;
+    overflow-y: auto;
+    background: white;
+    /* 确保填充整个高度 */
+    min-height: 0;
+}
+
+/* Chat消息区域 */
+.chat-messages-area {
+    flex: 1;           /* 核心：让它自动占据剩余的所有中间空间 */
+    overflow-y: auto;  /* 允许滚动 */
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* 修复Tab栏位置 */
+.chat-tab-bar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    padding: 8px 0;
+    position: relative;
+    z-index: 10;
+    /* 确保Tab栏固定在底部 */
+    flex-shrink: 0;
+}
+
+/* 创建角色表单 */
+.create-form {
+    padding: 20px;
+    background: white
