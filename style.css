@@ -1,3 +1,12 @@
+/* ============================================
+            PurrPhone 样式文件
+   ============================================ */
+/* 功能：iOS风格手机模拟器的完整UI样式
+   包含：锁屏、主屏幕、相机、聊天应用等所有界面样式 */
+
+/* ==================== 全局重置与基础样式 ==================== */
+
+/* 重置HTML和Body的默认样式 */
 body, html { 
     margin:0; 
     padding:0; 
@@ -6,7 +15,7 @@ body, html {
     width: 100vw;
     overflow:hidden; 
     
-    /* 🌟 这是您的新字体设置：启用 CSS 变量，并使用 iOS 系统字体作为备选 */
+    /* 🌟 字体设置：启用CSS变量，使用iOS系统字体作为备选 */
     font-family: var(--custom-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif); 
     
     /* 确保整个内容居中 */
@@ -15,7 +24,8 @@ body, html {
     align-items: center; 
     background-color: #f0f0f0; 
 }
-/* ==================== 容器样式 (用户请求复制) ==================== */
+
+/* ==================== 手机容器样式 ==================== */
 #phone-container {
   width: 100%; /* 占满屏幕宽度 */
   height: 100vh; /* 占满屏幕高度 */
@@ -29,42 +39,42 @@ body, html {
   position: relative; /* 确保内部元素可以基于它进行定位 */
 }
 
-/* ========================================================== */
-/* ==================== 全局主题变量（新增） ==================== */
+/* ==================== 全局主题变量 ==================== */
 :root {
     --primary-hue: 217; 
     --primary-saturation: 70%;
     --primary-lightness: 60%;
     
-    /* 【您的新变量】：边框颜色 */
+    /* 边框颜色 */
     --border-color: hsla(var(--primary-hue), calc(var(--primary-saturation) / 2), calc(var(--primary-lightness)), 0.3); 
 
-    /* 【您的新变量】：阴影颜色 */
+    /* 阴影颜色 */
     --soft-shadow: 0 4px 12px hsla(var(--primary-hue), 40%, calc(var(--primary-lightness) - 10%), 0.15);
 }
-/* ========================================================= */
+
+/* ==================== 通用工具类 ==================== */
 .hidden { display:none !important; }
 
-/* style.css 新增：移除移动端点击时的蓝色高亮/选中效果 */
+/* 移除移动端点击时的蓝色高亮/选中效果 */
 * {
     -webkit-tap-highlight-color: transparent; /* 针对WebKit/Chrome内核 */
     -webkit-touch-callout: none; /* 禁用长按弹出菜单 */
 }
 
-/* ================= 手机边框和缩放 ================== */
+/* ==================== 手机边框和框架 ==================== */
 .phone-frame {
     /* 外框总尺寸 */
     width: 370px; 
     height: 778px; 
     
-    /* 【核心修改 1】：外框边框设为深灰色 (#1A1A1A)，避免纯黑 */
+    /* 外框边框设为深灰色 (#1A1A1A)，避免纯黑 */
     border: 10px solid #1A1A1A; 
     border-radius: 45px; /* 外框圆角 */
     
-    /* 【核心修改 2】：背景设为深灰色 (#1A1A1A) */
+    /* 背景设为深灰色 (#1A1A1A) */
     background-color: #1A1A1A;
     
-    /* 【核心修改 3】：调整阴影，增加质感和厚度 */
+    /* 调整阴影，增加质感和厚度 */
     box-shadow: 
         /* 外部大阴影 */
         0 20px 40px rgba(0, 0, 0, 0.5), 
@@ -75,25 +85,11 @@ body, html {
     
     overflow: hidden; 
     transform: perspective(1000px); 
-  
 }
 
-/* 调整所有屏幕的尺寸和位置以适应无刘海的显示 */
-/* 调整所有屏幕的尺寸和位置，使其完全贴合边框内部 */
-.lock-screen, .home-screen, .passcode-screen {
-    /* 【关键修改】：内屏尺寸 = 外框尺寸 - 20px 边框 */
-    width: calc(100% - 20px); 
-    height: calc(100% - 20px); 
-    position: absolute;
-    top: 10px; /* 顶部偏移 10px (边框宽度) */
-    left: 10px; /* 左侧偏移 10px (边框宽度) */
-    border-radius: 35px; /* 内屏圆角 */
-    overflow: hidden; 
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-/* 关键修改：将所有屏幕的定位从 fixed 更改为 absolute，并确保它们占据 phone-frame 的 100% 宽高 */
-.lock-screen, .passcode-screen, .home-screen, .camera-app {
+/* ==================== 所有屏幕的通用样式 ==================== */
+/* 锁屏、主屏幕、密码屏、相机应用 */
+.lock-screen, .home-screen, .passcode-screen, .camera-app {
     width: 100%;
     height: 100%;
     position: absolute; 
@@ -102,29 +98,127 @@ body, html {
     /* 屏幕内圆角（略小于边框圆角） */
     border-radius: 28px; 
 }
-/* ============================================================= */
 
-
-/* 锁屏 */
+/* ==================== 锁屏样式 ==================== */
 .lock-screen {
-    /* 移除 position:fixed; inset:0; z-index:10; 因为已在上面通用定义 */
     z-index:10;
     display:flex; flex-direction:column; align-items:center;
     color:white;
-    /* 🌟 核心修改：移除 Lock Screen 的渐变覆盖，使其与 Home Screen 壁纸完全一致 */
+    /* 背景图片：使用壁纸 */
     background:url(https://i.ibb.co/hFPt6Nmn/retouch-2025121418510296.jpg) center/cover no-repeat;
     transition: opacity 0.5s ease, transform 0.5s ease;
     
-    /* 🌟 核心修改：为所有内容留出状态栏的高度 (35px) */
+    /* 为所有内容留出状态栏的高度 (35px) */
     padding-top: 35px;
 }
-.lock-screen.fade-out { opacity:0; transform:translateY(-30px); pointer-events:none; }
-.lock-screen.fade-in  { opacity:0; transform:translateY(30px); }
-.lock-screen.fade-in.active { opacity:1; transform:translateY(0); }
+/* --- 在 style.css 末尾添加 --- */
 
-/* 状态栏：统一使用绝对定位和固定高度 */
+/* 锁屏滑出动画 */
+.slide-up-exit {
+    animation: slideUpExit 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideUpExit {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-100%);
+        opacity: 0.5;
+    }
+}
+
+/* 主屏幕进入动画 (缩放+淡入) */
+.home-fade-in {
+    animation: homeZoomIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes homeZoomIn {
+    from {
+        transform: scale(1.1);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 修改 hidden 类，或者为主屏幕专门定义一个类 */
+.home-screen.hidden {
+    display: flex !important; /* 保持布局存在 */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none; /* 防止在后台被点击 */
+    transform: scale(0.95); /* 稍微缩小，模拟缩进效果 */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.home-screen {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* --- 替换你 style.css 中的解锁相关动画 --- */
+
+/* 锁屏滑出 */
+.slide-up-exit {
+    animation: iosLockExit 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes iosLockExit {
+    to { transform: translateY(-100%); opacity: 0.4; }
+}
+
+/* 主屏幕背景整体缩放 */
+.home-screen-animate {
+    display: flex !important;
+    animation: iosHomeScale 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes iosHomeScale {
+    from { transform: scale(1.1); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* 核心修复：确保你 HTML 中所有的组件都有动画 */
+.home-screen-animate .home-widget, 
+.home-screen-animate .app-icon,
+.home-screen-animate .center-widget {
+    opacity: 0;
+    animation: iosIconPop 0.6s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+}
+
+@keyframes iosIconPop {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* 延迟效果：让不同区域的图标先后出现 */
+.home-screen-animate .left-group > * { animation-delay: 0.05s; }
+.home-screen-animate .center-widget { animation-delay: 0.1s; }
+.home-screen-animate .right-group > * { animation-delay: 0.15s; }
+
+
+.app-icon {
+    /* 1. 开启硬件加速，防止重绘抖动 */
+    backface-visibility: hidden;
+    perspective: 1000px;
+    transform: translate3d(0, 0, 0);
+    
+    /* 2. 确保过渡动画平滑 */
+    transition: transform 0.3s ease-out;
+}
+
+/* 3. 检查 index.js 中的初始化逻辑 */
+/* 确保在 homeScreen 显示时，不要重复触发 init 动画 */
+/* ==================== 状态栏样式 ==================== */
 .top-status-bar {
-    /* 🌟 核心修改：绝对定位到顶部，脱离文档流 */
+    /* 绝对定位到顶部，脱离文档流 */
     position: absolute; 
     top: 0; 
     left: 0;
@@ -133,7 +227,7 @@ body, html {
     /* 统一固定高度，确保所有屏幕一致 */
     height: 55px; 
     
-    /* 调整内边距，使其内容在 35px 高度内垂直居中 */
+    /* 调整内边距，使其内容在35px高度内垂直居中 */
     padding: 0 20px; /* 移除顶部的 padding-top: 12px 0; */
     
     display: flex;
@@ -146,6 +240,8 @@ body, html {
     /* 确保它始终位于所有其他屏幕元素之上 */
     z-index: 50; 
 }
+
+/* 状态栏图标容器 */
 .status-icons { gap:4px; display:flex; align-items:center; }
 .battery-level { margin-right:-2px; }
 
@@ -153,11 +249,11 @@ body, html {
 .top-status-bar .battery-icon {
     vertical-align: middle; 
     position: relative; 
-    top: 1px; /* 向下微移 1 像素 */
+    top: 1px; /* 向下微移1像素 */
     margin-left: 3px;
 }
 
-/* style.css (锁屏时间/日期部分) */
+/* ==================== 锁屏时间/日期部分 ==================== */
 
 /* 主内容容器：保持顶部对齐 */
 .main-content { 
@@ -169,7 +265,7 @@ body, html {
     align-items: center; 
     justify-content: flex-start; 
     
-    /* 🌟 核心修正：从 vh 改为 %，使其位置始终相对于手机屏幕的高度（778px） */
+    /* 从vh改为%，使其位置始终相对于手机屏幕的高度（778px） */
     padding-top: 24%; 
 }
 
@@ -177,15 +273,15 @@ body, html {
 .time-text {
     order: 1; 
     color: white; 
-    /* 🌟 修改：时间数字尺寸增大 */
+    /* 时间数字尺寸增大 */
     font-size: 4.6em; 
     font-weight: 300; 
     line-height: 1; 
     letter-spacing: -3px; 
     margin-top: 0; 
     
-    /* 🌟 修改：移除时间与日期之间的距离 */
-    margin-bottom: 20px; 
+    /* 移除时间与日期之间的距离 */
+    margin-bottom: 15px; 
 }
 
 /* 日期文本 */
@@ -193,7 +289,7 @@ body, html {
     order: 2; 
     color: white; 
     
-    /* 🌟 修改：略微减小日期字体 */
+    /* 略微减小日期字体 */
     font-size: 1.0em; 
     
     font-weight: 500; 
@@ -211,7 +307,7 @@ body, html {
     display: flex; 
     justify-content: space-between; 
     
-    /* 🌟 修改 7：增加与上方日期的距离，把小组件推下去 */
+    /* 增加与上方日期的距离，把小组件推下去 */
     margin-top: 25px; 
     
     font-size: 1.2em; 
@@ -219,48 +315,45 @@ body, html {
 }
 
 /* 底部快捷键 */
-.bottom-shortcuts { width:80vw; max-width:400px; display:flex; justify-content: center;  /* 🌟 核心修改 2: 增加一个间距 (可以根据需要调整 30px 的值) */
-  gap: 218px; margin-bottom:7vh; }
+.bottom-shortcuts { width:80vw; max-width:400px; display:flex; justify-content: center; gap: 218px; margin-bottom:7vh; }
 .shortcut-icon { width:60px; height:60px; border-radius:50%; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2);
     backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; font-size:1.6em; transition:all .2s; }
 .shortcut-icon:active { transform:scale(0.9); background:rgba(255,255,255,0.3); }
 
-/* 激活状态 (手电筒的原始样式) */
+/* 手电筒激活状态 */
 .flashlight.on .heart-icon {
     animation: heartbeat 1.4s ease-in-out infinite;
     color: #ff6dc8;
     text-shadow: 0 0 15px #ff6dc8;
 }
 
-/* 主屏幕 */
+/* ==================== 主屏幕样式 ==================== */
 .home-screen {
-    /* 移除 position:fixed; inset:0; z-index:9; 因为已在上面通用定义 */
     z-index:9;
     display:flex; flex-direction:column; align-items:center;
     background:url(https://i.ibb.co/hFPt6Nmn/retouch-2025121418510296.jpg) center/cover no-repeat;
     
-    /* 🌟 核心修改：为所有内容留出状态栏的高度 (35px) */
+    /* 为所有内容留出状态栏的高度 (35px) */
     padding-top: 35px;
 }
 
-/* 【修改点】：主屏幕状态栏改回白色字体 */
+/* 主屏幕状态栏改回白色字体 */
 .home-status-bar { 
     color: white; /* 字体颜色改为白色 */
     text-shadow: 0 0 4px rgba(0,0,0,0.4); /* 增加文字阴影，提高在复杂背景上的对比度 */
 }
 
-/* 🌟 新增：密码界面的状态栏颜色需要是白色，覆盖 home-status-bar 的 black */
+/* 密码界面的状态栏颜色需要是白色，覆盖home-status-bar的black */
 .passcode-status-bar-color {
     color: white; 
     text-shadow: 0 0 4px rgba(0,0,0,0.4);
 }
 
-
-/* ==================== Dock 区域样式 (修正宽度并合并布局样式) ==================== */
+/* ==================== Dock区域样式 ==================== */
 .dock-area { 
-    /* 🌟 核心修正：将 width 从 72vw 改为 72%，使其相对于父容器 (370px) 保持固定比例 */
+    /* 将width从72vw改为72%，使其相对于父容器(370px)保持固定比例 */
     width: 82%; 
-    /* 移除 max-width: 450px; 避免在大屏幕上宽度不一致的问题 */
+    /* 移除max-width: 450px; 避免在大屏幕上宽度不一致的问题 */
     height: 85px; 
     margin-top: 30px;
     margin-bottom: 70px; 
@@ -269,24 +362,23 @@ body, html {
     border-radius: 24px; 
     border: 1px solid rgba(255,255,255,0.1); 
     
-    /* 保持图标的 flex 布局样式 (来自第二个定义块的最终样式) */
+    /* 保持图标的flex布局样式 */
     display: flex; 
     justify-content: flex-start;
     align-items: flex-start; /* 让内容（图标）靠顶部对齐 */
     gap: 12px; 
-    /* 🌟 关键修改：增大顶部内边距，让图标向下移动 */
+    /* 关键修改：增大顶部内边距，让图标向下移动 */
     padding: 12px 16px 0 20px; 
 }
-/* ================================================================================== */
 
-
-/* Emoji 雨 */
+/* ==================== Emoji雨动画 ==================== */
 #emoji-shower { position:absolute; bottom:6vh; width:100%; pointer-events:none; display:flex; justify-content:center; }
 .floating-emoji { position:absolute; font-size:2.8em; animation:floatUpAndFade 1.6s ease-out forwards; }
 @keyframes floatUpAndFade {
     to { transform:translateY(-180px) scale(1.6); opacity:0; }
 }
 
+/* ==================== 充电特效 ==================== */
 /* 充电时的绿色呼吸特效 (应用于状态栏电池图标 & 闪电小组件) */
 .battery-icon.charging {
     color: #90ee90 !important; 
@@ -300,27 +392,23 @@ body, html {
     color: #90ee90 !important; 
 }
 
-
 @keyframes charging-breathe {
     0% { opacity: 1; filter: brightness(1); }
     50% { opacity: 0.85; filter: brightness(1.1); } 
     100% { opacity: 1; filter: brightness(1); }
 }
-/* style.css 添加 */
 
-/* style.css 添加 */
-
-/* 主屏幕小组件容器 */
+/* ==================== 主屏幕小组件容器 ==================== */
 .home-widgets-container {
-    flex: 1; /* 让它占据主屏幕的剩余空间，将 Dock 推到底部 */
+    flex: 1; /* 让它占据主屏幕的剩余空间，将Dock推到底部 */
     width: 90%;
     max-width: 400px; /* 限制最大宽度 */
     display: flex;
     justify-content: space-around; /* 小组件组之间均匀分布 */
-    align-items: flex-start; /* **【主要修改点】**: 垂直向上对齐 */
+    align-items: flex-start; /* 垂直向上对齐 */
     gap: 15px; /* 小组件组之间的间距 */
-     margin-left: -41px; 
-    /* **【主要修改点】**: 减少顶部间距，但依然留出空间避开状态栏 */
+    margin-left: -41px; 
+    /* 减少顶部间距，但依然留出空间避开状态栏 */
     padding-top:50px; 
 }
 
@@ -372,7 +460,7 @@ body, html {
 .center-circle {
     width: 80px; /* 圆的直径 */
     height: 80px;
-    /* 【修改点】：将背景颜色替换为你的图片 */
+    /* 背景图片 */
     background-image: url(https://i.ibb.co/x9XKkn2/Camera-XHS-17657024151771040g00831o8jo56f6meg40ktn7kc3nn00q2l0i8-2.jpg); 
     background-size: cover; /* 确保图片覆盖整个圆形 */
     background-position: center; /* 图片居中 */
@@ -385,14 +473,15 @@ body, html {
 
 /* 中间黑色圆圈下方的文字 */
 .center-text {
-    position: absolute; /* 相对于 center-widget 定位 */
+    position: absolute; /* 相对于center-widget定位 */
     bottom: -20px; /* 在圆圈下方 */
     color: White; /* 黑色文字 */
     font-weight: 600;
     font-size: 1.0em;
     white-space: nowrap; /* 不换行 */
 }
-/* ==================== Dock 区域图标样式 (新增) ==================== */
+
+/* ==================== Dock区域图标样式 ==================== */
 
 /* 1. 通用应用图标样式：定义图标的大小和形状 */
 .app-icon {
@@ -419,15 +508,15 @@ body, html {
     white-space: nowrap; 
 }
 
-/* 3. 特定图标：相机图标的背景图片 (使用你上传的 1000051538.jpg) */
+/* 3. 特定图标：相机图标的背景图片 */
 .camera-app-icon {
-    /* 🌟 关键修改：使用你本地上传的文件名 */
+    /* 使用相机图标图片 */
     background-image: url('https://i.ibb.co/HLBFb8Pz/Camera-XHS-17645804740351040g2sg3120cpg1o3c305nt8j00g8qa26vrp9dg-2.jpg'); 
 }
-/* ==================== 相机 App 样式 (新增) ==================== */
+
+/* ==================== 相机App样式 ==================== */
 
 .camera-app {
-    /* 移除 position: fixed; inset: 0; z-index: 100; 因为已在上面通用定义 */
     z-index: 100; 
     background-color: black;
     color: white;
@@ -436,25 +525,22 @@ body, html {
     align-items: center;
     justify-content: space-between;
     
-    /* 🌟 核心修改：为所有内容留出状态栏的高度 (35px) */
+    /* 为所有内容留出状态栏的高度 (35px) */
     padding-top: 35px;
 }
 
 /* 顶部设置栏 (闪光灯/HDR/计时器) */
 .camera-top-bar {
-    /* 🌟 修改点 1: 增加宽度到 90%，让内容有更多空间 */
+    /* 增加宽度到90%，让内容有更多空间 */
     width: 72%; 
     max-width: none;
     height: 60px;
     display: flex;
-    /* 🌟 修改点 2: 使用 space-around 或 space-evenly 替代 space-between */
-    /* space-around: 图标之间和两边都有空间 */
-    /* justify-content: space-around; */ 
-    /* 保持 space-between，但增大左右内边距，使其整体向右偏移 */
+    /* 使用space-between，但增大左右内边距，使其整体向右偏移 */
     justify-content: space-between; 
     align-items: center;
-    /* 🌟 修改点 3: 调整左右内边距，让右边更大，从而将内容向右推 */
-    padding: 0 10px 0 75px; /* 左 35px, 右 50px。右边距比左边大，整体右移 */
+    /* 调整左右内边距，让右边更大，从而将内容向右推 */
+    padding: 0 10px 0 75px; /* 左35px, 右50px。右边距比左边大，整体右移 */
     font-size: 1.1em;
     font-weight: 500;
 }
@@ -462,13 +548,12 @@ body, html {
 /* 调整图标容器的样式，让它们在垂直方向上对齐 */
 .camera-top-bar .camera-icon-btn,
 .camera-top-bar #camera-close-button {
-    display: flex; /* 让图标内部也能flex布局，如果有多行文本或复杂内容 */
+    display: flex; /* 让图标内部也能flex布局 */
     align-items: center; /* 确保内部元素垂直居中 */
     justify-content: center; /* 确保内部元素水平居中 */
     height: 100%; /* 让按钮高度充满父容器，更容易对齐 */
     padding: 0 8px; /* 增加点击区域左右内边距，手感更好 */
 }
-
 
 .camera-icon-btn {
     cursor: pointer;
@@ -481,14 +566,14 @@ body, html {
     flex: 1; 
     position: relative; /* 用于网格线定位 */
     
-    /* 🌟 关键修改：将背景色设置为白色 */
+    /* 关键修改：将背景色设置为白色 */
     background-color: white; 
 }
 
 /* 九宫格辅助线 */
 .grid-line {
     position: absolute;
-    /* 🌟 关键修改：将线条颜色从 rgba(255, 255, 255, 0.4) 改为 rgba(0, 0, 0, 0.4) (半透明黑色) */
+    /* 关键修改：将线条颜色从半透明白色改为半透明黑色 */
     background: rgba(0, 0, 0, 0.4); 
 }
 
@@ -499,7 +584,6 @@ body, html {
 /* 垂直线 */
 .grid-line.vertical:nth-child(3) { left: 33.33%; top: 0; bottom: 0; width: 1px; }
 .grid-line.vertical:nth-child(4) { left: 66.66%; top: 0; bottom: 0; width: 1px; }
-
 
 /* 底部操作区 */
 .camera-bottom-bar {
@@ -575,7 +659,8 @@ body, html {
     background-color: white;
     border-radius: 50%;
 }
-/* style.css 新增：快门激活时的动画效果 */
+
+/* 快门激活时的动画效果 */
 .shutter-button.shutter-active {
     /* 按下时的视觉反馈：略微缩小并移除边框，使白色内圆更突出 */
     transform: scale(0.9);
@@ -601,10 +686,10 @@ body, html {
     color: white;
 }
 
-/* 新增：专业模式手动控制面板样式 */
+/* ==================== 专业模式手动控制面板样式 ==================== */
 .pro-controls {
     position: absolute;
-    bottom: 120px; /* 放在 mode-selector 上方 */
+    bottom: 120px; /* 放在mode-selector上方 */
     left: 0;
     right: 0;
     z-index: 10;
@@ -647,7 +732,7 @@ body, html {
     font-variant-numeric: tabular-nums; /* 数字对齐，视觉上更整齐 */
 }
 
-/* 滑块样式 (使用 mode-active 的黄色) */
+/* 滑块样式 (使用mode-active的黄色) */
 .slider {
     flex-grow: 1;
     -webkit-appearance: none; 
@@ -679,24 +764,21 @@ body, html {
     border: 2px solid white;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
-/* style.css (片段) */
-/* 4. 特定图标：相机图标的背景图片 (使用你上传的 1000051538.jpg) */
+
+/* 相机图标图片 */
 .camera-app-icon {
-    /* 🌟 关键修改：使用你本地上传的文件名 */
     background-image: url('https://i.ibb.co/ymNsjZ28/Camera-XHS-17656961359831040g008317m2ipnt3u205o22u8p091jo88hqv3g-2.jpg'); 
 }
 
-/* style.css (修改片段) */
-
-/* ==================== 针对应用图标小组件的样式 (新增) ==================== */
+/* ==================== 应用图标小组件的样式 ==================== */
 
 /* 1. 应用图标小组件容器 (通用样式) */
 .app-widget {
-    /* 覆盖 home-widget 的默认样式，使其更像应用图标 */
+    /* 覆盖home-widget的默认样式，使其更像应用图标 */
     background: rgba(255, 255, 255, 0.9); /* 更亮的背景 */
     padding: 0; /* 移除内边距 */
     
-    /* 🌟 关键修改：图标大小调整为 60px x 60px，与 Dock 图标一致 */
+    /* 图标大小调整为60px x 60px，与Dock图标一致 */
     width: 60px; 
     height: 60px;
     
@@ -714,29 +796,29 @@ body, html {
     align-items: center;
 }
 
-/* 2. 微信小组件特定样式：背景图片 (关键修改) */
+/* 2. 微信小组件特定样式：背景图片 */
 .wechat-app-widget {
-    /* 使用你提供的微信图标图片 URL */
+    /* 使用微信图标图片URL */
     background-image: url('https://i.ibb.co/qMKqdMgZ/Camera-1040g3k831k9d6igr2o805oe8f9l410do6tcbpso-2.jpg');
     background-size: cover;
     background-position: center;
     
-    /* 🌟 **修正点 2：** 重置顶部边距，让垂直定位由父容器 icon-row-group 统一处理。 */
+    /* 重置顶部边距，让垂直定位由父容器icon-row-group统一处理 */
     margin-top: 0; 
 }
 
 /* 3. 应用图标小组件的名称样式 */
 .widget-app-name {
-    /* 覆盖通用 home-widget 的文字样式 */
+    /* 覆盖通用home-widget的文字样式 */
     position: absolute;
     
-    /* 🌟 关键修改：文字位置调整到 -20px，与 Dock 图标文字一致 */
+    /* 文字位置调整到-20px，与Dock图标文字一致 */
     bottom: -17px; 
     left: 50%;
     transform: translateX(-50%); 
     color: White; /* 使用白色字体 */
     
-    /* 🌟 关键修改：文字大小保持 0.75em，与 Dock 图标文字一致 */
+    /* 文字大小保持0.75em，与Dock图标文字一致 */
     font-size: 12.7px;
     font-weight: 500;
     white-space: nowrap; 
@@ -744,43 +826,559 @@ body, html {
     /* 确保它在图标上方 */
     z-index: 2; 
 }
-/* style.css (在文件末尾新增或修改) */
 
-/* ==================== 针对图标横向排列的容器样式 (修正，恢复垂直间距) ==================== */
+/* ==================== 图标横向排列的容器样式 ==================== */
 .icon-row-group {
-    display: flex; /* 🌟 启用 Flexbox */
-    flex-direction: row; /* 🌟 关键：使 Chat 和 相机 水平排列（并排） */
-    gap: 15px; /* 两个图标之间的间距 */
+    display: flex; /* 启用Flexbox */
+    flex-direction: row; /* 使Chat和相机水平排列（并排） */
+    gap: 25px; /* 两个图标之间的间距 */
     
-    /* 🌟 **修正点 1：** 将 margin-top 调整为 60px，以补偿父容器 home-widget-group 的 10px gap，确保总间距为 70px。 */
-    margin-top: 60px; 
-}
-
-
-/* ==================== 针对左侧小组件组的位置调整 (修正，恢复药丸位置) ==================== */
-
-.home-widget-group.left-group {
-    /* 🌟 **修正点 3：** 移除所有影响药丸垂直位置的属性，只保留横向位移。 */
-    padding-top: 0 !important; 
-    
-    /* 🌟 关键修改：通过增加左侧外边距，将所有内容向右推。（您设置的 25px） */
-    margin-left: 20px; 
-    
-    /* 确保靠左对齐，如果需要 */
-    align-items: flex-start; 
-    pointer-events: auto; /* 确保小组件可点击 */
-}
-/* style.css (在文件末尾新增或修改) */
-
-/* ==================== 针对图标横向排列的容器样式 (修正，恢复垂直间距) ==================== */
-.icon-row-group {
-    display: flex; /* 🌟 启用 Flexbox */
-    flex-direction: row; /* 关键：使 Chat 和 相机 水平排列（并排） */
-    
-    /* 🌟 【修改 1】：增大两个图标之间的间距 */
-    gap: 25px; 
-    
-    /* 🌟 【修改 2】：增大顶部外边距，将图标整体向下推 */
+    /* 增大顶部外边距，将图标整体向下推 */
     margin-top: 60px; 
     margin-left:8px; 
 }
+
+/* ==================== 针对左侧小组件组的位置调整 ==================== */
+.home-widget-group.left-group {
+    /* 移除所有影响药丸垂直位置的属性，只保留横向位移 */
+    padding-top: 0 !important; 
+    
+    /* 通过增加左侧外边距，将所有内容向右推 */
+    margin-left: 20px; 
+    
+    /* 确保靠左对齐 */
+    align-items: flex-start; 
+    pointer-events: auto; /* 确保小组件可点击 */
+}
+
+/* ==================== 聊天应用整体优化 ==================== */
+/* 重新设计聊天应用的整体外观 */
+.chat-app {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 120;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* 聊天子屏幕通用样式 */
+.chat-sub-screen {
+    width: 100%;
+    height: 100%;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 0.3s ease;
+    border-radius: 28px;
+    overflow: hidden;
+}
+
+/* 毛玻璃效果的头部 */
+.chat-header {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 30px 15px 10px 15px !important;
+    height: 32px !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 10;
+}
+
+.chat-header i {
+    font-size: 1.2em;
+    color: #333;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.chat-header span {
+    flex: 1;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.1em;
+    color: #333;
+}
+
+#chat-main-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* ==================== Tab栏样式优化 ==================== */
+.chat-tab-bar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    padding: 8px 0;
+    position: relative;
+    z-index: 10;
+}
+
+.tab-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-item i {
+    font-size: 1.4em;
+    margin-bottom: 4px;
+    color: #999;
+    transition: all 0.3s ease;
+}
+
+.tab-item span {
+    font-size: 0.75em;
+    color: #999;
+    transition: all 0.3s ease;
+}
+
+.tab-item.active i {
+    color: #07c160;
+    transform: translateY(-2px);
+}
+
+.tab-item.active span {
+    color: #07c160;
+    font-weight: 500;
+}
+
+/* ==================== 角色列表优化 ==================== */
+.role-list {
+    flex: 1;
+    overflow-y: auto;
+    background: white;
+}
+
+.role-item {
+    display: flex;
+    padding: 12px 15px;
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.role-item:hover {
+    background-color: #f9f9f9;
+}
+
+.role-item-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-right: 12px;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.role-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.role-item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.role-item-name {
+    font-weight: 600;
+    font-size: 1em;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.role-item-time {
+    font-size: 0.75em;
+    color: #999;
+    white-space: nowrap;
+}
+
+.role-item-msg {
+    font-size: 0.85em;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ==================== 创建角色界面优化 ==================== */
+.create-form {
+    padding: 20px;
+    background: white;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.avatar-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.avatar-upload img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    margin-bottom: 10px;
+}
+
+.upload-label {
+    color: #07c160;
+    font-size: 0.9em;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid #07c160;
+    transition: all 0.3s ease;
+}
+
+.upload-label:hover {
+    background: #07c160;
+    color: white;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #666;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.input-group input,
+.input-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1em;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+    border-color: #07c160;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(7, 193, 96, 0.1);
+}
+
+.input-group textarea {
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* 保存按钮样式 */
+.save-btn {
+    color: #07c160;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: rgba(7, 193, 96, 0.1);
+    transition: all 0.3s ease;
+}
+
+.save-btn:hover {
+    background: #07c160;
+    color: white;
+}
+
+/* ==================== 聊天会话界面优化 ==================== */
+#chat-session-screen {
+    z-index: 3;
+}
+
+.chat-messages-area {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: linear-gradient(180deg, #f0f2f5 0%, #e6e9ef 100%);
+    display: flex;
+    flex-direction: column;
+}
+
+/* 消息时间戳 */
+.message-time {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 0.75em;
+    color: #999;
+}
+
+/* 消息组样式 */
+.msg-group {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-end;
+}
+
+.msg-group.left {
+    justify-content: flex-start;
+}
+
+.msg-group.right {
+    justify-content: flex-end;
+}
+
+.msg-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 消息气泡优化 */
+.msg-bubble {
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 18px;
+    position: relative;
+    font-size: 0.95em;
+    line-height: 1.4;
+    word-wrap: break-word;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.msg-group.left .msg-bubble {
+    background: white;
+    color: #333;
+    margin-left: 10px;
+    border-bottom-left-radius: 4px;
+}
+
+.msg-group.right .msg-bubble {
+    background: linear-gradient(135deg, #95ec69 0%, #7dd956 100%);
+    color: white;
+    margin-right: 10px;
+    border-bottom-right-radius: 4px;
+}
+
+/* ==================== 输入栏样式优化 ==================== */
+.chat-input-bar {
+    background: white;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.chat-input-bar i {
+    font-size: 1.2em;
+    color: #666;
+    cursor: pointer;
+    padding: 8px;
+}
+
+#msg-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    font-size: 0.95em;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+#msg-input:focus {
+    outline: none;
+    border-color: #07c160;
+    background: white;
+}
+
+#send-btn {
+    background: linear-gradient(135deg, #07c160 0%, #05a049 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(7, 193, 96, 0.3);
+}
+
+#send-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(7, 193, 96, 0.4);
+}
+
+/* 消息动画 */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.msg-group.left {
+    animation: slideInLeft 0.3s ease;
+}
+
+.msg-group.right {
+    animation: slideInRight 0.3s ease;
+}
+
+/* 朋友圈和个人信息界面样式 */
+#tab-moments,
+#tab-me {
+    background: white;
+    flex: 1;
+    padding: 20px;
+    color: #333;
+}
+
+/* 滚动条样式优化 */
+.role-list::-webkit-scrollbar,
+.chat-messages-area::-webkit-scrollbar {
+    width: 4px;
+}
+
+.role-list::-webkit-scrollbar-track,
+.chat-messages-area::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.role-list::-webkit-scrollbar-thumb,
+.chat-messages-area::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.role-list::-webkit-scrollbar-thumb:hover,
+.chat-messages-area::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+/* 空状态样式 */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    font-size: 0.9em;
+    background: white;
+    border-radius: 10px;
+    margin: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* 呼吸动画效果 */
+@keyframes breathing {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.tab-item i {
+    animation: breathing 4s ease-in-out infinite;
+}
+
+/* 响应式调整 */
+@media (max-width: 400px) {
+    .chat-header {
+        padding: 10px;
+    }
+    
+    .msg-bubble {
+        max-width: 80%;
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+    
+    .chat-input-bar {
+        padding: 8px 12px;
+    }
+    
+    .input-group input,
+    .input-group textarea {
+        padding: 10px;
+    }
+}
+
+/* ==================== 修复Chat App显示问题 ==================== */
+
+/* 确保子屏幕初始状态正确 */
+.chat-sub-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    border-radius: 28px;
+    overflow: hidden;
+}
+
+/* 确保Tab切换正确 */
+.tab-pane {
+    display: none;
+    flex: 1;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+/* ==================== 修复Chat App全屏显示问题 ==================== */
+
+/* Chat Ap
