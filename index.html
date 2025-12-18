@@ -1,3 +1,6 @@
+<!-- ============================================
+          PurrPhone - iOS风格手机模拟器
+   ============================================ -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -9,139 +12,350 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        /* 确保初始状态正确 */
+        .hidden { display: none !important; }
+        #home-screen { display: none; }
+        #camera-app { display: none; }
+        #chat-app { display: none; }
+    </style>
 </head>
 <body>
 
-    <div class="phone-frame">
-    
-        <div class="lock-screen" id="lock-screen">
-            <div class="top-status-bar">
-                <div class="status-time">9:41</div>
-                <div class="status-icons">
-                    <i class="fas fa-signal"></i>
-                    <i class="fas fa-wifi"></i>
-                    <span class="battery-level">82</span>
-                    <i class="fas fa-battery-three-quarters battery-icon"></i>
-                </div>
-            </div>
+<!-- 手机外框容器 -->
+<div class="phone-frame">
 
-            <div class="main-content">
-                <div class="date-text" id="current-date">Saturday, July 12</div>
-                <div class="time-text" id="current-time">08:37</div>
-                <div id="emoji-shower"></div>
-            </div>
-
-            <div class="bottom-slogan" id="cat-slogan">
-                <span class="cat-paw"><i class="fas fa-paw"></i></span> PurrPhone
-            </div>
-
-            <div class="bottom-shortcuts">
-                <div class="shortcut-icon flashlight" id="flashlight-toggle">
-                    <span class="heart-icon">♡</span>
-                </div>
-                <div class="shortcut-icon camera"><i class="fas fa-camera"></i></div>
-            </div>
-
-            <div class="bottom-navigation-bar">
-                <div class="home-indicator"></div>
+    <!-- ==================== 锁屏界面 ==================== -->
+    <div class="lock-screen" id="lock-screen">
+        <!-- 状态栏 -->
+        <div class="top-status-bar">
+            <div class="status-time">9:41</div>
+            <div class="status-icons">
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-wifi"></i>
+                <span class="battery-level">82</span>
+                <i class="fas fa-battery-three-quarters battery-icon"></i>
             </div>
         </div>
-        
-        <div class="home-screen hidden" id="home-screen">
-            <div class="top-status-bar home-status-bar" id="home-status-bar">
-                <div class="status-time">9:41</div>
-                <div class="status-icons">
-                    <i class="fas fa-signal"></i>
-                    <i class="fas fa-wifi"></i>
-                    <span class="battery-level">82</span>
-                    <i class="fas fa-battery-three-quarters battery-icon"></i>
-                </div>
-            </div>
-            <div class="home-widgets-container">
-                <div class="home-widget-group left-group">
-                    <div class="home-widget pill-widget">HAPPY</div>
-                    <div class="home-widget pill-widget">放松</div>
-                    
-                    <div class="icon-row-group">
-                        <div class="home-widget app-widget wechat-app-widget">
-                            <div class="app-name widget-app-name">Chat</div>
-                        </div>
-                        
-                        <div class="app-icon camera-app-icon">
-                            <div class="app-name">相机</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="home-widget center-widget">
-                    <div class="center-circle"></div> 
-                    <div class="center-text">撸了个猫.</div> 
-                </div>
-                <div class="home-widget-group right-group">
-                    <div class="home-widget pill-widget">冥想</div>
-                    <div class="home-widget pill-widget">SMILE</div>
-                </div>
-            </div>
-            <div style="flex: 1;"></div>
 
-            <div class="dock-area">
-                
-            </div>
+        <!-- 主内容区域：时间、日期、表情雨 -->
+        <div class="main-content">
+            <div class="date-text" id="current-date">Saturday, July 12</div>
+            <div class="time-text" id="current-time">08:37</div>
+            <div id="emoji-shower"></div>
         </div>
-        
-        <div id="camera-app" class="camera-app hidden">
-            <div class="camera-top-bar">
-                <div class="camera-icon-btn"><i class="fas fa-bolt"></i></div>
-                <div class="camera-icon-btn">HDR</div>
-                <div class="camera-icon-btn"><i class="fas fa-stopwatch"></i></div>
-                <div class="camera-icon-btn"><i class="far fa-circle"></i></div>
-            </div>
 
-            <div class="camera-viewfinder">
-                <div class="grid-line"></div>
-                <div class="grid-line"></div>
-                <div class="grid-line vertical"></div>
-                <div class="grid-line vertical"></div>
-            </div>
-
-            <div class="pro-controls hidden">
-                <div class="control-slider">
-                    <label>ISO</label>
-                    <input type="range" min="50" max="3200" value="100" step="50" class="slider" id="iso-slider">
-                    <span id="iso-value">100</span>
-                </div>
-                <div class="control-slider">
-                    <label>S</label> 
-                    <input type="range" min="0" max="10" value="6" step="1" class="slider" id="shutter-slider">
-                    <span id="shutter-value">1/60s</span>
-                </div>
-            </div>
-
-            <div class="camera-bottom-bar">
-                <div class="mode-selector">
-                    <span data-mode="slo-mo">SLO-MO</span>
-                    <span data-mode="video">VIDEO</span>
-                    <span class="mode-active" data-mode="photo">PHOTO</span>
-                    <span data-mode="pro">PRO</span> 
-                    <span data-mode="square">SQUARE</span>
-                    <span data-mode="pano">PANO</span>
-                </div>
-                
-                <div class="shutter-controls">
-                    <div class="preview-thumbnail"></div>
-                    <div class="shutter-button">
-                        <div class="shutter-inner"></div>
-                    </div>
-                    <div class="camera-toggle-btn"><i class="fas fa-redo"></i></div>
-                </div>
-            </div>
-
-            <div id="camera-close-button" class="camera-close-button">
-                <i class="fas fa-chevron-left"></i>
-            </div>
+        <!-- 底部猫咪口号（可点击触发表情雨） -->
+        <div class="bottom-slogan" id="cat-slogan">
+            <span class="cat-paw"><i class="fas fa-paw"></i></span> PurrPhone
         </div>
-        
+
+        <!-- 底部快捷方式：手电筒和相机 -->
+        <div class="bottom-shortcuts">
+            <div class="shortcut-icon flashlight" id="flashlight-toggle">
+                <span class="heart-icon">♡</span>
+            </div>
+            <div class="shortcut-icon camera"><i class="fas fa-camera"></i></div>
+        </div>
+
+        <!-- 底部导航指示条 -->
+        <div class="bottom-navigation-bar">
+            <div class="home-indicator"></div>
+        </div>
     </div>
     
-    <script src="index.js"></script>
+
+    <!-- ==================== 主屏幕界面 ==================== -->
+    <div class="home-screen hidden" id="home-screen">
+        <!-- 状态栏 -->
+        <div class="top-status-bar home-status-bar" id="home-status-bar">
+            <div class="status-time">9:41</div>
+            <div class="status-icons">
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-wifi"></i>
+                <span class="battery-level">82</span>
+                <i class="fas fa-battery-three-quarters battery-icon"></i>
+            </div>
+        </div>
+        
+        <!-- 主屏幕小组件容器 -->
+        <div class="home-widgets-container">
+            <!-- 左侧小组件组 -->
+            <div class="home-widget-group left-group">
+                <div class="home-widget pill-widget">HAPPY</div>
+                <div class="home-widget pill-widget">放松</div>
+
+                <!-- 图标行组：Chat和相机应用图标 -->
+                <div class="icon-row-group">
+                    <div class="home-widget app-widget wechat-app-widget">
+                        <div class="app-name widget-app-name">Chat</div>
+                    </div>
+
+                    <div class="app-icon camera-app-icon">
+                        <div class="app-name">相机</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 居中小组件：圆形图片和文字 -->
+            <div class="home-widget center-widget">
+                <div class="center-circle"></div> 
+                <div class="center-text">撸了个猫.</div> 
+            </div>
+
+            <!-- 右侧小组件组 -->
+            <div class="home-widget-group right-group">
+                <div class="home-widget pill-widget">冥想</div>
+                <div class="home-widget pill-widget">SMILE</div>
+            </div>
+        </div>
+
+        <!-- 占位空白区域 -->
+        <div style="flex: 1;"></div>
+        
+        <!-- Dock区域 -->
+        <div class="dock-area"></div>
+    </div>
+
+    <!-- ==================== 相机应用界面 ==================== -->
+    <div id="camera-app" class="camera-app hidden">
+        <!-- 顶部设置栏 -->
+        <div class="camera-top-bar">
+            <div class="camera-icon-btn"><i class="fas fa-bolt"></i></div>
+            <div class="camera-icon-btn">HDR</div>
+            <div class="camera-icon-btn"><i class="fas fa-stopwatch"></i></div>
+            <div class="camera-icon-btn"><i class="far fa-circle"></i></div>
+        </div>
+
+        <!-- 取景器区域（含九宫格辅助线） -->
+        <div class="camera-viewfinder">
+            <div class="grid-line"></div>
+            <div class="grid-line"></div>
+            <div class="grid-line vertical"></div>
+            <div class="grid-line vertical"></div>
+        </div>
+
+        <!-- 专业模式控制面板（默认隐藏） -->
+        <div class="pro-controls hidden">
+            <div class="control-slider">
+                <label>ISO</label>
+                <input type="range" min="50" max="3200" value="100" step="50" class="slider" id="iso-slider">
+                <span id="iso-value">100</span>
+            </div>
+            <div class="control-slider">
+                <label>S</label> 
+                <input type="range" min="0" max="10" value="6" step="1" class="slider" id="shutter-slider">
+                <span id="shutter-value">1/60s</span>
+            </div>
+        </div>
+
+        <!-- 底部操作区 -->
+        <div class="camera-bottom-bar">
+            <!-- 模式选择器 -->
+            <div class="mode-selector">
+                <span data-mode="slo-mo">SLO-MO</span>
+                <span data-mode="video">VIDEO</span>
+                <span class="mode-active" data-mode="photo">PHOTO</span>
+                <span data-mode="pro">PRO</span> 
+                <span data-mode="square">SQUARE</span>
+                <span data-mode="pano">PANO</span>
+            </div>
+
+            <!-- 快门控制区域 -->
+            <div class="shutter-controls">
+                <div class="preview-thumbnail"></div>
+                <div class="shutter-button">
+                    <div class="shutter-inner"></div>
+                </div>
+                <div class="camera-toggle-btn"><i class="fas fa-redo"></i></div>
+            </div>
+        </div>
+
+        <!-- 关闭按钮（返回之前屏幕） -->
+        <div id="camera-close-button" class="camera-close-button">
+            <i class="fas fa-chevron-left"></i>
+        </div>
+    </div>
+    
+    <!-- ==================== Chat应用界面 ==================== -->
+    <div id="chat-app" class="chat-app hidden">
+        <!-- 主屏幕：聊天列表/通讯录 -->
+        <div id="chat-main-screen" class="chat-sub-screen">
+            <!-- 头部 -->
+            <div class="chat-header">
+                <div class="header-left">
+                    <i class="fas fa-chevron-left" id="exit-chat"></i>
+                </div>
+                <span id="chat-title">Chat</span>
+                <div class="header-icons">
+                    <i class="fas fa-search" id="search-chat"></i>
+                    <i class="fas fa-plus" id="open-create-role"></i>
+                </div>
+            </div>
+
+            <!-- Tab内容区域 -->
+            <div class="chat-tab-content">
+                <!-- 聊天标签页 -->
+                <div id="tab-chats" class="tab-pane active">
+                    <div id="contacts-list" class="role-list">
+                        <!-- 角色列表将通过JS动态生成 -->
+                    </div>
+                </div>
+                
+                <!-- 通讯录标签页 -->
+                <div id="tab-contacts" class="tab-pane">
+                    <div id="all-contacts-list" class="role-list">
+                        <!-- 所有联系人将通过JS动态生成 -->
+                    </div>
+                </div>
+                
+                <!-- 朋友圈标签页 -->
+                <div id="tab-moments" class="tab-pane">
+                    <div style="padding: 20px; text-align: center;">
+                        <h3 style="color: #333; margin-bottom: 10px;">朋友圈</h3>
+                        <p style="color: #666;">分享生活点滴...</p>
+                    </div>
+                </div>
+                
+                <!-- 个人中心标签页 -->
+                <div id="tab-me" class="tab-pane">
+                    <div style="padding: 20px;">
+                        <div style="text-align: center; margin-bottom: 30px;">
+                            <img src="https://i.ibb.co/SX7Xv1rn/Camera-XHS-17659397384191040g00830p35ncko42i040ktn7kc3nn0tkq4sc8-2.jpg" alt="头像" 
+                                 style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <h3 style="margin: 10px 0 5px 0; color: #333;">用户昵称</h3>
+                            <p style="color: #666; font-size: 0.9em;">微信号: user123</p>
+                        </div>
+                        
+                        <div style="background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+                            <div style="display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #f0f0f0; cursor: pointer;">
+                                <i class="fas fa-user" style="margin-right: 10px; color: #07c160;"></i>
+                                <span>个人信息</span>
+                            </div>
+                            <div style="display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #f0f0f0; cursor: pointer;">
+                                <i class="fas fa-cog" style="margin-right: 10px; color: #07c160;"></i>
+                                <span>设置</span>
+                            </div>
+                            <div style="display: flex; align-items: center; padding: 10px; cursor: pointer;">
+                                <i class="fas fa-moon" style="margin-right: 10px; color: #07c160;"></i>
+                                <span>夜间模式</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab栏 -->
+            <div class="chat-tab-bar">
+                <div class="tab-item active" data-tab="chats">
+                    <i class="fas fa-comment-dots"></i>
+                    <span>聊天</span>
+                </div>
+                <div class="tab-item" data-tab="contacts">
+                    <i class="fas fa-address-book"></i>
+                    <span>通讯录</span>
+                </div>
+                <div class="tab-item" data-tab="moments">
+                    <i class="fas fa-camera"></i>
+                    <span>朋友圈</span>
+                </div>
+                <div class="tab-item" data-tab="me">
+                    <i class="fas fa-user"></i>
+                    <span>我</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 创建角色屏幕 -->
+        <div id="create-role-screen" class="chat-sub-screen hidden">
+            <div class="chat-header">
+                <i class="fas fa-chevron-left" id="close-create-role"></i>
+                <span>创建新角色</span>
+                <span class="save-btn" id="save-role">保存</span>
+            </div>
+            
+            <!-- 创建角色表单 -->
+            <div class="create-form">
+                <div class="avatar-upload">
+                    <img src="https://i.ibb.co/FbH4ZpdJ/Camera-XHS-17659384254451040g008319ftia37627g5o9g4a5gk27vbtrijog-2.jpg" 
+                         id="role-avatar-preview" alt="角色头像">
+                    <input type="file" id="role-avatar-input" accept="image/*" hidden>
+                    <label for="role-avatar-input" class="upload-label">选择头像</label>
+                </div>
+                
+                <div class="input-group">
+                    <label>昵称</label>
+                    <input type="text" id="role-name" placeholder="请输入角色名字" maxlength="20">
+                </div>
+                
+                <div class="input-group">
+                    <label>个性签名</label>
+                    <textarea id="role-bio" placeholder="描述一下这个角色的性格、爱好或特点..." 
+                              maxlength="100"></textarea>
+                    <div style="text-align: right; font-size: 0.8em; color: #999; margin-top: 5px;">
+                        <span id="char-count">0/100</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>角色标签</label>
+                    <input type="text" id="role-tags" placeholder="例如：活泼、幽默、温柔 (用逗号分隔)">
+                </div>
+            </div>
+        </div>
+
+        <!-- 聊天会话屏幕 -->
+        <div id="chat-session-screen" class="chat-sub-screen hidden">
+            <!-- 聊天头部 -->
+            <div class="chat-header">
+                <i class="fas fa-chevron-left" id="back-to-main"></i>
+                <div style="flex: 1; text-align: center;">
+                    <span id="current-chat-name" style="font-weight: 600; display: block; font-size: 1.1em;">昵称</span>
+                    <span style="font-size: 0.75em; color: #666;" id="online-status">在线</span>
+                </div>
+                <div style="display: flex; gap: 15px;">
+                    <i class="fas fa-phone-alt"></i>
+                    <i class="fas fa-video"></i>
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </div>
+            
+            <!-- 聊天消息区域 -->
+            <div id="chat-messages" class="chat-messages-area">
+                <div class="message-time">今天</div>
+                <!-- 消息将通过JS动态生成 -->
+            </div>
+            
+            <!-- 消息输入栏 -->
+            <div class="chat-input-bar">
+                <i class="fas fa-plus-circle" id="add-attachment"></i>
+                <input type="text" id="msg-input" placeholder="输入消息...">
+                <i class="fas fa-smile" id="emoji-picker"></i>
+                <button id="send-btn">发送</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 表情包选择器弹窗 -->
+    <div id="emoji-modal" class="emoji-modal hidden">
+        <div class="emoji-header">
+            <span>表情包</span>
+            <i class="fas fa-times close-emoji"></i>
+        </div>
+        <div class="emoji-categories">
+            <span class="emoji-category active" data-category="smileys">😀 表情</span>
+            <span class="emoji-category" data-category="animals">🐱 动物</span>
+            <span class="emoji-category" data-category="food">🍎 食物</span>
+            <span class="emoji-category" data-category="objects">💡 物品</span>
+        </div>
+        <div class="emoji-grid">
+            <!-- 表情将通过JS动态生成 -->
+        </div>
+    </div>
+
+</div>
+
+<!-- JavaScript文件 -->
+<script src="index.js"></script>
 </body>
 </html>
