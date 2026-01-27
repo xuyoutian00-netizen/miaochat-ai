@@ -1,361 +1,2985 @@
-<!-- ============================================
-          PurrPhone - iOS风格手机模拟器
-   ============================================ -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PurrPhone</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>AI聊天手机 - 完善版</title>
     <style>
-        /* 确保初始状态正确 */
-        .hidden { display: none !important; }
-        #home-screen { display: none; }
-        #camera-app { display: none; }
-        #chat-app { display: none; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .phone-frame {
+            width: 355px;
+            height: 740px;
+            background: #000;
+            border-radius: 50px;
+            padding: 8px;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .phone-frame.fullscreen {
+            width: 100vw;
+            height: 100vh;
+            max-width: 100vw;
+            max-height: 100vh;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+        }
+
+        .phone-frame.fullscreen .phone-screen {
+            border-radius: 0 !important;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #111;
+            border-radius: 42px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .boot-screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            transition: opacity 0.8s ease-out;
+        }
+
+        .boot-cat {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 40px;
+            border-radius: 25px;
+            overflow: hidden;
+        }
+
+        .boot-cat img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .loading-text {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+
+        .loading-bar {
+            width: 180px;
+            height: 3px;
+            background: #f0f0f0;
+            border-radius: 1.5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: #333;
+            width: 0%;
+            animation: loading 2s ease-out forwards;
+        }
+
+        @keyframes loading {
+            to { width: 100%; }
+        }
+
+        .lock-screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: none;
+            z-index: 9;
+            transition: background-image 0.3s ease;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .lock-screen.active {
+            display: block;
+        }
+
+        .lock-screen.fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .lock-time {
+            position: absolute;
+            top: 80px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .time {
+            font-size: 68px;
+            font-weight: 300;
+            line-height: 1;
+            transition: all 0.3s ease;
+        }
+
+        .date {
+            font-size: 20px;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .unlock-hint {
+            position: absolute;
+            bottom: 80px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #8e8e93;
+            font-size: 14px;
+            animation: bounce 2s infinite;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .home-screen {
+            display: none;
+            height: 100%;
+            background: #fff;
+            position: relative;
+            padding-bottom: 80px;
+            transition: background-image 0.3s ease;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .status-bar {
+            height: 44px;
+            background: transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            position: relative;
+            z-index: 5;
+        }
+
+        .status-bar.time-black { color: #000; text-shadow: none; }
+        .status-bar.time-white { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
+        .battery-icon {
+            width: 20px;
+            height: 10px;
+            border-radius: 3px;
+            position: relative;
+            padding: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .battery-icon.border-black { border: 1px solid #000; }
+        .battery-icon.border-white { border: 1px solid #fff; }
+
+        .battery-icon::after {
+            content: '';
+            position: absolute;
+            right: -2px;
+            top: 2px;
+            width: 1px;
+            height: 4px;
+            border-radius: 0 1px 1px 0;
+        }
+
+        .battery-icon.border-black::after { background: #000; }
+        .battery-icon.border-white::after { background: #fff; }
+
+        .battery-fill {
+            height: 100%;
+            border-radius: 1px;
+            transition: width 0.3s ease, background 0.3s ease;
+        }
+
+        .battery-icon.inside {
+            position: relative;
+        }
+
+        .battery-fill.inside {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6px;
+            color: #fff;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .battery-fill.inside::before {
+            content: attr(data-level) '%';
+        }
+
+        .battery-icon.outside {
+            margin-right: 30px;
+        }
+
+        .battery-icon.outside::after {
+            content: attr(data-level) '%';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            font-weight: 500;
+            color: inherit;
+            width: auto;
+            height: auto;
+            background: transparent;
+            border-radius: 0;
+        }
+
+        .battery-icon.border-black.outside::after { color: #000; }
+        .battery-icon.border-white.outside::after { color: #fff; }
+
+        .battery-icon.hidden {
+            display: none;
+        }
+
+        .fullscreen .profile-widget {
+            width: 360px;
+            margin: 15px auto;
+            border-radius: 20px;
+            min-height: 125px;
+        }
+
+        .fullscreen .dock {
+            bottom: 20px;
+            left: 19.5px;
+            right: 19.5px;
+            height: 92px;
+        }
+
+        .fullscreen .dock-container {
+            padding: 0 10px;
+            gap: 2px;
+        }
+
+        .fullscreen .dock-icon {
+            width: 62px;
+            height: 62px;
+            border-radius: 16px; 
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+        }
+
+        .fullscreen .time {
+            font-size: 82px;
+        }
+
+        .fullscreen .date {
+            font-size: 24px;
+        }
+
+        .fullscreen .unlock-hint {
+            font-size: 18px;
+        }
+
+        .fullscreen .status-bar {
+            height: 55px;
+            font-size: 17px;
+        }
+
+        .fullscreen .battery-icon {
+            width: 25px;
+            height: 12px;
+        }
+
+        .fullscreen .battery-icon.outside {
+            margin-right: 35px;
+        }
+
+        .fullscreen .battery-icon.outside::after {
+            right: -35px;
+            font-size: 14px;
+        }
+
+        .fullscreen .home-content {
+            padding-bottom: 105px;
+        }
+
+        .profile-widget {
+            background: #fff;
+            width: 280px;
+            margin: 15px auto;
+            border-radius: 18px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            position: relative;
+            min-height: 125px;
+        }
+
+        .background-upload {
+            height: 130px;
+            background: #f8f8f8;
+            border: 1px dashed #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .background-upload.image-loaded {
+            border: none !important;
+            background: transparent;
+        }
+
+        .background-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 18px 18px 0 0;
+        }
+
+        .bg-upload-hint {
+            color: #999;
+            font-size: 10px;
+            pointer-events: none;
+        }
+
+        .background-upload.image-loaded .bg-upload-hint {
+            display: none;
+        }
+
+        .avatar-upload {
+            width: 70px;
+            height: 70px;
+            border: 2px dashed #ddd;
+            border-radius: 50%;
+            background: #f8f8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: -35px auto 4px;
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .avatar-upload.image-loaded {
+            border: none !important;
+            background: transparent;
+        }
+
+        .avatar-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .avatar-upload-hint {
+            color: #999;
+            font-size: 9px;
+            pointer-events: none;
+        }
+
+        .avatar-upload.image-loaded .avatar-upload-hint {
+            display: none;
+        }
+
+        .profile-info {
+            text-align: center;
+            padding: 0 10px 8px;
+        }
+
+        .username {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0px;
+            outline: none;
+        }
+
+        .username:empty::before {
+            content: '点击编辑用户名';
+            color: #ccc;
+        }
+
+        .usertag {
+            font-size: 9px;
+            color: #666;
+            margin-bottom: 4px;
+            outline: none;
+        }
+
+        .usertag:empty::before {
+            content: '@...';
+            color: #ccc;
+        }
+
+        .bio {
+            font-size: 9px;
+            color: #888;
+            line-height: 1.1;
+            margin-bottom: 2px;
+            outline: none;
+            min-height: 18px;
+        }
+
+        .bio:empty::before {
+            content: '点击编辑个性签名';
+            color: #ccc;
+        }
+
+        .location {
+            font-size: 8px;
+            color: #999;
+            outline: none;
+        }
+
+        .location:empty::before {
+            content: '📍 点击编辑定位';
+            color: #ccc;
+        }
+
+        [contenteditable="true"]:hover {
+            background: rgba(0, 122, 255, 0.05);
+            border-radius: 2px;
+            cursor: text;
+        }
+
+        [contenteditable="true"]:focus {
+            background: rgba(0, 122, 255, 0.08);
+            border-radius: 2px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .ios-notification {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 320px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 14px;
+            padding: 12px 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .ios-notification.show {
+            top: 20px;
+            opacity: 1;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .notification-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .notification-icon.success {
+            background: #34c759;
+            color: white;
+        }
+
+        .notification-icon.error {
+            background: #ff3b30;
+            color: white;
+        }
+
+        .notification-icon.warning {
+            background: #ff9500;
+            color: white;
+        }
+
+        .notification-text {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 2px;
+        }
+
+        .notification-message {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .dock {
+            position: absolute;
+            bottom: 20px;
+            left: 15px;
+            right: 15px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 5;
+        }
+
+        .dock-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 100%;
+            padding: 0 15px;
+            gap: 10px;
+        }
+
+        .dock-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .dock-icon:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .dock-icon:active {
+            transform: scale(0.95);
+        }
+
+        .dock-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .home-content {
+            height: 100%;
+            overflow-y: auto;
+            padding-bottom: 100px;
+        }
+
+        /* --- 美化 App 深度重构样式 --- */
+.beautify-app {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #FDEEF4; /* 主背景粉 */
+    z-index: 100;
+    display: none; 
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 40px;
+}
+
+.beautify-app.active { display: flex; }
+
+/* 头部设计 */
+.beautify-header {
+    position: sticky;
+    top: 0;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 12px 15px; /* 显著缩短高度 */
+    border-bottom: 1px solid #FFD3E0;
+    z-index: 101;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-title {
+    font-size: 16px; /* 稍微缩小字号更显精致 */
+    font-weight: 800;
+    color: #555;
+    letter-spacing: 0.5px;
+}
+
+/* 退出按钮样式 */
+.exit-btn {
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.exit-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* 使用伪元素绘制 < 形状 */
+.exit-icon {
+    width: 12px;
+    height: 12px;
+    border-left: 2.5px solid #888;
+    border-bottom: 2.5px solid #888;
+    transform: rotate(45deg); /* 旋转 45 度形成左箭头 */
+    margin-left: 4px; /* 视觉修正居中 */
+}
+
+/* 移除旧的 back-btn 样式（如果有）以防冲突 */
+.back-btn { display: none; }
+
+/* 修改：优化模块化卡片宽度 */
+.preview-section, .settings-section, .icons-section {
+    margin: 12px 10px; /* 减小左右外边距，增加横向宽度 */
+    background: #FFFFFF;
+    border-radius: 24px;
+    padding: 20px 15px; /* 增加内边距 */
+    box-shadow: 0 8px 20px rgba(197, 202, 213, 0.1);
+    border: 1px solid #EAEAEA;
+}
+
+/* 修改：优化选项按钮组，允许更灵活的排列 */
+.option-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-start; /* 确保按钮从左对齐 */
+}
+
+.option-btn {
+    padding: 10px 12px; /* 稍微压缩一点内边距，防止在极窄屏幕上换行太乱 */
+    background: #F5F5F5;
+    border-radius: 12px;
+    color: #777;
+    font-size: 12px;
+    cursor: pointer;
+    flex: 1 1 auto; /* 核心：让按钮根据内容自适应宽度，但也能填充空隙 */
+    min-width: calc(45% - 8px); /* 保证一行最多放两个，或者根据内容排布 */
+    text-align: center;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+/* 修改：全屏模式下的特殊适配 */
+.fullscreen .preview-section, 
+.fullscreen .settings-section, 
+.fullscreen .icons-section {
+    width: 95%; /* 占用绝大部分宽度 */
+    margin: 15px auto; /* 居中显示 */
+    padding: 18px 18px;
+}
+
+.section-title {
+    font-size: 15px;
+    font-weight: bold;
+    color: #C5CAD5; /* 灰蓝色 */
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-left: 4px solid #FFD3E0;
+    padding-left: 10px;
+}
+
+/* --- 真实比例预览重构 --- */
+.preview-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.preview-item {
+    flex: 0 0 120px; /* 固定宽度，靠比例撑起高度 */
+    text-align: center;
+}
+
+.preview-item span {
+    display: block;
+    font-size: 12px;
+    color: #888;
+    margin-top: 8px;
+}
+
+.preview-box {
+    width: 100%;
+    /* 核心：模拟手机常见的 19.5:9 比例 */
+    aspect-ratio: 9 / 19.5; 
+    background: #F5F5F5;
+    border-radius: 18px; /* 模拟手机圆角 */
+    border: 2px solid #EAEAEA;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* 预览框内的状态栏模拟 */
+.preview-box::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    width: 30%;
+    height: 4px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 10px;
+    z-index: 2;
+}
+
+.preview-box:hover {
+    border-color: #FFD3E0;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(255, 211, 224, 0.4);
+}
+
+/* 已加载图片时的样式 */
+.preview-box.image-loaded {
+    border: 1px solid #FFD3E0;
+}
+
+.preview-hint {
+    font-size: 10px;
+    color: #C5CAD5;
+    z-index: 1;
+    background: rgba(255,255,255,0.8);
+    padding: 4px 8px;
+    border-radius: 20px;
+}
+
+/* 选项设置 */
+.setting-item { margin-bottom: 20px; }
+
+.setting-label {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 10px;
+    padding-left: 5px;
+}
+
+
+.option-btn.active {
+    background: #FFD3E0;
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(255, 211, 224, 0.5);
+}
+
+/* 图标网格 */
+/* 修改：图标网格自适应 */
+.icons-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 依然保持两列 */
+    gap: 12px;
+}
+
+.icon-item {
+    background: #F5F5F5;
+    padding: 12px 8px; /* 减小一点内边距，给按钮腾位子 */
+    border-radius: 18px;
+    text-align: center;
+}
+
+.icon-buttons {
+    display: flex;
+    gap: 5px;
+    flex-direction: row; /* 强制水平排列，如果还是太窄，可改为 column */
+}
+
+.icon-preview {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 10px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.icon-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+.icon-name { font-size: 12px; color: #555; margin-bottom: 10px; }
+
+
+.btn {
+    flex: 1;
+    padding: 6px 0;
+    font-size: 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary { background: #C5CAD5; color: white; }
+
+.btn-secondary { background: #EAEAEA; color: #888; }
+
+/* 精致半透明圆形保存按钮 */
+.cute-floating-save {
+    position: sticky;
+    float: right;
+    bottom: 20px;
+    right: 15px;
+    margin-top: -80px;
+    margin-right: 10px;
+    
+    /* 保持圆形 */
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    
+    z-index: 9999;
+    cursor: pointer;
+    
+    /* iOS 磨砂玻璃效果 */
+    background: rgba(255, 255, 255, 0.5); 
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
+    
+    /* 细边框与柔和阴影 */
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 交互反馈：点击时轻微缩小 */
+.cute-floating-save:active {
+    transform: scale(0.9);
+    background: rgba(240, 240, 240, 0.9);
+}
+
+.cute-btn-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.cute-emoji {
+    font-size: 20px;
+    margin-bottom: 2px;
+}
+
+.cute-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: #333;
+    letter-spacing: 0.5px;
+}
+
+/* 手机框模式下的自适应缩小 */
+.phone-frame:not(.fullscreen) .cute-floating-save {
+    width: 56px;
+    height: 56px;
+    bottom: 10px;
+    right: 5px;
+    margin-top: -70px;
+}
+
+.phone-frame:not(.fullscreen) .cute-emoji {
+    font-size: 16px;
+}
+
+.api-app {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: #FDF6F8; z-index: 1000; display: none; flex-direction: column;
+}
+.api-app.active { display: flex; }
+.api-content { flex: 1; overflow-y: auto; padding-top: 10px; }
+
+.quick-tags { display: flex; gap: 8px; margin-top: 8px; }
+.tag {
+    font-size: 11px; padding: 4px 10px; background: #fff; border: 1px solid #eee;
+    border-radius: 20px; color: #888; cursor: pointer;
+}
+
+.api-input, .api-select {
+    width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee;
+    background: #fff; margin-top: 5px; font-size: 14px;
+}
+
+.fetch-btn {
+    width: 100%; padding: 14px; border-radius: 14px; border: none;
+    background: #ADB5C7; color: white; font-weight: bold; margin-top: 15px;
+    transition: all 0.3s;
+}
+.fetch-btn.loading { background: #e0e0e0; cursor: wait; }
+.fetch-btn.success { background: #FFD3E0; color: #555; }
+
+.save-preset-full-btn {
+    width: 100%; padding: 16px; border-radius: 20px; border: 2px dashed #FFD3E0;
+    background: transparent; color: #FF94B4; font-weight: bold;
+}
+
+/* Modal */
+.modal-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.4);
+    display: none; justify-content: center; align-items: center; z-index: 2000;
+    backdrop-filter: blur(5px);
+}
+.api-modal-card {
+    width: 80%; background: white; border-radius: 24px; padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+.m-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: bold; }
+.m-cancel { background: #f5f5f5; color: #999; }
+.m-confirm { background: #FFD3E0; color: #555; }
+
+.api-range {
+    width: 100%;
+    margin: 10px 0;
+    accent-color: #FFD3E0; /* 保持粉色系 */
+}
+#tempVal {
+    float: right;
+    color: #FF94B4;
+    font-weight: bold;
+}
+
+.pink-text { color: #FF94B4; font-weight: bold; }
+
+.api-info-bar {
+    display: flex; justify-content: space-between;
+    background: #fff; padding: 10px; border-radius: 10px; font-size: 12px; color: #666;
+}
+
+.api-range {
+    width: 100%; height: 6px; background: #eee; border-radius: 5px;
+    outline: none; -webkit-appearance: none; margin: 15px 0;
+}
+.api-range::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 18px; height: 18px;
+    background: #FFD3E0; border: 2px solid #FF94B4; border-radius: 50%; cursor: pointer;
+}
+
+.api-footer-tools {
+    display: flex; gap: 10px; padding: 0 20px 30px;
+}
+.tool-btn {
+    flex: 1; padding: 8px; border: 1px solid #FFD3E0; background: white;
+    border-radius: 10px; color: #FF94B4; font-size: 12px;
+}
+ 
+ .backup-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.backup-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #FFD3E0;
+    border-radius: 12px;
+    color: #FF94B4;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.backup-btn:active { background: #FDF6F8; transform: scale(0.98); }
+
+/* 余额链接 */
+.check-balance-link {
+    float: right; font-size: 11px; color: #FF94B4; 
+    cursor: pointer; text-decoration: underline;
+}
+
+/* 余额气泡 */
+.balance-badge {
+    background: #FFF0F5; color: #FF69B4; padding: 6px 12px;
+    border-radius: 20px; font-size: 12px; margin-top: 8px;
+    display: inline-block; border: 1px solid #FFD3E0;
+}
+
+/* 测试框 */
+.test-box {
+    background: #fff; padding: 15px; border-radius: 14px; border: 1px solid #eee;
+}
+.test-result-text {
+    font-size: 12px; color: #888; line-height: 1.5;
+    min-height: 40px; word-break: break-all;
+}
+
+/* 通用的通知容器定位 */
+.inner-notification, .notification-container {
+    position: absolute;
+    top: 55px; /* 避开手机顶部的刘海/状态栏 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    z-index: 9999;
+    pointer-events: none; /* 防止遮挡点击 */
+}
+
+/* 仿 iOS 系统弹窗样式 */
+.ios-toast {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: iosToastIn 0.5s cubic-bezier(0.2, 1, 0.2, 1);
+    transition: all 0.4s ease;
+}
+
+.toast-icon {
+    width: 28px;
+    height: 28px;
+    background: #FFD3E0; /* 沿用你的粉色系 */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.toast-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.toast-t { font-size: 13px; font-weight: 700; color: #333; }
+.toast-m { font-size: 11px; color: #666; margin-top: 1px; }
+
+/* 消失动画 */
+.ios-toast.hide {
+    opacity: 0;
+    transform: scale(0.8) translateY(-40px);
+}
+
+@keyframes iosToastIn {
+    from { opacity: 0; transform: translateY(-30px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
     </style>
 </head>
 <body>
-
-<!-- 手机外框容器 -->
-<div class="phone-frame">
-
-    <!-- ==================== 锁屏界面 ==================== -->
-    <div class="lock-screen" id="lock-screen">
-        <!-- 状态栏 -->
-        <div class="top-status-bar">
-            <div class="status-time">9:41</div>
-            <div class="status-icons">
-                <i class="fas fa-signal"></i>
-                <i class="fas fa-wifi"></i>
-                <span class="battery-level">82</span>
-                <i class="fas fa-battery-three-quarters battery-icon"></i>
+    <div class="phone-frame" id="phoneFrame">
+        <div class="phone-screen">
+                      <div class="boot-screen" id="bootScreen">
+                <div class="boot-cat">
+                    <img src="https://i.ibb.co/kVk6DWNr/Camera-XHS-17680466994381040g00831p65ag462g2g5pujj3pinsf3rlb9bh8.jpg" alt="布偶猫">
+                </div>
+                <div class="loading-text">正在启动...</div>
+                <div class="loading-bar">
+                    <div class="loading-progress"></div>
+                </div>
             </div>
-        </div>
 
-        <!-- 主内容区域：时间、日期、表情雨 -->
-        <div class="main-content">
-            <div class="date-text" id="current-date">Saturday, July 12</div>
-            <div class="time-text" id="current-time">08:37</div>
-            <div id="emoji-shower"></div>
-        </div>
-
-        <!-- 底部猫咪口号（可点击触发表情雨） -->
-        <div class="bottom-slogan" id="cat-slogan">
-            <span class="cat-paw"><i class="fas fa-paw"></i></span> PurrPhone
-        </div>
-
-        <!-- 底部快捷方式：手电筒和相机 -->
-        <div class="bottom-shortcuts">
-            <div class="shortcut-icon flashlight" id="flashlight-toggle">
-                <span class="heart-icon">♡</span>
+            <div class="lock-screen" id="lockScreen">
+                <div class="lock-time" id="lockTimeDisplay">
+                    <div class="time" id="timeDisplay">09:41</div>
+                    <div class="date" id="dateDisplay">1月10日 星期五</div>
+                </div>
+                <div class="unlock-hint">
+                    向上滑动解锁 ✨
+                </div>
             </div>
-            <div class="shortcut-icon camera"><i class="fas fa-camera"></i></div>
-        </div>
+                        <div class="home-screen" id="homeScreen">
+    <div id="notificationContainer" class="notification-container"></div>
 
-        <!-- 底部导航指示条 -->
-        <div class="bottom-navigation-bar">
-            <div class="home-indicator"></div>
-        </div>
-    </div>
-    
-
-    <!-- ==================== 主屏幕界面 ==================== -->
-    <div class="home-screen hidden" id="home-screen">
-        <!-- 状态栏 -->
-        <div class="top-status-bar home-status-bar" id="home-status-bar">
-            <div class="status-time">9:41</div>
-            <div class="status-icons">
-                <i class="fas fa-signal"></i>
-                <i class="fas fa-wifi"></i>
-                <span class="battery-level">82</span>
-                <i class="fas fa-battery-three-quarters battery-icon"></i>
-            </div>
-        </div>
-        
-        <!-- 主屏幕小组件容器 -->
-        <div class="home-widgets-container">
-            <!-- 左侧小组件组 -->
-            <div class="home-widget-group left-group">
-                <div class="home-widget pill-widget">HAPPY</div>
-                <div class="home-widget pill-widget">放松</div>
-
-                <!-- 图标行组：Chat和相机应用图标 -->
-                <div class="icon-row-group">
-                    <div class="home-widget app-widget wechat-app-widget">
-                        <div class="app-name widget-app-name">Chat</div>
+                <div class="home-content">
+                    <div class="status-bar time-black border-black" id="statusBar">
+                        <span id="currentTime">09:41</span>
+                        <div class="battery-icon border-black" id="batteryIcon">
+                            <div class="battery-fill fill-black" id="batteryFill"></div>
+                        </div>
                     </div>
 
-                    <div class="app-icon camera-app-icon">
-                        <div class="app-name">相机</div>
+                    <div class="profile-widget" id="profileWidget">
+                        <div class="background-upload" id="bgUpload">
+                            <img id="bgImage" class="background-image" style="display:none;">
+                            <span class="bg-upload-hint">点击上传背景图</span>
+                            <input type="file" class="file-input" id="bgInput" accept="image/*">
+                        </div>
+
+                        <div class="avatar-upload" id="avatarUpload">
+                            <img id="avatarImage" class="avatar-image" style="display:none;">
+                            <span class="avatar-upload-hint">头像</span>
+                            <input type="file" class="file-input" id="avatarInput" accept="image/*">
+                        </div>
+
+                        <div class="profile-info">
+                            <h2 class="username" contenteditable="true">用户</h2>
+                            <p class="usertag" contenteditable="true">@标签</p>
+                            <p class="bio" contenteditable="true">个性签名</p>
+                            <p class="location" contenteditable="true">📍 冰岛</p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- 居中小组件：圆形图片和文字 -->
-            <div class="home-widget center-widget">
-                <div class="center-circle"></div> 
-                <div class="center-text">撸了个猫.</div> 
-            </div>
-
-            <!-- 右侧小组件组 -->
-            <div class="home-widget-group right-group">
-                <div class="home-widget pill-widget">冥想</div>
-                <div class="home-widget pill-widget">SMILE</div>
-            </div>
-        </div>
-
-        <!-- 占位空白区域 -->
-        <div style="flex: 1;"></div>
-        
-        <!-- Dock区域 -->
-        <div class="dock-area"></div>
-    </div>
-
-    <!-- ==================== 相机应用界面 ==================== -->
-    <div id="camera-app" class="camera-app hidden">
-        <!-- 顶部设置栏 -->
-        <div class="camera-top-bar">
-            <div class="camera-icon-btn"><i class="fas fa-bolt"></i></div>
-            <div class="camera-icon-btn">HDR</div>
-            <div class="camera-icon-btn"><i class="fas fa-stopwatch"></i></div>
-            <div class="camera-icon-btn"><i class="far fa-circle"></i></div>
-        </div>
-
-        <!-- 取景器区域（含九宫格辅助线） -->
-        <div class="camera-viewfinder">
-            <div class="grid-line"></div>
-            <div class="grid-line"></div>
-            <div class="grid-line vertical"></div>
-            <div class="grid-line vertical"></div>
-        </div>
-
-        <!-- 专业模式控制面板（默认隐藏） -->
-        <div class="pro-controls hidden">
-            <div class="control-slider">
-                <label>ISO</label>
-                <input type="range" min="50" max="3200" value="100" step="50" class="slider" id="iso-slider">
-                <span id="iso-value">100</span>
-            </div>
-            <div class="control-slider">
-                <label>S</label> 
-                <input type="range" min="0" max="10" value="6" step="1" class="slider" id="shutter-slider">
-                <span id="shutter-value">1/60s</span>
-            </div>
-        </div>
-
-        <!-- 底部操作区 -->
-        <div class="camera-bottom-bar">
-            <!-- 模式选择器 -->
-            <div class="mode-selector">
-                <span data-mode="slo-mo">SLO-MO</span>
-                <span data-mode="video">VIDEO</span>
-                <span class="mode-active" data-mode="photo">PHOTO</span>
-                <span data-mode="pro">PRO</span> 
-                <span data-mode="square">SQUARE</span>
-                <span data-mode="pano">PANO</span>
-            </div>
-
-            <!-- 快门控制区域 -->
-            <div class="shutter-controls">
-                <div class="preview-thumbnail"></div>
-                <div class="shutter-button">
-                    <div class="shutter-inner"></div>
-                </div>
-                <div class="camera-toggle-btn"><i class="fas fa-redo"></i></div>
-            </div>
-        </div>
-
-        <!-- 关闭按钮（返回之前屏幕） -->
-        <div id="camera-close-button" class="camera-close-button">
-            <i class="fas fa-chevron-left"></i>
-        </div>
-    </div>
-    
-    <!-- ==================== Chat应用界面 ==================== -->
-    <div id="chat-app" class="chat-app hidden">
-        <!-- 主屏幕：聊天列表/通讯录 -->
-        <div id="chat-main-screen" class="chat-sub-screen">
-            <!-- 头部 -->
-            <div class="chat-header">
-                <div class="header-left">
-                    <i class="fas fa-chevron-left" id="exit-chat"></i>
-                </div>
-                <span id="chat-title">Chat</span>
-                <div class="header-icons">
-                    <i class="fas fa-search" id="search-chat"></i>
-                    <i class="fas fa-plus" id="open-create-role"></i>
-                </div>
-            </div>
-
-            <!-- Tab内容区域 -->
-            <div class="chat-tab-content">
-                <!-- 聊天标签页 -->
-                <div id="tab-chats" class="tab-pane active">
-                    <div id="contacts-list" class="role-list">
-                        <!-- 角色列表将通过JS动态生成 -->
-                    </div>
-                </div>
-                
-                <!-- 通讯录标签页 -->
-                <div id="tab-contacts" class="tab-pane">
-                    <div id="all-contacts-list" class="role-list">
-                        <!-- 所有联系人将通过JS动态生成 -->
-                    </div>
-                </div>
-                
-                <!-- 朋友圈标签页 -->
-                <div id="tab-moments" class="tab-pane">
-                    <div style="padding: 20px; text-align: center;">
-                        <h3 style="color: #333; margin-bottom: 10px;">朋友圈</h3>
-                        <p style="color: #666;">分享生活点滴...</p>
-                    </div>
-                </div>
-                
-                <!-- 个人中心标签页 -->
-                <div id="tab-me" class="tab-pane">
-                    <div style="padding: 20px;">
-                        <div style="text-align: center; margin-bottom: 30px;">
-                            <img src="https://i.ibb.co/SX7Xv1rn/Camera-XHS-17659397384191040g00830p35ncko42i040ktn7kc3nn0tkq4sc8-2.jpg" alt="头像" 
-                                 style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                            <h3 style="margin: 10px 0 5px 0; color: #333;">用户昵称</h3>
-                            <p style="color: #666; font-size: 0.9em;">微信号: user123</p>
+                <div class="dock">
+                    <div class="dock-container">
+                        <div class="dock-icon" data-app="api">
+                            <img src="https://i.ibb.co/TxFXWmvx/Camera-1040g3k031q2oocdh724g40h1q2rj1rmnjgmh8ug.jpg" alt="API设置">
                         </div>
                         
-                        <div style="background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
-                            <div style="display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #f0f0f0; cursor: pointer;">
-                                <i class="fas fa-user" style="margin-right: 10px; color: #07c160;"></i>
-                                <span>个人信息</span>
-                            </div>
-                            <div style="display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #f0f0f0; cursor: pointer;">
-                                <i class="fas fa-cog" style="margin-right: 10px; color: #07c160;"></i>
-                                <span>设置</span>
-                            </div>
-                            <div style="display: flex; align-items: center; padding: 10px; cursor: pointer;">
-                                <i class="fas fa-moon" style="margin-right: 10px; color: #07c160;"></i>
-                                <span>夜间模式</span>
-                            </div>
+                        <div class="dock-icon" data-app="profile">
+                            <img src="https://i.ibb.co/pYnk0qK/Camera-XHS-17662348867821040g008314ti67gfhc8g5o9phh90j8ltr62b2d0.jpg" alt="我的档案">
+                        </div>
+                        
+                        <div class="dock-icon" data-app="worldbook">
+                            <img src="https://i.ibb.co/fGZ0nwyL/Camera-XHS-17662402507381040g008317eb1pg146005p8ilmv0hoqhgvok1dg.jpg" alt="世界书">
+                        </div>
+                        
+                        <div class="dock-icon" data-app="beautify">
+                            <img src="https://i.ibb.co/ks178BgN/Camera-XHS-17656152739381040g2sg31hp4bquojscg5pfbo2sh9653kab52m8-2.jpg" alt="美化">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tab栏 -->
-            <div class="chat-tab-bar">
-                <div class="tab-item active" data-tab="chats">
-                    <i class="fas fa-comment-dots"></i>
-                    <span>聊天</span>
-                </div>
-                <div class="tab-item" data-tab="contacts">
-                    <i class="fas fa-address-book"></i>
-                    <span>通讯录</span>
-                </div>
-                <div class="tab-item" data-tab="moments">
-                    <i class="fas fa-camera"></i>
-                    <span>朋友圈</span>
-                </div>
-                <div class="tab-item" data-tab="me">
-                    <i class="fas fa-user"></i>
-                    <span>我</span>
-                </div>
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="loading-spinner"></div>
             </div>
+            <div class="beautify-app" id="beautifyApp">
+    <div id="beautifyNotification" class="inner-notification"></div>
+    <div class="beautify-header">
+        <button class="exit-btn" onclick="exitWithoutSaving()" title="退出">
+    <span class="exit-icon"></span>
+</button>
+        
+        <span class="header-title">🎨 美化设置</span>
+        
+        <div style="width: 40px;"></div>
+    </div>
+    
+                
+                <div class="preview-section">
+    <div class="section-title">
+        <span>📱</span>
+        <span>屏幕背景预览</span>
+    </div>
+    <div class="preview-container">
+    <div class="preview-item">
+        <div class="preview-box" id="lockPreview" onclick="changeBackground('lock')">
+            <div class="preview-hint">点击设置</div>
+            <div class="lock-preview-content" id="lockPreviewContent" style="display: none;"></div>
         </div>
+        <span style="font-size: 12px; color: #888; margin-top: 8px; display: block;">锁屏界面</span>
+        <button class="btn btn-secondary" style="margin-top: 8px; width: 80%;" onclick="resetBackground('lock', event)">重置</button>
+    </div>
 
-        <!-- 创建角色屏幕 -->
-        <div id="create-role-screen" class="chat-sub-screen hidden">
-            <div class="chat-header">
-                <i class="fas fa-chevron-left" id="close-create-role"></i>
-                <span>创建新角色</span>
-                <span class="save-btn" id="save-role">保存</span>
-            </div>
-            
-            <!-- 创建角色表单 -->
-            <div class="create-form">
-                <div class="avatar-upload">
-                    <img src="https://i.ibb.co/FbH4ZpdJ/Camera-XHS-17659384254451040g008319ftia37627g5o9g4a5gk27vbtrijog-2.jpg" 
-                         id="role-avatar-preview" alt="角色头像">
-                    <input type="file" id="role-avatar-input" accept="image/*" hidden>
-                    <label for="role-avatar-input" class="upload-label">选择头像</label>
-                </div>
-                
-                <div class="input-group">
-                    <label>昵称</label>
-                    <input type="text" id="role-name" placeholder="请输入角色名字" maxlength="20">
-                </div>
-                
-                <div class="input-group">
-                    <label>个性签名</label>
-                    <textarea id="role-bio" placeholder="描述一下这个角色的性格、爱好或特点..." 
-                              maxlength="100"></textarea>
-                    <div style="text-align: right; font-size: 0.8em; color: #999; margin-top: 5px;">
-                        <span id="char-count">0/100</span>
+    <div class="preview-item">
+        <div class="preview-box" id="homePreview" onclick="changeBackground('home')">
+            <div class="preview-hint">点击设置</div>
+        </div>
+        <span style="font-size: 12px; color: #888; margin-top: 8px; display: block;">主屏幕界面</span>
+        <button class="btn btn-secondary" style="margin-top: 8px; width: 80%;" onclick="resetBackground('home', event)">重置</button>
+    </div>
+</div>
+
+                <div class="settings-section">
+                    <div class="setting-item">
+                        <div class="setting-label">锁屏时间日期颜色</div>
+                        <div class="option-group" id="lockTimeStyleOptions">
+                            <div class="option-btn active" data-style="black">默认黑色</div>
+                            <div class="option-btn" data-style="white">白色阴影</div>
+                            <div class="option-btn" data-style="gradient">渐变彩色</div>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">状态栏时间/电量颜色</div>
+                        <div class="option-group" id="statusBarStyleOptions">
+                            <div class="option-btn active" data-style="black">默认黑色</div>
+                            <div class="option-btn" data-style="white">白色</div>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">电量显示样式</div>
+                        <div class="option-group" id="batteryStyleOptions">
+                            <div class="option-btn active" data-style="bar">条形</div>
+                            <div class="option-btn" data-style="inside">电量显示在图标内</div>
+                            <div class="option-btn" data-style="outside">电量显示在图标外</div>
+                            <div class="option-btn" data-style="hidden">隐藏</div>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">显示模式</div>
+                        <div class="option-group" id="displayModeOptions">
+                            <div class="option-btn active" data-mode="frame">手机框</div>
+                            <div class="option-btn" data-mode="fullscreen">全屏</div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="input-group">
-                    <label>角色标签</label>
-                    <input type="text" id="role-tags" placeholder="例如：活泼、幽默、温柔 (用逗号分隔)">
-                </div>
-            </div>
-        </div>
 
-        <!-- 聊天会话屏幕 -->
-        <div id="chat-session-screen" class="chat-sub-screen hidden">
-            <!-- 聊天头部 -->
-            <div class="chat-header">
-                <i class="fas fa-chevron-left" id="back-to-main"></i>
-                <div style="flex: 1; text-align: center;">
-                    <span id="current-chat-name" style="font-weight: 600; display: block; font-size: 1.1em;">昵称</span>
-                    <span style="font-size: 0.75em; color: #666;" id="online-status">在线</span>
+                <div class="icons-section">
+                    <div class="section-title">
+                        <span>📲</span>
+                        <span>应用图标设置</span>
+                    </div>
+                    <div class="icons-grid" id="iconsGrid">
+                    </div>
                 </div>
-                <div style="display: flex; gap: 15px;">
-                    <i class="fas fa-phone-alt"></i>
-                    <i class="fas fa-video"></i>
-                    <i class="fas fa-ellipsis-v"></i>
+
+           <button class="cute-floating-save" onclick="saveBeautifySettings()">
+    <div class="cute-btn-inner">
+        <span class="cute-emoji">✓</span>
+        <span class="cute-text">完成</span>
+    </div>
+</button>
                 </div>
-            </div>
-            
-            <!-- 聊天消息区域 -->
-            <div id="chat-messages" class="chat-messages-area">
-                <div class="message-time">今天</div>
-                <!-- 消息将通过JS动态生成 -->
-            </div>
-            
-            <!-- 消息输入栏 -->
-            <div class="chat-input-bar">
-                <i class="fas fa-plus-circle" id="add-attachment"></i>
-                <input type="text" id="msg-input" placeholder="输入消息...">
-                <i class="fas fa-smile" id="emoji-picker"></i>
-                <button id="send-btn">发送</button>
+
+                <input type="file" id="backgroundInput" accept="image/*" style="display: none;">
+                <input type="file" id="iconInput" accept="image/*" style="display: none;">
             </div>
         </div>
     </div>
     
-    <!-- 表情包选择器弹窗 -->
-    <div id="emoji-modal" class="emoji-modal hidden">
-        <div class="emoji-header">
-            <span>表情包</span>
-            <i class="fas fa-times close-emoji"></i>
+    <div class="api-app" id="apiApp">
+    <div id="apiNotification" class="inner-notification"></div>
+    <div class="beautify-header">
+        <button class="exit-btn" onclick="closeApiApp()">
+            <span class="exit-icon"></span>
+        </button>
+        <span class="header-title">⚙️ API 接口配置</span>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div class="api-content">
+        <div class="settings-section">
+            <div class="section-title"><span>📋</span> 预设方案</div>
+            <div class="preset-controls">
+                <select id="presetDropdown" class="api-select" onchange="switchPreset(this.value)">
+                    </select>
+            </div>
+            <div class="option-group" style="margin-top: 10px; display: flex; gap: 8px;">
+                <button class="option-btn" style="flex:1" onclick="handleRename()">重命名</button>
+                <button class="option-btn" style="flex:1; color: #ff3b30;" onclick="handleDelete()">删除</button>
+            </div>
         </div>
-        <div class="emoji-categories">
-            <span class="emoji-category active" data-category="smileys">😀 表情</span>
-            <span class="emoji-category" data-category="animals">🐱 动物</span>
-            <span class="emoji-category" data-category="food">🍎 食物</span>
-            <span class="emoji-category" data-category="objects">💡 物品</span>
+
+<div class="settings-section">
+    <div class="section-title"><span>🔗</span> 连接设置</div>
+    <div class="setting-item">
+        <div class="setting-label">API 地址</div>
+        <input type="text" id="apiUrl" class="api-input" placeholder="输入接口地址">
+        <div class="quick-tags">
+            <span class="tag" onclick="setQuickUrl('https://api.openai.com/v1')">OpenAI</span>
+            <span class="tag" onclick="setQuickUrl('https://api.anthropic.com/v1')">Claude</span>
         </div>
-        <div class="emoji-grid">
-            <!-- 表情将通过JS动态生成 -->
+    </div>
+    <div class="setting-item">
+        <div class="setting-label">
+            API Key 
+            <span class="check-balance-link" onclick="checkBalance()">查询余额</span>
+        </div>
+        <input type="password" id="apiKey" class="api-input" placeholder="sk-...">
+    </div>
+    
+    <div id="balanceInfo" class="balance-badge" style="display:none;">
+        余额: <span id="balanceAmount">--</span>
+    </div>
+
+    <button class="fetch-btn" id="fetchBtn" onclick="runFetchModels()">
+        <span id="fetchBtnText">拉取模型列表</span>
+    </button>
+</div>
+
+<div class="settings-section">
+    <div class="section-title"><span>⚡</span> 连通性测试</div>
+    <div class="test-box">
+        <div id="testResult" class="test-result-text">等待测试...</div>
+        <button class="option-btn" style="width: 100%; margin-top: 10px;" onclick="testApiConnection()">发送测试消息 (Hello)</button>
+    </div>
+</div>
+
+        <div class="settings-section">
+            <div class="section-title"><span>🤖</span> 模型选择</div>
+            <select id="modelSelect" class="api-select">
+                <option value="">请先拉取模型...</option>
+            </select>
+        </div>
+        
+        <div class="settings-section">
+    <div class="section-title"><span>🛡️</span> 安全与测速</div>
+    <div class="setting-item">
+        <div class="api-info-bar">
+            <span>状态: <b id="connStatus">未连接</b></span>
+            <span>延迟: <b id="pingVal">-- ms</b></span>
+        </div>
+    </div>
+</div>
+
+<div class="settings-section">
+    <div class="section-title"><span>🛠️</span> 进阶参数</div>
+    <div class="setting-item">
+        <div class="setting-label">
+            创造力 (Temperature): <span id="tempVal" class="pink-text">0.7</span>
+        </div>
+        <input type="range" class="api-range" id="tempRange" min="0" max="2" step="0.1" value="0.7" oninput="updateParamDisplay()">
+    </div>
+    <div class="setting-item">
+        <div class="setting-label">上下文轮数 (Max History)</div>
+        <input type="number" id="maxHistory" class="api-input" value="10" placeholder="建议 5-20">
+    </div>
+    <div class="setting-item">
+        <div class="setting-label">系统提示词 (System Prompt)</div>
+        <textarea id="systemPrompt" class="api-input" style="height: 60px; font-size: 12px;" placeholder="设定 AI 的身份，如：你是一个毒舌翻译官..."></textarea>
+    </div>
+</div>
+
+
+<div class="api-footer-tools">
+    <button class="tool-btn" onclick="exportConfig()">备份配置</button>
+    <button class="tool-btn" onclick="importConfig()">导入配置</button>
+</div>
+
+        <div style="padding: 20px;">
+            <button class="save-preset-full-btn" onclick="openSaveModal()">
+                保存当前为新预设
+            </button>
         </div>
     </div>
 
+    <div class="modal-overlay" id="apiModal">
+        <div class="api-modal-card">
+            <h3>新建预设</h3>
+            <p style="font-size: 12px; color: #888; margin-bottom: 12px;">请输入预设的别名</p>
+            <input type="text" id="newPresetNameInput" class="api-input" placeholder="例如：工作助手">
+            <div class="modal-btns">
+                <button class="m-btn m-cancel" onclick="closeSaveModal()">取消</button>
+                <button class="m-btn m-confirm" onclick="saveNewPreset()">确定</button>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- JavaScript文件 -->
-<script src="index.js"></script>
+<div class="modal-overlay" id="renameModal">
+    <div class="api-modal-card">
+        <h3>重命名预设</h3>
+        <p style="font-size: 12px; color: #888; margin-bottom: 12px;">请输入新的名称</p>
+        <input type="text" id="renameInput" class="api-input" placeholder="输入名称...">
+        <div class="modal-btns">
+            <button class="m-btn m-cancel" onclick="closeModal('renameModal')">取消</button>
+            <button class="m-btn m-confirm" onclick="confirmRename()">确定</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="backupModal">
+    <div class="api-modal-card">
+        <h3>备份与恢复</h3>
+        <p style="font-size: 12px; color: #888; margin-bottom: 20px;">备份会将所有预设保存为 JSON 文件</p>
+        <div class="backup-options">
+            <button class="backup-btn" onclick="executeExport()">
+                <span>📤</span> 导出到本地
+            </button>
+            <button class="backup-btn" onclick="triggerImport()">
+                <span>📥</span> 从文件导入
+            </button>
+        </div>
+        <button class="m-btn m-cancel" style="width:100%; margin-top:15px;" onclick="closeModal('backupModal')">关闭</button>
+    </div>
+</div>
+
+<input type="file" id="importFileControl" style="display:none" accept=".json">
+</body>
+<script>
+    let currentBeautifyTarget = null;
+    let currentEditType = '';
+    let isProcessing = false;
+    
+    const defaultBeautifySettings = {
+        lockBg: null,
+        homeBg: null,
+        lockTimeStyle: 'black',
+        statusBarStyle: 'black',
+        batteryStyle: 'bar',
+        displayMode: 'frame',
+        icons: {
+            api: { name: 'API设置', icon: 'https://i.ibb.co/TxFXWmvx/Camera-1040g3k031q2oocdh724g40h1q2rj1rmnjgmh8ug.jpg' },
+            profile: { name: '我的档案', icon: 'https://i.ibb.co/pYnk0qK/Camera-XHS-17662348867821040g008314ti67gfhc8g5o9phh90j8ltr62b2d0.jpg' },
+            worldbook: { name: '世界书', icon: 'https://i.ibb.co/fGZ0nwyL/Camera-XHS-17662402507381040g008317eb1pg146005p8ilmv0hoqhgvok1dg.jpg' },
+            beautify: { name: '美化', icon: 'https://i.ibb.co/ks178BgN/Camera-XHS-17656152739381040g2sg31hp4bquojscg5pfbo2sh9653kab52m8-2.jpg' }
+        }
+    };
+
+    let beautifySettings = JSON.parse(localStorage.getItem('beautifySettings')) || JSON.parse(JSON.stringify(defaultBeautifySettings));
+
+    // 显示/隐藏加载遮罩
+    function showLoading(show = true) {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+            overlay.style.display = show ? 'flex' : 'none';
+            isProcessing = show;
+        }
+    }
+
+    // 开机动画
+    setTimeout(() => {
+        const bootScreen = document.getElementById('bootScreen');
+        const lockScreen = document.getElementById('lockScreen');
+        
+        bootScreen.classList.add('hide');
+        
+        setTimeout(() => {
+            bootScreen.style.display = 'none';
+            lockScreen.classList.add('active');
+            lockScreen.classList.add('fade-in');
+        }, 800);
+    }, 2000);
+
+    // 更新时间
+    function updateTime() {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const timeString = `${hours}:${minutes}`;
+        
+        const months = ['1月', '2月', '3月', '4月', '5月', '6月', 
+                      '7月', '8月', '9月', '10月', '11月', '12月'];
+        const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+        const dateString = `${months[now.getMonth()]}${now.getDate()}日 ${weekdays[now.getDay()]}`;
+        
+        const timeDisplay = document.getElementById('timeDisplay');
+        const dateDisplay = document.getElementById('dateDisplay');
+        const currentTime = document.getElementById('currentTime');
+        const previewTime = document.getElementById('previewTime');
+        const previewDate = document.getElementById('previewDate');
+        
+        if (timeDisplay) timeDisplay.textContent = timeString;
+        if (dateDisplay) dateDisplay.textContent = dateString;
+        if (currentTime) currentTime.textContent = timeString;
+        if (previewTime) previewTime.textContent = timeString;
+        if (previewDate) previewDate.textContent = dateString;
+        
+        // 更新电量显示
+        updateBatteryDisplay();
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // 电池状态
+    async function updateBatteryStatus() {
+        try {
+            if ('getBattery' in navigator) {
+                const battery = await navigator.getBattery();
+                
+                function updateBattery() {
+                    const level = Math.round(battery.level * 100);
+                    const batteryFill = document.getElementById('batteryFill');
+                    const previewBatteryFill = document.querySelector('.preview-battery-fill');
+                    
+                    if (batteryFill) {
+                        batteryFill.style.width = `${level}%`;
+                        
+                        if (battery.charging) {
+                            batteryFill.style.background = '#34c759';
+                        } else if (level < 20) {
+                            batteryFill.style.background = '#ff3b30';
+                        } else {
+                            // 根据当前状态栏样式决定填充颜色
+                            const isWhiteStyle = document.getElementById('statusBar').classList.contains('time-white');
+                            batteryFill.style.background = isWhiteStyle ? '#fff' : '#000';
+                        }
+                    }
+                    
+                    if (previewBatteryFill) {
+                        previewBatteryFill.style.width = `${level}%`;
+                    }
+                    
+                    // 更新电量显示
+                    updateBatteryDisplay();
+                }
+                
+                updateBattery();
+                battery.addEventListener('levelchange', updateBattery);
+                battery.addEventListener('chargingchange', updateBattery);
+                
+            } else {
+                const batteryFill = document.getElementById('batteryFill');
+                if (batteryFill) batteryFill.style.width = '100%';
+            }
+        } catch (error) {
+            console.log('无法获取电池状态:', error);
+            const batteryFill = document.getElementById('batteryFill');
+            if (batteryFill) batteryFill.style.width = '100%';
+        }
+    }
+
+    updateBatteryStatus();
+
+    // 更新电量显示（inside/outside样式）
+    function updateBatteryDisplay() {
+        const batteryIcon = document.getElementById('batteryIcon');
+        const batteryFill = document.getElementById('batteryFill');
+        const batteryLevel = batteryFill ? parseInt(batteryFill.style.width || '100') : 100;
+        
+        if (!batteryIcon || !batteryFill) return;
+        
+        // 移除电量显示类
+        batteryIcon.classList.remove('inside', 'outside');
+        batteryFill.classList.remove('inside');
+        
+        // 根据设置应用
+        if (beautifySettings.batteryStyle === 'inside') {
+            batteryIcon.classList.add('inside');
+            batteryFill.classList.add('inside');
+            batteryFill.setAttribute('data-level', batteryLevel);
+        } else if (beautifySettings.batteryStyle === 'outside') {
+            batteryIcon.classList.add('outside');
+            batteryIcon.setAttribute('data-level', batteryLevel);
+        }
+        
+        // 更新预览
+        updatePreviewBattery();
+    }
+
+    // 更新预览中的电量显示
+    function updatePreviewBattery() {
+        const previewBattery = document.getElementById('previewBattery');
+        const previewBatteryFill = document.querySelector('.preview-battery-fill');
+        if (!previewBattery || !previewBatteryFill) return;
+        
+        const batteryLevel = parseInt(previewBatteryFill.style.width || '80');
+        
+        previewBattery.classList.remove('inside', 'outside');
+        previewBatteryFill.classList.remove('inside');
+        
+        if (beautifySettings.batteryStyle === 'inside') {
+            previewBattery.classList.add('inside');
+            previewBatteryFill.classList.add('inside');
+            previewBatteryFill.setAttribute('data-level', batteryLevel);
+        } else if (beautifySettings.batteryStyle === 'outside') {
+            previewBattery.classList.add('outside');
+            previewBattery.setAttribute('data-level', batteryLevel);
+        }
+    }
+
+    // 通知系统
+   function showIOSNotification(title, message, type = 'info', duration = 3000) {
+    // 1. 智能寻路：判断当前哪个页面可见
+    let targetContainerId = 'notificationContainer'; // 默认主屏幕
+
+    if (document.getElementById('apiApp').classList.contains('active')) {
+        targetContainerId = 'apiNotification';
+    } else if (document.getElementById('beautifyApp').classList.contains('active')) {
+        targetContainerId = 'beautifyNotification';
+    }
+
+    const container = document.getElementById(targetContainerId);
+    if (!container) return;
+
+    // 2. 创建弹窗元素
+    const toast = document.createElement('div');
+    toast.className = `ios-toast ${type}`;
+    
+    const icons = { 'success': '✓', 'error': '✕', 'warning': '!', 'info': 'i' };
+    
+    toast.innerHTML = `
+        <div class="toast-icon">${icons[type] || '✓'}</div>
+        <div class="toast-body">
+            <div class="toast-t">${title}</div>
+            <div class="toast-m">${message}</div>
+        </div>
+    `;
+
+    // 3. 渲染并定时移除
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 500);
+    }, duration);
+}
+
+    // 锁屏滑动解锁
+    let startY = 0;
+    const lockScreen = document.getElementById('lockScreen');
+
+    function handleTouchStart(e) {
+        startY = e.touches ? e.touches[0].clientY : e.clientY;
+    }
+
+    function handleTouchMove(e) {
+        const currentY = e.touches ? e.touches[0].clientY : e.clientY;
+        const diffY = startY - currentY;
+        
+        if (diffY > 100) {
+            const homeScreen = document.getElementById('homeScreen');
+            lockScreen.style.opacity = '0';
+            lockScreen.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                lockScreen.style.display = 'none';
+                homeScreen.style.display = 'block';
+                homeScreen.style.opacity = '1';
+                homeScreen.style.transform = 'scale(1)';
+            }, 300);
+        }
+    }
+
+    lockScreen.addEventListener('touchstart', handleTouchStart);
+    lockScreen.addEventListener('touchmove', handleTouchMove);
+
+    lockScreen.addEventListener('mousedown', handleTouchStart);
+    lockScreen.addEventListener('mousedown', function(e) {
+        startY = e.clientY;
+        const handleMouseUp = (e) => {
+            const diffY = startY - e.clientY;
+            if (diffY > 100) {
+                const homeScreen = document.getElementById('homeScreen');
+                lockScreen.style.opacity = '0';
+                lockScreen.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    lockScreen.style.display = 'none';
+                    homeScreen.style.display = 'block';
+                    homeScreen.style.opacity = '1';
+                    homeScreen.style.transform = 'scale(1)';
+                }, 300);
+            }
+            document.removeEventListener('mouseup', handleMouseUp);
+        };
+        document.addEventListener('mouseup', handleMouseUp);
+    });
+
+    // 美化app功能
+    function openBeautifyApp() {
+        if (isProcessing) return;
+        const beautifyApp = document.getElementById('beautifyApp');
+        if (beautifyApp) {
+            beautifyApp.classList.add('active');
+            // 新增：根据当前显示模式调整适配
+            adjustBeautifyAppLayout();
+            initBeautifyPreview();
+            generateBeautifyIconsGrid();
+        }
+    }
+
+    function closeBeautifyApp() {
+        const beautifyApp = document.getElementById('beautifyApp');
+        if (beautifyApp) {
+            beautifyApp.classList.remove('active');
+            beautifyApp.classList.remove('frame-mode');
+            // 确保设置被应用
+            applyBeautifySettings();
+        }
+    }
+
+    // 新增：调整美化App布局
+    function adjustBeautifyAppLayout() {
+        const beautifyApp = document.getElementById('beautifyApp');
+        const phoneFrame = document.getElementById('phoneFrame');
+        
+        if (!beautifyApp || !phoneFrame) return;
+        
+        if (beautifySettings.displayMode === 'frame') {
+            beautifyApp.classList.add('frame-mode');
+        } else {
+            beautifyApp.classList.remove('frame-mode');
+        }
+    }
+
+    function initBeautifyPreview() {
+        const lockPreview = document.getElementById('lockPreview');
+        const lockPreviewContent = document.getElementById('lockPreviewContent');
+        
+        if (beautifySettings.lockBg) {
+            lockPreview.style.backgroundImage = `url(${beautifySettings.lockBg})`;
+            lockPreview.classList.add('image-loaded');
+            lockPreview.querySelector('.preview-hint').style.display = 'none';
+            lockPreviewContent.style.display = 'flex';
+        } else {
+            lockPreview.style.backgroundImage = '';
+            lockPreview.classList.remove('image-loaded');
+            lockPreview.querySelector('.preview-hint').style.display = 'block';
+            lockPreviewContent.style.display = 'none';
+        }
+
+        const homePreview = document.getElementById('homePreview');
+        if (beautifySettings.homeBg) {
+            homePreview.style.backgroundImage = `url(${beautifySettings.homeBg})`;
+            homePreview.classList.add('image-loaded');
+            homePreview.querySelector('.preview-hint').style.display = 'none';
+        } else {
+            homePreview.style.backgroundImage = '';
+            homePreview.classList.remove('image-loaded');
+            homePreview.querySelector('.preview-hint').style.display = 'block';
+        }
+
+        // 设置选项状态
+        const setActiveOption = (selector, value) => {
+            document.querySelectorAll(selector).forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.style === value || btn.dataset.mode === value) {
+                    btn.classList.add('active');
+                }
+            });
+        };
+
+        setActiveOption('#lockTimeStyleOptions .option-btn', beautifySettings.lockTimeStyle);
+        setActiveOption('#statusBarStyleOptions .option-btn', beautifySettings.statusBarStyle);
+        setActiveOption('#batteryStyleOptions .option-btn', beautifySettings.batteryStyle);
+        setActiveOption('#displayModeOptions .option-btn', beautifySettings.displayMode);
+
+        updateBeautifyPreviewStyles();
+        updatePreviewBattery();
+    }
+
+    function generateBeautifyIconsGrid() {
+        const grid = document.getElementById('iconsGrid');
+        if (!grid) return;
+        
+        grid.innerHTML = '';
+        
+        Object.entries(beautifySettings.icons).forEach(([key, app]) => {
+            const iconItem = document.createElement('div');
+            iconItem.className = 'icon-item';
+            
+            iconItem.innerHTML = `
+                <div class="icon-preview" id="icon-${key}">
+                    <img src="${app.icon}" alt="${app.name}">
+                </div>
+                <div class="icon-name">${app.name}</div>
+                <div class="icon-buttons">
+                    <button class="btn btn-primary" onclick="changeAppIcon('${key}')">更换</button>
+                    <button class="btn btn-secondary" onclick="resetAppIcon('${key}')">重置</button>
+                </div>
+            `;
+            grid.appendChild(iconItem);
+        });
+    }
+
+    function changeBackground(type) {
+        if (isProcessing) return;
+        currentEditType = 'background';
+        currentBeautifyTarget = type;
+        document.getElementById('backgroundInput').click();
+    }
+
+    function changeAppIcon(appKey) {
+        if (isProcessing) return;
+        currentEditType = 'icon';
+        currentBeautifyTarget = appKey;
+        document.getElementById('iconInput').click();
+    }
+
+    function resetAppIcon(appKey) {
+        if (isProcessing) return;
+        beautifySettings.icons[appKey].icon = defaultBeautifySettings.icons[appKey].icon;
+        generateBeautifyIconsGrid();
+        showIOSNotification('已重置', `${beautifySettings.icons[appKey].name}图标已恢复默认`, 'success');
+    }
+
+    // 文件处理
+    document.getElementById('backgroundInput').addEventListener('change', function(e) {
+        if (isProcessing) return;
+        const file = e.target.files[0];
+        if (!file) return;
+
+        showLoading(true);
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const img = new Image();
+                img.onload = function() {
+                    const imageUrl = e.target.result;
+                    
+                    if (currentEditType === 'background' && currentBeautifyTarget === 'lock') {
+                        beautifySettings.lockBg = imageUrl;
+                        const lockPreview = document.getElementById('lockPreview');
+                        lockPreview.style.backgroundImage = `url(${imageUrl})`;
+                        lockPreview.classList.add('image-loaded');
+                        lockPreview.querySelector('.preview-hint').style.display = 'none';
+                        document.getElementById('lockPreviewContent').style.display = 'flex';
+                        showIOSNotification('上传成功', '锁屏背景已更新', 'success');
+                    } else if (currentEditType === 'background' && currentBeautifyTarget === 'home') {
+                        beautifySettings.homeBg = imageUrl;
+                        const homePreview = document.getElementById('homePreview');
+                        homePreview.style.backgroundImage = `url(${imageUrl})`;
+                        homePreview.classList.add('image-loaded');
+                        homePreview.querySelector('.preview-hint').style.display = 'none';
+                        showIOSNotification('上传成功', '主屏幕背景已更新', 'success');
+                    }
+                    
+                    showLoading(false);
+                };
+                img.onerror = function() {
+                    showLoading(false);
+                    showIOSNotification('上传失败', '图片格式错误', 'error');
+                };
+                img.src = e.target.result;
+            } catch (error) {
+                showLoading(false);
+                showIOSNotification('上传失败', '处理图片时出错', 'error');
+            }
+        };
+        
+        reader.onerror = function() {
+            showLoading(false);
+            showIOSNotification('上传失败', '无法读取文件', 'error');
+        };
+        
+        reader.readAsDataURL(file);
+    });
+
+    document.getElementById('iconInput').addEventListener('change', function(e) {
+        if (isProcessing) return;
+        const file = e.target.files[0];
+        if (!file) return;
+
+        showLoading(true);
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const img = new Image();
+                img.onload = function() {
+                    if (currentEditType === 'icon' && currentBeautifyTarget) {
+                        const imageUrl = e.target.result;
+                        beautifySettings.icons[currentBeautifyTarget].icon = imageUrl;
+                        generateBeautifyIconsGrid();
+                        showIOSNotification('上传成功', '应用图标已更新', 'success');
+                    }
+                    showLoading(false);
+                };
+                img.onerror = function() {
+                    showLoading(false);
+                    showIOSNotification('上传失败', '图标格式错误', 'error');
+                };
+              img.src = e.target.result;
+            } catch (error) {
+                showLoading(false);
+                showIOSNotification('上传失败', '处理图标时出错', 'error');
+            }
+        };
+        
+        reader.onerror = function() {
+            showLoading(false);
+            showIOSNotification('上传失败', '无法读取文件', 'error');
+        };
+        
+        reader.readAsDataURL(file);
+    });
+
+    // 事件监听
+    document.getElementById('lockTimeStyleOptions').addEventListener('click', function(e) {
+        if (e.target.classList.contains('option-btn')) {
+            this.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            beautifySettings.lockTimeStyle = e.target.dataset.style;
+            updateBeautifyPreviewStyles();
+            applyLockTimeStyle();
+        }
+    });
+
+    document.getElementById('statusBarStyleOptions').addEventListener('click', function(e) {
+        if (e.target.classList.contains('option-btn')) {
+            this.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            beautifySettings.statusBarStyle = e.target.dataset.style;
+            applyStatusBarStyle();
+            updateBatteryStatus();
+        }
+    });
+
+    document.getElementById('batteryStyleOptions').addEventListener('click', function(e) {
+        if (e.target.classList.contains('option-btn')) {
+            this.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            beautifySettings.batteryStyle = e.target.dataset.style;
+            updateBeautifyPreviewStyles();
+            applyBatteryStyle();
+            updateBatteryDisplay();
+        }
+    });
+
+    document.getElementById('displayModeOptions').addEventListener('click', function(e) {
+        if (e.target.classList.contains('option-btn')) {
+            this.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            beautifySettings.displayMode = e.target.dataset.mode;
+            updateDisplayMode();
+            // 新增：立即调整美化App布局
+            adjustBeautifyAppLayout();
+        }
+    });
+
+    function updateBeautifyPreviewStyles() {
+        const previewTime = document.getElementById('previewTime');
+        const previewDate = document.getElementById('previewDate');
+        const previewBattery = document.getElementById('previewBattery');
+        
+        if (!previewTime || !previewDate || !previewBattery) return;
+
+        previewTime.className = 'preview-time';
+        previewDate.className = 'preview-date';
+        previewBattery.className = 'preview-battery';
+
+        switch (beautifySettings.lockTimeStyle) {
+            case 'white':
+                previewTime.classList.add('time-style-white');
+                previewDate.classList.add('time-style-white');
+                break;
+            case 'gradient':
+                previewTime.classList.add('time-style-gradient');
+                previewDate.classList.add('time-style-gradient');
+                break;
+            default:
+                previewTime.classList.add('time-style-default');
+                previewDate.classList.add('time-style-default');
+        }
+
+        previewBattery.classList.add(beautifySettings.batteryStyle);
+    }
+
+    function applyLockTimeStyle() {
+        const lockTime = document.getElementById('lockTimeDisplay');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const dateDisplay = document.getElementById('dateDisplay');
+        
+        if (!lockTime || !timeDisplay || !dateDisplay) return;
+
+        lockTime.className = 'lock-time';
+        timeDisplay.className = 'time';
+        dateDisplay.className = 'date';
+        timeDisplay.style.cssText = '';
+        dateDisplay.style.cssText = '';
+
+        switch (beautifySettings.lockTimeStyle) {
+            case 'white':
+                timeDisplay.style.color = '#fff';
+                dateDisplay.style.color = '#fff';
+                timeDisplay.style.textShadow = '0 0 15px rgba(0,0,0,0.7)';
+                dateDisplay.style.textShadow = '0 0 15px rgba(0,0,0,0.7)';
+                break;
+            case 'gradient':
+                timeDisplay.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
+                timeDisplay.style.webkitBackgroundClip = 'text';
+                timeDisplay.style.webkitTextFillColor = 'transparent';
+                dateDisplay.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
+                dateDisplay.style.webkitBackgroundClip = 'text';
+                dateDisplay.style.webkitTextFillColor = 'transparent';
+                break;
+            default:
+                timeDisplay.style.color = '#333';
+                dateDisplay.style.color = '#666';
+        }
+    }
+
+    function applyStatusBarStyle() {
+        const statusBar = document.getElementById('statusBar');
+        const batteryIcon = document.getElementById('batteryIcon');
+        
+        if (!statusBar || !batteryIcon) return;
+
+        statusBar.className = 'status-bar';
+        batteryIcon.className = 'battery-icon';
+
+        if (beautifySettings.statusBarStyle === 'white') {
+            statusBar.classList.add('time-white');
+            batteryIcon.classList.add('border-white');
+        } else {
+            statusBar.classList.add('time-black');
+            batteryIcon.classList.add('border-black');
+        }
+        
+        applyBatteryStyle();
+    }
+
+    function applyBatteryStyle() {
+        const batteryIcon = document.getElementById('batteryIcon');
+        const batteryFill = document.getElementById('batteryFill');
+        if (!batteryIcon || !batteryFill) return;
+        
+        // 保留边框颜色
+        const hasWhiteBorder = batteryIcon.classList.contains('border-white');
+        
+        // 重置样式类
+        batteryIcon.className = 'battery-icon ' + (hasWhiteBorder ? 'border-white' : 'border-black');
+        batteryFill.className = 'battery-fill';
+        
+        // 应用显示模式
+        if (beautifySettings.batteryStyle === 'inside') {
+            batteryIcon.classList.add('inside');
+            batteryFill.classList.add('inside');
+        } else if (beautifySettings.batteryStyle === 'outside') {
+            batteryIcon.classList.add('outside');
+        } else if (beautifySettings.batteryStyle === 'hidden') {
+            batteryIcon.classList.add('hidden');
+        }
+        
+        updateBatteryDisplay();
+    }
+
+    function updateDisplayMode() {
+        const phoneFrame = document.getElementById('phoneFrame');
+        if (!phoneFrame) return;
+
+        if (beautifySettings.displayMode === 'fullscreen') {
+            phoneFrame.classList.add('fullscreen');
+        } else {
+            phoneFrame.classList.remove('fullscreen');
+        }
+    }
+
+    // 保存设置
+    function saveBeautifySettings() {
+        if (isProcessing) return;
+        
+        showLoading(true);
+        
+        try {
+            // 保存到localStorage
+            localStorage.setItem('beautifySettings', JSON.stringify(beautifySettings));
+            
+            // 立即应用到主界面
+            applyBeautifySettings();
+            
+            showLoading(false);
+            showIOSNotification('保存成功', '所有美化设置已应用并保存', 'success');
+            
+            setTimeout(() => {
+                closeBeautifyApp();
+            }, 1500);
+            
+        } catch (error) {
+            showLoading(false);
+            showIOSNotification('保存失败', '设置保存时出错', 'error');
+            console.error('保存设置失败:', error);
+        }
+    }
+
+    // 应用所有设置
+    function applyBeautifySettings() {
+        try {
+            applyLockTimeStyle();
+            applyStatusBarStyle();
+            applyBatteryStyle();
+            updateDisplayMode();
+            
+            // 应用背景图到锁屏和主屏幕
+            const lockScreen = document.getElementById('lockScreen');
+            const homeScreen = document.getElementById('homeScreen');
+            
+            if (lockScreen) {
+                lockScreen.style.backgroundImage = beautifySettings.lockBg ? `url(${beautifySettings.lockBg})` : '';
+            }
+            
+            if (homeScreen) {
+                homeScreen.style.backgroundImage = beautifySettings.homeBg ? `url(${beautifySettings.homeBg})` : '';
+            }
+            
+            // 应用图标到Dock
+            Object.entries(beautifySettings.icons).forEach(([key, app]) => {
+                const dockIcon = document.querySelector(`[data-app="${key}"] img`);
+                if (dockIcon) {
+                    dockIcon.src = app.icon;
+                }
+            });
+        } catch (error) {
+            console.error('应用设置失败:', error);
+        }
+    }
+
+    // Dock图标点击
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.dock-icon').forEach(icon => {
+        icon.addEventListener('click', function() {
+            if (isProcessing) return;
+            
+            const appName = this.getAttribute('data-app');
+            
+            // 1. 如果是美化 App
+            if (appName === 'beautify') {
+                openBeautifyApp();
+            } 
+            // 2. 如果是 API 设置 App (新加的判断)
+            else if (appName === 'api') {
+                // 这里调用我们之前写好的打开函数
+                if (typeof openApiApp === 'function') {
+                    openApiApp();
+                } else {
+                    // 保底方案：如果函数名不一致，确保它能运行
+                    document.getElementById('apiApp').classList.add('active');
+                    if (typeof initApiApp === 'function') initApiApp();
+                }
+            } 
+            // 3. 其他还在开发中的 App
+            else {
+                const appNames = {
+                    'profile': '我的档案',
+                    'worldbook': '世界书'
+                };
+                
+                showIOSNotification('应用启动', `${appNames[appName]}功能开发中...`, 'warning', 2000);
+                
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            }
+        });
+    });
+});
+
+    // 页面加载时恢复所有设置
+    window.addEventListener('load', () => {
+        try {
+            // 加载美化设置
+            if (localStorage.getItem('beautifySettings')) {
+                const saved = JSON.parse(localStorage.getItem('beautifySettings'));
+                // 合并默认设置和保存的设置
+                beautifySettings = {
+                    ...defaultBeautifySettings,
+                    ...saved,
+                    icons: { ...defaultBeautifySettings.icons, ...saved.icons }
+                };
+            } else {
+                beautifySettings = JSON.parse(JSON.stringify(defaultBeautifySettings));
+            }
+            
+            // 立即应用所有设置
+            applyBeautifySettings();
+            
+            // 恢复个人资料
+            const savedUsername = localStorage.getItem('username');
+            if (savedUsername) document.querySelector('.username').textContent = savedUsername;
+            
+            const savedUsertag = localStorage.getItem('usertag');
+            if (savedUsertag) document.querySelector('.usertag').textContent = savedUsertag;
+            
+            const savedBio = localStorage.getItem('bio');
+            if (savedBio) document.querySelector('.bio').textContent = savedBio;
+            
+            const savedLocation = localStorage.getItem('location');
+            if (savedLocation) document.querySelector('.location').textContent = savedLocation;
+            
+            // 恢复背景图
+            const savedBg = localStorage.getItem('profileBg');
+            if (savedBg) {
+                const bgImage = document.getElementById('bgImage');
+                bgImage.src = savedBg;
+                bgImage.style.display = 'block';
+                document.getElementById('bgUpload').classList.add('image-loaded');
+            }
+            
+            // 恢复头像
+            const savedAvatar = localStorage.getItem('profileAvatar');
+            if (savedAvatar) {
+                const avatarImage = document.getElementById('avatarImage');
+                avatarImage.src = savedAvatar;
+                avatarImage.style.display = 'block';
+                document.getElementById('avatarUpload').classList.add('image-loaded');
+            }
+            
+            // 确保电量显示正确
+            setTimeout(() => {
+                updateBatteryDisplay();
+            }, 100);
+            
+        } catch (error) {
+            console.error('加载设置失败:', error);
+            beautifySettings = JSON.parse(JSON.stringify(defaultBeautifySettings));
+        }
+    });
+
+    // 保存编辑的文本
+    document.querySelectorAll('[contenteditable="true"]').forEach(element => {
+        element.addEventListener('blur', function() {
+            localStorage.setItem(this.className, this.textContent);
+        });
+    });
+
+    // 背景图上传
+    document.getElementById('bgUpload').addEventListener('click', () => {
+        document.getElementById('bgInput').click();
+    });
+
+    document.getElementById('bgInput').addEventListener('change', async function(e) {
+        if (isProcessing) return;
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        if (!file.type.startsWith('image/')) {
+            showIOSNotification('上传失败', '请选择图片文件！', 'error');
+            return;
+        }
+        
+        try {
+            showLoading(true);
+            
+            const compressedDataUrl = await compressImage(file, 1000, 750, 0.8);
+            
+            const sizeInMB = (compressedDataUrl.length * 0.000001).toFixed(2);
+            if (compressedDataUrl.length > 4.5 * 1024 * 1024) {
+                showLoading(false);
+                showIOSNotification('图片过大', `压缩后仍达${sizeInMB}MB，请选择更小的图片`, 'error');
+                return;
+            }
+            
+            localStorage.setItem('profileBg', compressedDataUrl);
+            
+            const bgImage = document.getElementById('bgImage');
+            bgImage.src = compressedDataUrl;
+            bgImage.style.display = 'block';
+            
+            document.getElementById('bgUpload').classList.add('image-loaded');
+            
+            showLoading(false);
+            showIOSNotification('上传成功', `背景图已保存 (${sizeInMB}MB)`, 'success');
+            
+        } catch (error) {
+            showLoading(false);
+            console.error('背景图上传失败:', error);
+            showIOSNotification('上传失败', '请重试或选择其他图片', 'error');
+        }
+    });
+
+    // 头像上传
+    document.getElementById('avatarUpload').addEventListener('click', () => {
+        document.getElementById('avatarInput').click();
+    });
+
+    document.getElementById('avatarInput').addEventListener('change', async function(e) {
+        if (isProcessing) return;
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        if (!file.type.startsWith('image/')) {
+            showIOSNotification('上传失败', '请选择图片文件！', 'error');
+            return;
+        }
+        
+        try {
+            showLoading(true);
+            
+            const compressedDataUrl = await compressImage(file, 300, 300, 0.9);
+            
+            const sizeInMB = (compressedDataUrl.length * 0.000001).toFixed(2);
+            if (compressedDataUrl.length > 4.5 * 1024 * 1024) {
+                showLoading(false);
+                showIOSNotification('图片过大', `压缩后仍达${sizeInMB}MB，请选择更小的图片`, 'error');
+                return;
+            }
+            
+            localStorage.setItem('profileAvatar', compressedDataUrl);
+            
+            const avatarImage = document.getElementById('avatarImage');
+            avatarImage.src = compressedDataUrl;
+            avatarImage.style.display = 'block';
+            
+            document.getElementById('avatarUpload').classList.add('image-loaded');
+            
+            showLoading(false);
+            showIOSNotification('上传成功', `头像已保存 (${sizeInMB}MB)`, 'success');
+            
+        } catch (error) {
+            showLoading(false);
+            console.error('头像上传失败:', error);
+            showIOSNotification('上传失败', '请重试或选择其他图片', 'error');
+        }
+    });
+
+    // 图片压缩函数
+    function compressImage(file, maxWidth, maxHeight, quality) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height *= maxWidth / width;
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width *= maxHeight / height;
+                            height = maxHeight;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.onerror = reject;
+                img.src = e.target.result;
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+    /* ----------  手机框模式滚动修复  ---------- */
+function fixFrameModeScroll() {
+  const beautifyApp = document.getElementById('beautifyApp');
+  if (!beautifyApp) return;
+
+  let startY = 0;
+  let startX = 0;
+  let isDragging = false;
+
+  // 统一处理函数
+  function handleStart(e) {
+    const touch = e.touches ? e.touches[0] : e;
+    startY = touch.clientY;
+    startX = touch.clientX;
+    isDragging = true;
+  }
+
+  function handleMove(e) {
+    if (!isDragging) return;
+    const touch = e.touches ? e.touches[0] : e;
+    const deltaY = startY - touch.clientY;
+    const deltaX = startX - touch.clientX;
+
+    // 纵向滚动 > 横向滚动 才滚动
+    if (Math.abs(deltaY) > Math.abs(deltaX)) {
+      beautifyApp.scrollTop += deltaY; // 同步滚动
+    }
+    startY = touch.clientY;
+    startX = touch.clientX;
+  }
+
+  function handleEnd() {
+    isDragging = false;
+  }
+
+  // 绑定事件
+  beautifyApp.addEventListener('touchstart', handleStart, { passive: true });
+  beautifyApp.addEventListener('touchmove', handleMove, { passive: true });
+  beautifyApp.addEventListener('touchend', handleEnd);
+
+  beautifyApp.addEventListener('mousedown', handleStart);
+  beautifyApp.addEventListener('mousemove', handleMove);
+  beautifyApp.addEventListener('mouseup', handleEnd);
+  beautifyApp.addEventListener('mouseleave', handleEnd);
+}
+
+/* 打开美化App时调用 */
+/* --- 优化后的逻辑：修复了滚动冲突并整合了功能 --- */
+
+function openBeautifyApp() {
+    if (isProcessing) return; // 如果正在处理（如开关机），则不执行
+    
+    const beautifyApp = document.getElementById('beautifyApp');
+    if (!beautifyApp) return;
+
+    // 1. 显示界面
+    beautifyApp.classList.add('active');
+    
+    // 2. 核心：处理布局适配
+    adjustBeautifyAppLayout();
+    
+    // 3. 核心：如果是手机框模式，启动手动滚动修复
+    if (beautifySettings.displayMode === 'frame') {
+        console.log("检测到框架模式，已激活滚动修复");
+        fixFrameModeScroll(); 
+    }
+    
+    // 4. 初始化预览和图标列表
+    initBeautifyPreview();
+    generateBeautifyIconsGrid();
+}
+
+/**
+ * 手动滚动修复逻辑
+ * 解决了在 transform: scale 缩放状态下，原生滚动条可能失效的问题
+ */
+/* 修复手机框模式滚动失效的核心逻辑 */
+function fixFrameModeScroll() {
+  const beautifyApp = document.getElementById('beautifyApp');
+  if (!beautifyApp) return;
+
+  let startY = 0;
+  let isDragging = false;
+
+  // 当鼠标或手指按下时
+  function handleStart(e) {
+    const touch = e.touches ? e.touches[0] : e;
+    startY = touch.clientY;
+    isDragging = true;
+  }
+
+  // 当鼠标或手指移动时
+  function handleMove(e) {
+    if (!isDragging) return;
+    
+    // 如果不是手机框模式，就不干预，让浏览器原生滚动起作用
+    if (beautifySettings.displayMode !== 'frame') return;
+
+    const touch = e.touches ? e.touches[0] : e;
+    const deltaY = startY - touch.clientY; // 计算滑动距离
+    
+    // 强制美化 App 容器滚动。注意：这里除以 0.85 是为了补偿你的缩放比例
+    beautifyApp.scrollTop += (deltaY / 0.85); 
+    
+    startY = touch.clientY;
+    // 阻止浏览器默认行为，防止整个网页跟着晃动
+    if (e.cancelable) e.preventDefault(); 
+  }
+
+  function handleEnd() {
+    isDragging = false;
+  }
+
+  // 重新绑定所有事件
+  beautifyApp.addEventListener('touchstart', handleStart, { passive: false });
+  beautifyApp.addEventListener('touchmove', handleMove, { passive: false });
+  beautifyApp.addEventListener('touchend', handleEnd);
+  beautifyApp.addEventListener('mousedown', handleStart);
+  window.addEventListener('mousemove', handleMove); // 在窗口移动保证顺畅
+  window.addEventListener('mouseup', handleEnd);
+}
+
+/* 确保在打开 App 的时候启动修复 */
+function openBeautifyApp() {
+  if (isProcessing) return;
+  const beautifyApp = document.getElementById('beautifyApp');
+  if (!beautifyApp) return;
+
+  beautifyApp.classList.add('active');
+  adjustBeautifyAppLayout();
+  initBeautifyPreview();
+  generateBeautifyIconsGrid();
+  
+  // 关键：每次打开都调用一次修复函数
+  fixFrameModeScroll(); 
+}
+// 重置背景功能
+function resetBackground(type, event) {
+    // 阻止事件冒泡，防止触发预览框的点击上传事件
+    if (event) event.stopPropagation();
+    
+    if (isProcessing) return;
+
+    if (type === 'lock') {
+        beautifySettings.lockBg = null;
+        showIOSNotification('已重置', '锁屏背景已恢复默认', 'success');
+    } else if (type === 'home') {
+        beautifySettings.homeBg = null;
+        showIOSNotification('已重置', '主屏幕背景已恢复默认', 'success');
+    }
+    
+    // 重新初始化预览界面以显示白色背景和提示文字
+    initBeautifyPreview();
+}
+// 退出功能：直接关闭预览，不保存到 localStorage
+function exitWithoutSaving() {
+    const beautifyApp = document.getElementById('beautifyApp');
+    if (beautifyApp) {
+        beautifyApp.classList.remove('active');
+        
+        // 可选：提示用户修改未保存
+        showIOSNotification('已退出', '修改未保存', 'warning', 1500);
+        
+        // 关键：重新从 localStorage 加载旧设置，撤销刚才在界面上的临时预览改动
+        const savedSettings = localStorage.getItem('beautifySettings');
+        if (savedSettings) {
+            beautifySettings = JSON.parse(savedSettings);
+            applyBeautifySettings(); // 恢复到上次保存的状态
+        } else {
+            // 如果从未保存过，恢复默认
+            beautifySettings = JSON.parse(JSON.stringify(defaultBeautifySettings));
+            applyBeautifySettings();
+        }
+    }
+}
+// 退出功能：撤销临时修改并回退状态
+function exitWithoutSaving() {
+    const beautifyApp = document.getElementById('beautifyApp');
+    if (!beautifyApp) return;
+
+    // 1. 获取上次保存的快照
+    const savedDataRaw = localStorage.getItem('beautifySettings');
+    const savedData = savedDataRaw ? JSON.parse(savedDataRaw) : defaultBeautifySettings;
+
+    // 2. 比较当前设置与保存的设置是否有差异
+    // 使用 JSON 字符串化进行快速深度比较
+    const isModified = JSON.stringify(beautifySettings) !== JSON.stringify(savedData);
+
+    // 3. 执行退出动画
+    beautifyApp.classList.remove('active');
+
+    // 4. 只有在有修改时，才提示并重置数据
+    if (isModified) {
+        showIOSNotification('已退出', '修改未保存', 'warning', 1500);
+        
+        // 撤销内存中的临时改动，恢复到上次保存的状态
+        beautifySettings = JSON.parse(JSON.stringify(savedData));
+        applyBeautifySettings(); // 将视觉效果刷回旧状态
+    }
+
+    // 5. 核心需求：回弹到第一行（重置滚动条）
+    // 延迟一小会儿执行，确保在关闭动画过程中平滑重置
+    setTimeout(() => {
+        beautifyApp.scrollTop = 0;
+    }, 300);
+}
+
+// 初始化数据
+let apiData = JSON.parse(localStorage.getItem('my_api_config')) || {
+    presets: {
+        "默认配置": { url: "https://api.openai.com/v1", key: "", model: "" }
+    },
+    current: "默认配置"
+};
+
+// 页面加载后执行初始化
+function initApiApp() {
+    renderPresetDropdown();
+    switchPreset(apiData.current);
+}
+
+// 渲染下拉菜单
+function renderPresetDropdown() {
+    const select = document.getElementById('presetDropdown');
+    select.innerHTML = Object.keys(apiData.presets).map(name => 
+        `<option value="${name}" ${name === apiData.current ? 'selected' : ''}>${name}</option>`
+    ).join('');
+}
+
+// 切换预设
+function switchPreset(name) {
+    apiData.current = name;
+    const config = apiData.presets[name];
+    document.getElementById('apiUrl').value = config.url || "";
+    document.getElementById('apiKey').value = config.key || "";
+    
+    const modelSelect = document.getElementById('modelSelect');
+    if(config.model) {
+        modelSelect.innerHTML = `<option value="${config.model}">${config.model}</option>`;
+    } else {
+        modelSelect.innerHTML = `<option value="">请先拉取模型...</option>`;
+    }
+}
+
+// 【第三步：完善后的真实请求函数】
+async function runFetchModels() {
+    // 1. 获取用户输入
+    const urlInput = document.getElementById('apiUrl').value.trim();
+    const key = document.getElementById('apiKey').value.trim();
+    const btn = document.getElementById('fetchBtn');
+    const btnText = document.getElementById('fetchBtnText');
+    const modelSelect = document.getElementById('modelSelect');
+
+    // 2. 基础校验
+    if (!urlInput || !key) {
+        showIOSNotification('提示', '请填写地址和密钥', 'warning');
+        return;
+    }
+
+    // 格式化 URL (确保不以斜杠结尾，并添加 /models)
+    const baseUrl = urlInput.replace(/\/+$/, "");
+    const fetchUrl = `${baseUrl}/models`;
+
+    // 3. UI 状态切换为“加载中”
+    btn.classList.add('loading');
+    btn.disabled = true; // 防止重复点击
+    btnText.innerText = "正在连接服务器...";
+    modelSelect.innerHTML = '<option value="">正在拉取模型列表...</option>';
+
+    try {
+        // 4. 发起真实的 HTTP 请求
+        const response = await fetch(fetchUrl, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${key}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // 5. 检查响应状态
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error?.message || `服务器返回错误: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // 6. 解析模型数据 (兼容 OpenAI 格式)
+        if (data.data && Array.isArray(data.data)) {
+            // 过滤并排序模型名称
+            const models = data.data
+                .map(m => m.id)
+                .sort();
+
+            if (models.length === 0) throw new Error("该 API 未提供可用模型");
+
+            // 将真实模型填充到下拉框
+            modelSelect.innerHTML = models.map(m => `<option value="${m}">${m}</option>`).join('');
+            
+            // 成功反馈
+            showIOSNotification('连接成功', `已识别 ${models.length} 个模型`, 'success');
+            btnText.innerText = "拉取成功 ✓";
+            btn.classList.add('success');
+            
+            // 自动更新当前预设的模型数据
+            if (apiData.presets[apiData.current]) {
+                apiData.presets[apiData.current].model = models[0];
+                saveToLocal();
+            }
+        } else {
+            throw new Error("返回的数据格式不正确");
+        }
+
+    } catch (error) {
+        // 7. 错误处理与通知
+        console.error("API 连接失败:", error);
+        showIOSNotification('连接失败', error.message, 'error');
+        btnText.innerText = "重试拉取模型";
+        modelSelect.innerHTML = '<option value="">请重新尝试拉取</option>';
+    } finally {
+        // 8. 恢复按钮状态
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        setTimeout(() => btn.classList.remove('success'), 2000);
+    }
+}
+
+// 保存弹窗控制
+function openSaveModal() { document.getElementById('apiModal').style.display = 'flex'; }
+function closeSaveModal() { document.getElementById('apiModal').style.display = 'none'; }
+
+// 确认保存新预设
+function saveNewPreset() {
+    const name = document.getElementById('newPresetNameInput').value.trim();
+    if(!name) return;
+
+    apiData.presets[name] = {
+        url: document.getElementById('apiUrl').value,
+        key: document.getElementById('apiKey').value,
+        model: document.getElementById('modelSelect').value
+    };
+    apiData.current = name;
+    
+    saveToLocal();
+    renderPresetDropdown();
+    closeSaveModal();
+    showIOSNotification('保存成功', `已添加预设：${name}`, 'success');
+}
+
+// 删除预设
+function handleDelete() {
+    if(Object.keys(apiData.presets).length <= 1) {
+        showIOSNotification('无法删除', '至少保留一个配置', 'warning');
+        return;
+    }
+    delete apiData.presets[apiData.current];
+    apiData.current = Object.keys(apiData.presets)[0];
+    saveToLocal();
+    renderPresetDropdown();
+    switchPreset(apiData.current);
+}
+
+// 数据持久化
+function saveToLocal() {
+    localStorage.setItem('my_api_config', JSON.stringify(apiData));
+}
+
+// 快速设置地址
+function setQuickUrl(url) {
+    document.getElementById('apiUrl').value = url;
+}
+
+// 绑定 App 入口
+document.querySelector('[data-app="api"]').onclick = () => {
+    document.getElementById('apiApp').classList.add('active');
+    initApiApp();
+};
+
+function closeApiApp() {
+    document.getElementById('apiApp').classList.remove('active');
+}
+
+function updateTemp(val) {
+    document.getElementById('tempVal').innerText = val;
+    // 将此值同步保存到 apiData.presets[current].temperature
+}
+
+// 更新显示数值
+function updateParamDisplay() {
+    document.getElementById('tempVal').innerText = document.getElementById('tempRange').value;
+}
+
+// 完善后的真实请求函数（带测速）
+async function runFetchModels() {
+    const urlInput = document.getElementById('apiUrl').value.trim();
+    const key = document.getElementById('apiKey').value.trim();
+    const btn = document.getElementById('fetchBtn');
+    
+    if (!urlInput || !key) {
+        showIOSNotification('提示', '请完整填写接口信息', 'warning');
+        return;
+    }
+
+    const baseUrl = urlInput.replace(/\/+$/, "");
+    btn.classList.add('loading');
+    btn.disabled = true;
+    
+    const startTime = Date.now(); // 开始计时
+
+    try {
+        const response = await fetch(`${baseUrl}/models`, {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${key}` }
+        });
+
+        const duration = Date.now() - startTime; // 计算延迟
+
+        if (!response.ok) throw new Error(`状态码: ${response.status}`);
+
+        const data = await response.json();
+        const models = data.data.map(m => m.id).sort();
+
+         // 更新 UI
+        document.getElementById('modelSelect').innerHTML = models.map(m => `<option value="${m}">${m}</option>`).join('');
+        document.getElementById('pingVal').innerText = `${duration} ms`;
+        document.getElementById('pingVal').style.color = duration < 500 ? "#34c759" : "#ff9500";
+        document.getElementById('connStatus').innerText = "已连接";
+        document.getElementById('connStatus').style.color = "#34c759";
+
+        showIOSNotification('成功', `已拉取 ${models.length} 个模型`, 'success');
+    } catch (error) {
+        document.getElementById('connStatus').innerText = "连接失败";
+        document.getElementById('connStatus').style.color = "#ff3b30";
+        showIOSNotification('连接失败', error.message, 'error');
+    } finally {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+    }
+}
+
+// 备份配置 (导出 JSON 文件)
+function exportConfig() {
+    const dataStr = JSON.stringify(apiData, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `API_Config_${new Date().toLocaleDateString()}.json`;
+    a.click();
+}
+
+// 导入配置
+function importConfig() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = event => {
+            try {
+                const imported = JSON.parse(event.target.result);
+                apiData = imported;
+                saveToLocal();
+                renderPresetDropdown();
+                showIOSNotification('导入成功', '预设已更新', 'success');
+            } catch(e) { showIOSNotification('导入失败', '文件格式错误', 'error'); }
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+}
+
+// --- 弹窗通用控制 ---
+function openModal(id) {
+    document.getElementById(id).style.display = 'flex';
+}
+
+function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+}
+
+// --- 重命名逻辑 ---
+function handleRename() {
+    document.getElementById('renameInput').value = apiData.current;
+    openModal('renameModal');
+}
+
+function confirmRename() {
+    const newName = document.getElementById('renameInput').value.trim();
+    const oldName = apiData.current;
+    
+    if (!newName || newName === oldName) {
+        closeModal('renameModal');
+        return;
+    }
+    
+    if (apiData.presets[newName]) {
+        showIOSNotification('提示', '名称已存在', 'warning');
+        return;
+    }
+
+    // 执行重命名数据迁移
+    apiData.presets[newName] = apiData.presets[oldName];
+    delete apiData.presets[oldName];
+    apiData.current = newName;
+    
+    saveToLocal();
+    renderPresetDropdown();
+    closeModal('renameModal');
+    showIOSNotification('成功', '名称已更新', 'success');
+}
+
+// --- 查询余额 ---
+async function checkBalance() {
+    const url = document.getElementById('apiUrl').value.trim().replace(/\/+$/, "");
+    const key = document.getElementById('apiKey').value.trim();
+    const balanceInfo = document.getElementById('balanceInfo');
+    const balanceAmount = document.getElementById('balanceAmount');
+
+    if (!key) return showIOSNotification('提示', '请先填写 API Key', 'warning');
+
+    balanceInfo.style.display = 'inline-block';
+    balanceAmount.innerText = "查询中...";
+
+    try {
+        // 大多数中转接口支持这个余额查询路径
+        const response = await fetch(`${url}/dashboard/billing/subscription`, {
+            headers: { 'Authorization': `Bearer ${key}` }
+        });
+        const data = await response.json();
+        
+        if (data.hard_limit_usd) {
+            balanceAmount.innerText = `$${data.hard_limit_usd.toFixed(2)}`;
+        } else if (data.total_usage) {
+            balanceAmount.innerText = `已用 $${(data.total_usage / 100).toFixed(2)}`;
+        } else {
+            balanceAmount.innerText = "已连接/额度充足";
+        }
+    } catch (err) {
+        balanceAmount.innerText = "查询失败/不支持";
+    }
+}
+
+// --- 测试连接 (模拟发送消息) ---
+async function testApiConnection() {
+    const url = document.getElementById('apiUrl').value.trim().replace(/\/+$/, "");
+    const key = document.getElementById('apiKey').value.trim();
+    const model = document.getElementById('modelSelect').value;
+    const testResult = document.getElementById('testResult');
+
+    if (!model) return showIOSNotification('提示', '请先拉取并选择一个模型', 'warning');
+
+    testResult.innerText = "🚀 正在发送测试请求...";
+    testResult.style.color = "#888";
+
+    try {
+        const response = await fetch(`${url}/chat/completions`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${key}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: model,
+                messages: [{ role: "user", content: "Say 'Hello! Connection successful.'" }],
+                max_tokens: 20
+            })
+        });
+
+        const data = await response.json();
+        if (data.choices && data.choices[0]) {
+            testResult.innerText = "✅ 回复: " + data.choices[0].message.content;
+            testResult.style.color = "#34c759";
+            showIOSNotification('测试成功', 'API 能够正常对话', 'success');
+        } else {
+            throw new Error(data.error?.message || "回复格式异常");
+        }
+    } catch (err) {
+        testResult.innerText = "❌ 错误: " + err.message;
+        testResult.style.color = "#ff3b30";
+        showIOSNotification('测试失败', '请检查配置或网络', 'error');
+    }
+}
+</script>
 </body>
 </html>
