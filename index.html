@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         :root {
-            /* 1. 更新背景图片变量 */
             --ios-bg-image: url('https://i.ibb.co/d065phQ8/IMG-20260327-232500.jpg');
-            
-            /* 2. 确保字体颜色变量为黑色 */
             --ios-black: #000000;
             --island-w: 125.5px;
             --island-h: 36.67px;
@@ -26,14 +23,13 @@
         }
 
         body { 
-            /* 3. body 设置背景图，防止解锁闪烁 */
             background-image: var(--ios-bg-image);
             background-size: cover;
             background-position: center;
             height: 100vh; width: 100vw; overflow: hidden; 
         }
 
-        /* --- 16 Pro 状态栏 --- */
+        /* --- 状态栏 --- */
         .status-bar {
             position: fixed; top: 0; left: 0; width: 100%; height: 54px; z-index: 2000;
             display: flex; align-items: center; padding: 0 var(--side-padding);
@@ -50,29 +46,10 @@
         .bat-level { width: 88%; height: 100%; background-color: var(--ios-black); border-radius: 1px; }
         .bat-tip { width: 1.5px; height: 4.2px; background-color: rgba(0,0,0,0.6); border-radius: 0 1.5px 1.5px 0; margin-left: 1px; }
 
-        /* --- 灵动岛 --- */
-        .dynamic-island {
-            position: absolute; left: 50%; top: 11px; transform: translateX(-50%) scale(0);
-            width: var(--island-w); height: var(--island-h); background-color: #000; /* 灵动岛主体保持纯黑 */
-            border-radius: 22px; opacity: 0; visibility: hidden; z-index: 2001;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1); overflow: hidden;
-        }
-        .dynamic-island.face-id { opacity: 1; visibility: visible; transform: translateX(-50%) scale(1.1); width: 185px; height: 40px; }
-        .dynamic-island.torch-mode { opacity: 1; visibility: visible; transform: translateX(-50%) scale(1); width: 135px; height: 40px; justify-content: space-between; padding: 0 15px; }
-        .face-id-content, .island-torch-ui { display: none; }
-        .face-id .face-id-content { display: flex; align-items: center; gap: 8px; color: white; font-size: 14.5px; }
-        .torch-mode .island-torch-ui { display: flex; align-items: center; width: 100%; justify-content: space-between; }
-        .b-slider { width: 60px; height: 4px; background: #333; border-radius: 10px; position: relative; }
-        .b-fill { position: absolute; left: 0; top: 0; height: 100%; width: var(--torch-brightness); background: #FFF; border-radius: 10px; }
-
-        /* --- 锁屏界面 --- */
+        /* --- 锁屏 --- */
         .lock-screen {
             position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; z-index: 1500;
-            /* 4. 锁屏设置背景图 */
-            background-image: var(--ios-bg-image);
-            background-size: cover;
-            background-position: center;
+            background-image: var(--ios-bg-image); background-size: cover; background-position: center;
             will-change: transform, opacity;
         }
         .lock-time { margin-top: 105px; font-size: 88px; font-weight: 200; letter-spacing: -2px; color: var(--ios-black); }
@@ -81,128 +58,96 @@
             position: absolute; bottom: 28px; font-size: 17px; font-weight: 500; color: rgba(0, 0, 0, 0.5);
             letter-spacing: -0.4px; animation: swipeHintAnim 3s ease-in-out infinite; pointer-events: none;
         }
-        @keyframes swipeHintAnim { 0%, 100% { transform: translateY(0); opacity: 0.4; } 50% { transform: translateY(-8px); opacity: 0.9; } }
-        .quick-actions {
-            position: absolute; bottom: 54px; width: 100%; padding: 0 46px; display: flex; justify-content: space-between; z-index: 1600;
+
+        /* --- 桌面主界面 --- */
+        .home-screen {
+            position: absolute; inset: 0; z-index: 1000;
+            background-image: var(--ios-bg-image); background-size: cover; background-position: center;
+            display: flex; flex-direction: column; align-items: center;
+            padding-top: 80px; 
         }
-        .action-btn {
-            width: 50px; height: 50px; background: rgba(0, 0, 0, 0.08); /* 稍微深一点的黑色蒙版 */
-            backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;
+
+        /* 第一个组件：微调上移了一点 */
+        .top-widgets {
+            display: flex; gap: 20px; width: 78%; height: 135px; 
+            margin-top: 25px; /* 从 40px 减小到 25px，实现上移一点点 */
         }
-        .action-btn.on { background: rgba(0, 0, 0, 0.9); }
-        .action-btn.on svg { fill: #FFF; }
-        .action-btn svg { width: 23px; height: 23px; fill: var(--ios-black); }
+        .widget-img-large {
+            flex: 1; height: 100%; border-radius: 22px; 
+            background-color: rgba(255, 255, 255, 0.5);
+            background-size: cover; background-position: center; 
+            cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+        }
+        .widget-right-stack { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        
+        .music-pill { height: 32px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .music-pill svg { fill: var(--pink-theme); width: 14px; height: 14px; }
+        .spectrum { display: flex; gap: 2px; align-items: center; }
+        .spectrum span { width: 2.5px; background: var(--pink-theme); border-radius: 2px; height: 8px; }
+
+        .battery-pill {
+            height: 38px; background: rgba(255, 234, 240, 0.9); border-radius: 19px;
+            display: flex; align-items: center; justify-content: space-evenly; padding: 0 6px;
+        }
+        .battery-pill span { color: var(--pink-theme); font-weight: 700; font-size: 12px; }
+        .battery-pill svg { fill: var(--pink-theme); width: 14px; height: 14px; }
+
+        .storage-pill {
+            height: 38px; background: rgba(255,255,255,0.9); border-radius: 19px;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 10px;
+        }
+        .storage-pill span { color: var(--pink-theme); font-size: 11px; font-weight: 600; }
+        .storage-pill svg { fill: var(--pink-theme); width: 14px; height: 14px; }
+
+        .iscreen-label {
+            font-size: 11px; color: #000; font-weight: 600; text-align: center; 
+            margin-top: 8px; letter-spacing: 0.5px; opacity: 0.7;
+        }
+
+        /* 第二个组件：维持原位不动 */
+        .mid-widgets {
+            position: relative; width: 70%; height: 120px; 
+            display: flex; justify-content: center; align-items: center; 
+            margin-top: 65px; 
+        }
+        .widget-circle {
+            width: 92px; height: 92px; border-radius: 50%; 
+            background-color: rgba(255, 255, 255, 0.5);
+            background-size: cover; background-position: center; 
+            cursor: pointer; z-index: 2; box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+        .small-pill {
+            position: absolute; background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(15px);
+            padding: 12px 12px; border-radius: 12px; font-size: 10px; font-weight: 700; color: #000;
+            display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            white-space: nowrap;
+        }
+        .small-pill.tl { left: -5px; top: -5px; }
+        .small-pill.bl { left: -5px; bottom: -5px; }
+        .small-pill.tr { right: -5px; top: -5px; }
+        .small-pill.br { right: -5px; bottom: -5px; }
+        
+        .deco-dots { color: #333; font-size: 9px; letter-spacing: 3px; margin-top: 6px; font-weight: bold; }
+
+        /* Dock 栏 */
+        .dock {
+            position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);
+            width: 92%; height: 94px; border-radius: 38px;
+            background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(35px);
+            display: flex; justify-content: space-around; align-items: center; padding: 0 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .dock-app {
+            width: 62px; height: 62px; border-radius: 15px; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; 
+            background: rgba(255, 255, 255, 0.6);
+        }
+        .dock-app img { width: 100%; height: 100%; object-fit: cover; }
 
         .home-bar {
             position: fixed; bottom: 9px; left: 50%; transform: translateX(-50%);
             width: 134px; height: 5px; background-color: var(--ios-black);
             border-radius: 100px; z-index: 3000;
-        }
-
-        /* --- 桌面主界面 --- */
-        .home-screen {
-            position: absolute; inset: 0; z-index: 1000;
-            /* 5. 桌面设置背景图 */
-            background-image: var(--ios-bg-image);
-            background-size: cover;
-            background-position: center;
-            display: flex; flex-direction: column; align-items: center;
-            padding-top: 70px;
-        }
-
-        .top-widgets {
-            display: flex; gap: 14px; width: 88%; height: 160px; margin-top: 15px;
-        }
-        .widget-img-large {
-            flex: 1.1; height: 100%; border-radius: 28px; 
-            background-color: rgba(255, 255, 255, 0.5); /* 占位色设为半透白 */
-            background-size: cover; background-position: center; 
-            cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-        }
-        .widget-right-stack {
-            flex: 1; display: flex; flex-direction: column; justify-content: space-between;
-        }
-        
-        .music-pill { height: 38px; display: flex; align-items: center; justify-content: center; gap: 14px; }
-        .music-pill svg { fill: var(--pink-theme); width: 18px; height: 18px; }
-        .spectrum { display: flex; gap: 3px; align-items: center; }
-        .spectrum span { width: 3.5px; background: var(--pink-theme); border-radius: 2px; opacity: 0.5;}
-        .spectrum span:nth-child(1) { height: 10px; }
-        .spectrum span:nth-child(2) { height: 18px; opacity: 1; }
-        .spectrum span:nth-child(3) { height: 14px; opacity: 0.7;}
-        .spectrum span:nth-child(4) { height: 20px; opacity: 0.9;}
-        .spectrum span:nth-child(5) { height: 12px; }
-
-        .battery-pill {
-            height: 48px; background: rgba(255, 234, 240, 0.9); /* 加深底色提升对比 */
-            border-radius: 24px;
-            display: flex; align-items: center; justify-content: space-evenly; padding: 0 10px;
-            backdrop-filter: blur(5px);
-        }
-        .battery-pill span { color: var(--pink-theme); font-weight: 700; font-size: 14px; }
-        .battery-pill svg { fill: var(--pink-theme); width: 18px; height: 18px; opacity: 0.8;}
-
-        .storage-pill {
-            height: 48px; background: rgba(255,255,255,0.9); border-radius: 24px;
-            display: flex; align-items: center; justify-content: space-between; padding: 0 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-            backdrop-filter: blur(5px);
-        }
-        .storage-pill span { color: var(--pink-theme); font-size: 13px; font-weight: 600; }
-        .storage-pill svg { fill: var(--pink-theme); width: 18px; height: 18px; opacity: 0.85; }
-
-        .iscreen-label {
-            font-size: 13px; color: #333; font-weight: 600; text-align: center; /* 6. 加深 iScreen 标签颜色 */
-            margin-top: 15px; letter-spacing: 0.5px;
-        }
-
-        .mid-widgets {
-            position: relative; width: 88%; height: 150px; 
-            display: flex; justify-content: center; align-items: center; margin-top: 35px;
-        }
-        .widget-circle {
-            width: 105px; height: 105px; border-radius: 50%; 
-            background-color: rgba(255, 255, 255, 0.5); /* 占位色设为半透白 */
-            background-size: cover; background-position: center; 
-            cursor: pointer; z-index: 2; box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-        }
-        .small-pill {
-            position: absolute; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(15px); /* 增加背景不透明度 */
-            padding: 8px 12px; border-radius: 18px; font-size: 11.5px; font-weight: 600; color: #000; /* 7. 小标签字体设为纯黑 */
-            display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            white-space: nowrap;
-        }
-        .small-pill.tl { left: -5px; top: 15px; }
-        .small-pill.bl { left: -5px; bottom: 15px; }
-        .small-pill.tr { right: -5px; top: 15px; }
-        .small-pill.br { right: -5px; bottom: 15px; }
-        
-        .deco-dots { color: #555; font-size: 12px; letter-spacing: 3px; margin-top: 10px; font-weight: bold; } /* 8. 加深装饰点颜色 */
-
-        .search-btn {
-            position: absolute; bottom: 135px; left: 50%; transform: translateX(-50%);
-            background: rgba(255,255,255,0.7); backdrop-filter: blur(15px); /* 调整背景 */
-            padding: 8px 18px; border-radius: 20px; font-size: 15px; font-weight: 600; color: #111; /* 9. 搜索按钮字体设为接近黑色 */
-            display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-        }
-
-        /* --- Dock 栏定制 --- */
-        .dock {
-            position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);
-            width: 92%; height: 98px; border-radius: 40px;
-            background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(35px); /* 10. 调整 Dock 栏背景 */
-            display: flex; justify-content: space-around; align-items: center; padding: 0 10px;
-            border: 1px solid rgba(255, 255, 255, 0.2); /* 增加描边提升精致感 */
-        }
-        .dock-app {
-            width: 65px; height: 65px; border-radius: 16px; overflow: hidden;
-            display: flex; align-items: center; justify-content: center; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            background: rgba(255, 255, 255, 0.6); /* 图标底色设为半透白 */
-        }
-        .dock-app img {
-            width: 100%; height: 100%; object-fit: cover;
         }
 
     </style>
@@ -211,17 +156,6 @@
 
     <div class="status-bar">
         <div class="status-left"><span id="carrier">中国移动</span><span id="mini-time">9:41</span></div>
-        <div class="dynamic-island" id="island">
-            <div class="face-id-content">
-                <svg style="width:18px;height:18px;fill:#34C759" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
-                <span>Face ID</span>
-            </div>
-            <div class="island-torch-ui">
-                <svg style="width:16px;height:16px;fill:#FAD44D" viewBox="0 0 24 24"><path d="M12,22A3,3 0 0,1 9,19V11.65L7.2,9.35C6.44,8.37 6,7.18 6,6V4A2,2 0 0,1 8,2H16A2,2 0 0,1 18,4V6C18,7.18 17.56,8.37 16.8,9.35L15,11.65V19A3,3 0 0,1 12,22M12,20A1,1 0 0,0 13,19V18H11V19A1,1 0 0,0 12,20M11,16H13V12H11V16M8,4V6H16V4H8Z" /></svg>
-                <div class="b-slider" onclick="adjustBrightness(event)"><div class="b-fill"></div></div>
-                <div style="font-size:10px; color:#666; font-weight:bold;">WIDE</div>
-            </div>
-        </div>
         <div class="status-icons">
             <div style="display:flex; align-items:flex-end; gap:1.6px; height:11px;"><div class="sig-bar" style="height:4.2px"></div><div class="sig-bar" style="height:6.5px"></div><div class="sig-bar" style="height:8.8px"></div><div class="sig-bar" style="height:11px"></div></div>
             <svg class="wifi-svg" viewBox="0 0 24 24"><path d="M12,21L15.6,17.2C14.6,16.45 13.35,16 12,16C10.65,16 9.4,16.45 8.4,17.2L12,21M12,4C7.95,4 4.21,5.34 1.2,7.6L3,9.9C5.5,8.12 8.63,7 12,7C15.37,7 18.5,8.12 21,9.9L22.8,7.6C19.79,5.34 16.05,4 12,4M12,10C9.3,10 6.81,10.89 4.8,12.4L6.6,14.7C8.1,13.64 9.97,13 12,13C14.03,13 15.9,13.64 17.4,14.7L19.2,12.4C17.19,10.89 14.7,10 12,10Z" /></svg>
@@ -233,15 +167,11 @@
         <div class="lock-time" id="big-time">09:41</div>
         <div class="lock-date" id="big-date">3月22日 星期日</div>
         <div class="swipe-hint">向上轻扫以解锁</div>
-        <div class="quick-actions">
-            <div class="action-btn" id="torchBtn" onclick="toggleTorch(event)"><svg viewBox="0 0 24 24"><path d="M12,22A3,3 0 0,1 9,19V11.65L7.2,9.35C6.44,8.37 6,7.18 6,6V4A2,2 0 0,1 8,2H16A2,2 0 0,1 18,4V6C18,7.18 17.56,8.37 16.8,9.35L15,11.65V19A3,3 0 0,1 12,22M12,20A1,1 0 0,0 13,19V18H11V19A1,1 0 0,0 12,20M11,16H13V12H11V16M8,4V6H16V4H8Z" /></svg></div>
-            <div class="action-btn" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24"><path d="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z" /></svg></div>
-        </div>
     </div>
 
     <div class="home-screen" id="homeScreen">
         <div class="top-widgets">
-            <div class="widget-img-large upload-trigger" id="topImgTarget"></div>
+            <div class="widget-img-large upload-trigger"></div>
             <div class="widget-right-stack">
                 <div class="music-pill">
                     <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9v7c0 1.1.9 2 2 2h4v-8H5v-1c0-3.87 3.13-7 7-7s7 3.13 7 7v1h-4v8h4c1.1 0 2-.9 2-2v-7c0-4.97-4.03-9-9-9z"/></svg>
@@ -251,9 +181,7 @@
                 <div class="battery-pill">
                     <svg viewBox="0 0 24 24" style="transform: rotate(90deg);"><path d="M15 4h-1c0-1.1-.9-2-2-2s-2 .9-2 2H9c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-1 16H10V9h4v11z"/></svg>
                     <span>90%</span>
-                    <svg viewBox="0 0 24 24"><path d="M12 21L15.6 17.2C14.6 16.45 13.35 16 12 16C10.65 16 9.4 16.45 8.4 17.2L12 21M12 4C7.95 4 4.21 5.34 1.2 7.6L3 9.9C5.5 8.12 8.63 7 12 7C15.37 7 18.5 8.12 21 9.9L22.8 7.6C19.79 5.34 16.05 4 12 4M12 10C9.3 10 6.81 10.89 4.8 12.4L6.6 14.7C8.1 13.64 9.97 13 12 13C14.03 13 15.9 13.64 17.4 14.7L19.2 12.4C17.19 10.89 14.7 10 12 10Z"/></svg>
-                    <svg viewBox="0 0 24 24"><path d="M17.71 7.71L12 2h-1v7.59L6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 11 14.41V22h1l5.71-5.71-4.3-4.29 4.3-4.29zM13 5.83l1.88 1.88L13 9.59V5.83zm1.88 10.46L13 18.17v-3.76l1.88 1.88z"/></svg>
-                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 21L15.6 17.2C14.6 16.45 13.35 16 12 16C10.65 16 9.4 16.45 8.4 17.2L12 21M12 4C7.95 4 4.21 5.34 1.2 7.6L3 9.9C5.5 8.12 8.63 7 12 7C15.37 7 18.5 8.12 21 9.9L22.8 7.6C19.79,5.34 16.05 4 12 4M12 10C9.3 10 6.81 10.89 4.8 12.4L6.6 14.7C8.1 13.64 9.97 13 12 13C14.03 13 15.9 13.64 17.4 14.7L19.2 12.4C17.19 10.89 14.7 10 12 10Z"/></svg>
                 </div>
                 <div class="storage-pill">
                     <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
@@ -262,36 +190,23 @@
                 </div>
             </div>
         </div>
-        <div class="iscreen-label">iScreen</div>
+        <div class="iscreen-label"> </div>
 
         <div class="mid-widgets">
-            <div class="small-pill tl">🎀 "Helloooo" ⁺ ‧ ₊</div>
-            <div class="small-pill bl">🍧 ⁺ ‧ Blingblin...</div>
-            <div class="widget-circle upload-trigger" id="midImgTarget"></div>
-            <div class="small-pill tr">🧸 ⁺ ‧ weekday</div>
-            <div class="small-pill br">🥤 ⁺ ‧ daily lif...</div>
+            <div class="small-pill tl">🎀 ᵕ̈Helloooo⚝</div>
+            <div class="small-pill bl">🍧 ⁺✧Blingbling</div>
+            <div class="widget-circle upload-trigger"></div>
+            <div class="small-pill tr">🧸 °*weekday</div>
+            <div class="small-pill br">🥤 و✧daily life</div>
         </div>
-        <div class="deco-dots">· . · · ° ⋈ ° · · . ·</div>
-        <div class="iscreen-label">iScreen</div>
-
-        <div class="search-btn">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="#111"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-            搜索
-        </div>
+        <div class="deco-dots"> </div>
+        <div class="iscreen-label"> </div>
 
         <div class="dock">
-            <div class="dock-app">
-                <img src="https://i.ibb.co/0Ry46m3v/magicut-1774623729382.png" alt="Phone">
-            </div>
-            <div class="dock-app">
-                <img src="https://i.ibb.co/twQV6HzS/magicut-1774623791306.png" alt="Chat">
-            </div>
-            <div class="dock-app">
-                <img src="https://i.ibb.co/CKmm2vPD/magicut-1774623807097.png" alt="Camera">
-            </div>
-            <div class="dock-app">
-                <img src="https://i.ibb.co/395yKWXH/magicut-1774623847474.png" alt="Settings">
-            </div>
+            <div class="dock-app"><img src="https://i.ibb.co/0Ry46m3v/magicut-1774623729382.png"></div>
+            <div class="dock-app"><img src="https://i.ibb.co/twQV6HzS/magicut-1774623791306.png"></div>
+            <div class="dock-app"><img src="https://i.ibb.co/CKmm2vPD/magicut-1774623807097.png"></div>
+            <div class="dock-app"><img src="https://i.ibb.co/395yKWXH/magicut-1774623847474.png"></div>
         </div>
 
     </div> 
@@ -299,98 +214,56 @@
     <input type="file" id="imageUploader" accept="image/*" style="display: none;">
 
     <script>
-        let startY = 0;
-        let isDragging = false;
-        let isUnlocked = false;
-        let torchOn = false;
-
+        let startY = 0; let isDragging = false; let isUnlocked = false;
         const lockScreen = document.getElementById('lockScreen');
-        const island = document.getElementById('island');
 
-        // 上滑解锁逻辑
         window.addEventListener('touchstart', (e) => {
-            if (isUnlocked || torchOn) return;
-            startY = e.touches[0].clientY;
-            isDragging = true;
+            if (isUnlocked) return;
+            startY = e.touches[0].clientY; isDragging = true;
             lockScreen.style.transition = 'none';
         });
 
         window.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
-            let currentY = e.touches[0].clientY;
-            let diff = startY - currentY;
+            let diff = startY - e.touches[0].clientY;
             if (diff > 0) {
                 lockScreen.style.transform = `translateY(-${diff}px)`;
                 lockScreen.style.opacity = 1 - (diff / window.innerHeight);
-                if (diff > 50 && !island.classList.contains('face-id')) island.className = 'dynamic-island face-id';
             }
         });
 
         window.addEventListener('touchend', (e) => {
-            if (!isDragging) return;
-            isDragging = false;
+            if (!isDragging) return; isDragging = false;
             let diff = startY - e.changedTouches[0].clientY;
             if (diff > window.innerHeight * 0.15) {
                 isUnlocked = true;
                 lockScreen.style.transition = 'all 0.6s cubic-bezier(0.32, 0.72, 0, 1)';
                 lockScreen.style.transform = 'translateY(-100vh)';
                 document.body.classList.add('unlocked');
-                setTimeout(() => { island.style.opacity = "0"; island.style.transform = "translateX(-50%) scale(0)"; }, 1000);
             } else {
                 lockScreen.style.transition = 'all 0.4s cubic-bezier(0.19, 1, 0.22, 1)';
-                lockScreen.style.transform = 'translateY(0)';
-                lockScreen.style.opacity = '1';
-                if (!torchOn) island.className = 'dynamic-island';
+                lockScreen.style.transform = 'translateY(0)'; lockScreen.style.opacity = '1';
             }
         });
-
-        function toggleTorch(e) {
-            e.stopPropagation();
-            torchOn = !torchOn;
-            const btn = document.getElementById('torchBtn');
-            if(torchOn) {
-                island.className = 'dynamic-island torch-mode';
-                btn.classList.add('on');
-                document.documentElement.style.setProperty('--torch-brightness', '60%');
-            } else {
-                island.className = 'dynamic-island';
-                btn.classList.remove('on');
-            }
-        }
-
-        function adjustBrightness(e) {
-            e.stopPropagation();
-            const rect = e.currentTarget.getBoundingClientRect();
-            const percentage = Math.round(((e.clientX - rect.left) / rect.width) * 100);
-            document.documentElement.style.setProperty('--torch-brightness', Math.max(10, percentage) + '%');
-        }
 
         function updateTime() {
             const now = new Date();
-            document.getElementById('big-time').innerText = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-            document.getElementById('mini-time').innerText = document.getElementById('big-time').innerText;
+            const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('big-time').innerText = timeStr;
+            document.getElementById('mini-time').innerText = timeStr;
         }
         setInterval(updateTime, 1000); updateTime();
 
-        // 点击上传图片
         const fileInput = document.getElementById('imageUploader');
         let currentUploadTarget = null;
-
         document.querySelectorAll('.upload-trigger').forEach(el => {
-            el.addEventListener('click', (e) => {
-                if(!isUnlocked) return;
-                currentUploadTarget = e.currentTarget;
-                fileInput.click();
-            });
+            el.addEventListener('click', (e) => { if(!isUnlocked) return; currentUploadTarget = e.currentTarget; fileInput.click(); });
         });
-
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file && currentUploadTarget) {
                 const reader = new FileReader();
-                reader.onload = (event) => {
-                    currentUploadTarget.style.backgroundImage = `url(${event.target.result})`;
-                };
+                reader.onload = (ev) => { currentUploadTarget.style.backgroundImage = `url(${ev.target.result})`; };
                 reader.readAsDataURL(file);
             }
             e.target.value = '';
